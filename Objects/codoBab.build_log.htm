@@ -5,11 +5,11 @@
 <h2>Tool Versions:</h2>
 IDE-Version: µVision V5.42.0.0
 Copyright (C) 2025 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: emad adham, ezz, LIC=----
+License Information: morcos mathieu, HP Inc., LIC=----
  
 Tool Versions:
 Toolchain:       MDK-Lite  Version: 5.42.0.0
-Toolchain Path:  C:\Users\Emad\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin
+Toolchain Path:  C:\Users\mathi\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin
 C Compiler:      ArmClang.exe V6.23
 Assembler:       Armasm.exe V6.23
 Linker/Locator:  ArmLink.exe V6.23
@@ -21,24 +21,18 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.3.0.0
 Dialog DLL:      TCM.DLL V1.56.6.0
  
 <h2>Project:</h2>
-D:\myProjects\GameBoy\gameBoy\codoBab.uvprojx
-Project File Date:  04/20/2025
+C:\Users\mathi\Downloads\cmder_mini\gameboy\gameBoy\codoBab.uvprojx
+Project File Date:  04/23/2025
 
 <h2>Output:</h2>
-*** Using Compiler 'V6.23', folder: 'C:\Users\Emad\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
-Rebuild target 'Target_1'
-assembling benchy.s...
-compiling system_stm32f4xx.c...
-assembling startup_stm32f401xc.s...
+*** Using Compiler 'V6.23', folder: 'C:\Users\mathi\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
+Build target 'Target_1'
+"Main.s", line 500: Warning: A1581W: Added 2 bytes of padding at address 0x326
+  500 00000328     END
+0 Errors, 1 Warning
 assembling Main.s...
-"Functions.s", line 136: Warning: A1488W: PROC/FUNC at line 45 in 'Functions.s' without matching ENDP/ENDFUNC
-  136 0000008e TEST_A  FUNCTION
-"Functions.s", line 211: Warning: A1581W: Added 2 bytes of padding at address 0x106
-  211 00000108  END
-0 Errors, 2 Warnings
-assembling Functions.s...
 linking...
-Program Size: Code=440 RO-data=404 RW-data=0 ZI-data=1536  
+Program Size: Code=1256 RO-data=404 RW-data=0 ZI-data=1536  
 ".\Objects\codoBab.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
@@ -57,8 +51,8 @@ Package Vendor: Keil
 
 <h2>Collection of Component include folders:</h2>
   ./RTE/_Target_1
-  C:/Users/Emad/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include
-  C:/Users/Emad/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+  C:/Users/mathi/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include
+  C:/Users/mathi/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include
 
 <h2>Collection of Component Files used:</h2>
 
@@ -66,9 +60,9 @@ Package Vendor: Keil
 
    * Component: Keil::Device:Startup@2.6.3
       Source file:   MDK/Device/Source/ARM/STM32F4xx_OTP.s
+      Include file:  Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f401xc.s
       Source file:   MDK/Device/Source/ARM/STM32F401xx_OPT.s
-      Include file:  Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
 Build Time Elapsed:  00:00:01
 </pre>

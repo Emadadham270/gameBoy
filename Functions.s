@@ -70,9 +70,9 @@ SETUP  FUNCTION
     STR R2, [R0]
 	
     
-    ; Configure PORT B AS OUTPUT 
+    ; Configure PORT B AS INPUT  
     LDR R0, =GPIOB_BASE                  
-    MOV R2, #0x55555555    
+    MOV R2, #0x00000000  
     STR R2, [R0]
 
     ; Configure PORT C AS OUTPUT 
