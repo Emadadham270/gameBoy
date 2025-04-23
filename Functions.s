@@ -11,11 +11,12 @@ Yellow  EQU 0xFFE0  ; 11111 111111 00000
 White   EQU 0xFFFF  ; 11111 111111 11111
 Black   EQU 0x0000  ; 00000 000000 00000 
 
-TFT_RST         EQU     (1 << 7)
-TFT_RD          EQU     (1 << 3)
-TFT_WR          EQU     (1 << 4)
-TFT_DC          EQU     (1 << 5)
-TFT_CS          EQU     (1 << 6)
+
+TFT_RST         EQU     (1 << 15)
+TFT_RD          EQU     (1 << 9)
+TFT_WR          EQU     (1 << 10)
+TFT_DC          EQU     (1 << 11)
+TFT_CS          EQU     (1 << 12)
 
 GPIOC_BASE        EQU        0x40020800  ;;;;;
 GPIOC_SPEEDR	  EQU        GPIOC_BASE+0x08;;;;;;;;;
@@ -43,7 +44,7 @@ GPIOB_OTYPER      EQU		 GPIOB_BASE+0x04
 GPIOB_PUPDR       EQU		 GPIOB_BASE+0x0C
 ;AFIO_BASE		EQU		0x40010000
 ;AFIO_MAPR	EQU		AFIO_BASE + 0x04
-INTERVAL EQU 0x566004
+INTERVAL EQU 0x166004
 	
 	
 	
@@ -53,7 +54,7 @@ INTERVAL EQU 0x566004
 	EXPORT TEST_A	
 	EXPORT TEST_B	
 	EXPORT TEST_C
-	EXPORT TFT_Init
+	;EXPORT TFT_Init
 	EXPORT TFT_FillRed
 	EXPORT TFT_FillBlack
 	EXPORT TFT_FillWhite
@@ -145,12 +146,13 @@ SETUP  FUNCTION
 	LDR R0, =GPIOC_PUPDR
 	MOV R2, #0x55555555
 	STR R2, [R0]
-   
-  
+	LDR R0, =GPIOA_ODR
+	
+    BL TFT_Init
 
     POP{R0-R2, PC}
 
-ENDFUNC
+	ENDFUNC
 	
 TEST_A  FUNCTION
     PUSH{R0-R12, LR}
@@ -223,11 +225,11 @@ DelayInner_Loop
     POP {R0, PC}                ; Pop R4 and return from subroutine
 	ENDFUNC
 
-TFT_WriteCommand FUNCTION
+TFT_WriteCommand 
     PUSH {R1-R2, LR}
 
     ; Set CS low
-    LDR R1, =GPIOA_ODR 
+	LDR R1, =GPIOA_ODR
     LDR R2, [R1]
     BIC R2, R2, #TFT_CS
     STR R2, [R1]
@@ -256,16 +258,16 @@ TFT_WriteCommand FUNCTION
     ORR R2, R2, #TFT_CS
     STR R2, [R1]
 
-    POP {R1-R2, LR}
-	ENDFUNC
+    POP {R1-R3, LR}
+	BX LR
 ; *************************************************************
 ; TFT Write Data (R0 = data)
 ; *************************************************************
-TFT_WriteData FUNCTION
-    PUSH {R1-R2, LR}
+TFT_WriteData 
+    PUSH {R1-R3, LR}
 
     ; Set CS low
-    LDR R1, =GPIOA_ODR
+	LDR R1, =GPIOA_ODR
     LDR R2, [R1]
     BIC R2, R2, #TFT_CS
     STR R2, [R1]
@@ -294,12 +296,13 @@ TFT_WriteData FUNCTION
     ORR R2, R2, #TFT_CS
     STR R2, [R1]
 
-    POP {R1-R2, LR}
-	ENDFUNC
+    POP {R1-R3, LR}
+	BX LR
+
 ; *************************************************************
 ; TFT Initialization
 ; *************************************************************
-TFT_Init FUNCTION
+TFT_Init 
     PUSH {R0-R2, LR}
 
     ; Reset sequence
@@ -337,7 +340,8 @@ TFT_Init FUNCTION
     BL TFT_WriteCommand
 
     POP {R0-R2, LR}
-	ENDFUNC
+	BX LR
+
 ; *************************************************************
 ; TFT Fill Screen (R0 = 16-bit color)
 ; *************************************************************

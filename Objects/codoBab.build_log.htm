@@ -28,17 +28,15 @@ Project File Date:  04/20/2025
 *** Using Compiler 'V6.23', folder: 'C:\Users\Emad\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
 Rebuild target 'Target_1'
 assembling benchy.s...
+assembling Main.s...
+"Functions.s", line 614: Warning: A1581W: Added 2 bytes of padding at address 0x3d2
+  614 000003d4  END
+0 Errors, 1 Warning
+assembling Functions.s...
 assembling startup_stm32f401xc.s...
 compiling system_stm32f4xx.c...
-"Functions.s", line 155: Warning: A1488W: PROC/FUNC at line 63 in 'Functions.s' without matching ENDP/ENDFUNC
-  155 0000008e TEST_A  FUNCTION
-"Functions.s", line 610: Warning: A1581W: Added 2 bytes of padding at address 0x3c6
-  610 000003c8  END
-0 Errors, 2 Warnings
-assembling Functions.s...
-assembling Main.s...
 linking...
-Program Size: Code=1168 RO-data=404 RW-data=0 ZI-data=1536  
+Program Size: Code=1176 RO-data=404 RW-data=0 ZI-data=1536  
 FromELF: creating hex file...
 ".\Objects\codoBab.axf" - 0 Error(s), 0 Warning(s).
 
@@ -68,8 +66,8 @@ Package Vendor: Keil
    * Component: Keil::Device:Startup@2.6.3
       Source file:   MDK/Device/Source/ARM/STM32F401xx_OPT.s
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f401xc.s
-      Include file:  Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
       Source file:   MDK/Device/Source/ARM/STM32F4xx_OTP.s
+      Include file:  Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
 Build Time Elapsed:  00:00:01
 </pre>

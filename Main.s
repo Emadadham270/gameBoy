@@ -12,7 +12,7 @@ Black   EQU 0x0000  ; 00000 000000 00000
 	IMPORT TEST_A
 	IMPORT TEST_B
 	IMPORT TEST_C
-	IMPORT TFT_Init
+	;IMPORT TFT_Init
 	IMPORT TFT_FillRed
 	IMPORT TFT_FillBlack
 	IMPORT TFT_FillWhite
@@ -24,7 +24,7 @@ __main FUNCTION
 	BL SETUP
 
 
-	BL TFT_Init
+	;BL TFT_Init
 	MOV R0, #Red
 	BL TFT_FillRed
 	MOV R0, #Black
