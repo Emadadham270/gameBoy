@@ -1,4 +1,4 @@
-	AREA MYDATA, DATA, READONLY
+	AREA MYDATA, DATA, READWRITE
 	
 RCC_BASE	     EQU		0x40023800;;;;;;;;
 RCC_AHB1ENR		 EQU		RCC_BASE + 0x30 ;;;;;;
@@ -32,6 +32,10 @@ GPIOB_PUPDR       EQU		 GPIOB_BASE+0x0C
 ;AFIO_MAPR	EQU		AFIO_BASE + 0x04
 INTERVAL EQU 0x566004
 	
+XO_array:
+	DCB 0x1A
+    DCB 0x3F
+    DCB 0x07
 	
 	
 	
@@ -70,9 +74,9 @@ SETUP  FUNCTION
     STR R2, [R0]
 	
     
-    ; Configure PORT B AS OUTPUT 
+    ; Configure PORT B AS INPUT 
     LDR R0, =GPIOB_BASE                  
-    MOV R2, #0x55555555    
+    MOV R2, #0x00000000    
     STR R2, [R0]
 
     ; Configure PORT C AS OUTPUT 
