@@ -262,5 +262,11 @@ Update_Left_Sidebar
 	;THIS FUNCTION IS RESPONSIBLE FOR THE LEFT SIDEBAR: MINIMUM REQUIREMENTS: DRAW CURRENT SCORE OF X AND O
 	
 	
-	
+	;Functions:
+	;R0: color to be sent
+	;R11: background color if needed (ReDraw_Square)
+	;Positions: col-R6 page-R7
+	;if start and end needed: col-R6,R7 page-R8,R9
+	;Input will be read in R10 
+	;Square dimensions 60 * 60
 	END
