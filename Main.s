@@ -31,7 +31,10 @@ Black	EQU 0x0000
 	IMPORT XWINS
 	IMPORT OWINS
 	IMPORT ta3adol
-
+X_start			DCB		0X70
+X_end			DCB		0XD2
+Y_start			DCB		0X70
+Y_END			DCB		0XD2
 __main FUNCTION
     
 
@@ -40,7 +43,7 @@ __main FUNCTION
     ; Initialize TFT
     BL TFT_Init
     ; Fill screen with color 
-	;BL TFT_DrawGrid
+	BL TFT_DrawGrid
 	;MOV R0,;THENUM OF THE PHOTO 
 	;MOV R5,#NUMX
 	;MOV R6, #NUMY
@@ -51,7 +54,7 @@ __main FUNCTION
 	MOV R8,#0X0002
 	MOV R9,#0X0062
     ; Fill screen with color (line)
-    MOV R0, #Blue
+    MOV R0, #Black
 	MOV R11,#Red
 	BL TFT_ReDrawSquare
 INNERLOOP
