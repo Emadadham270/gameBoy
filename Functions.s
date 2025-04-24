@@ -350,55 +350,60 @@ TFT_DrawGrid    FUNCTION
 
 
 ; *************************************************************
-; ReDraw Square Centered at (x=R6, y=R7 ,ColorBackground=R0, ColorSquare=R11, Direction=R10 (0->Nochange,1->Up 2->Down 4->Left 8->right))
+; ReDraw Square R6,R7-column start/end   R8,R9-page start/end ,ColorBackground=R0, ColorSquare=R11, Direction=R10 
+;(0->Nochange,1->Up 2->Down 4->Left 8->right)
 ; *************************************************************
 TFT_ReDrawSquare FUNCTION
 	PUSH{R8,LR}
 	
-	BL TFT_DrawSquare ; Remove Square -> By change the color to BG Color
+	BL TFT_Filldraw4INP ; Remove Square -> By change the color to BG Color
 
-	MOV R8 , R10
-	AND R8 , #0x000F
+	MOV R12 , R10
+	AND R12 , #0x000F
 	
-	CMP R8 , #1
+	CMP R12 , #1
 	BEQ MOVE_UP
 		
-	CMP R8 , #2
+	CMP R12 , #2
 	BEQ MOVE_DOWN
 	
-	CMP R8 , #4
+	CMP R12 , #4
 	BEQ MOVE_LEFT
 	
-	CMP R8 , #8
+	CMP R12 , #8
 	BEQ MOVE_RIGHT
 	
 MOVE_UP
-	CMP R7 , #270
-	BEQ DEFAULT
-	ADD R7 , R7 , #0x6E
+	CMP R8 , #0xDC
+	BHS DEFAULT
+	ADD R8 , R8 , #0x6E
+	ADD R9 , R9 , #0X6E
 	B DEFAULT
 	
 MOVE_DOWN
-	CMP R7 , #50
-	BEQ DEFAULT
-	SUB R7 , R7 , #0x6E
+	CMP R8 , #50
+	BLS DEFAULT
+	SUB R8 , R8 , #0x6E
+	SUB R9 , R9 , #0X6E
 	B DEFAULT
 	
 MOVE_RIGHT
 	CMP R6 , #50
 	BEQ DEFAULT
 	SUB R6 , R6 , #0x6E
+	SUB R7 , R7 , #0x6E
 	B DEFAULT
 	
 MOVE_LEFT
-	CMP R6 , #270
+	CMP R6 , #0xDC
 	BEQ DEFAULT
-	ADD R6 , R6 , #0x6E 
+	ADD R6 , R6 , #0x6E
+	ADD R7 , R7 , #0x6E
 	B DEFAULT
 	
 DEFAULT
 	MOV R0 , R11
-	BL TFT_DrawSquare
+	BL TFT_Filldraw4INP
 	
 	pop{R8,PC}
 	ENDFUNC
