@@ -395,11 +395,6 @@
               <FilePath>.\Functions.s</FilePath>
             </File>
             <File>
-              <FileName>benchy.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\benchy.s</FilePath>
-            </File>
-            <File>
               <FileName>dataO.s</FileName>
               <FileType>2</FileType>
               <FilePath>.\dataO.s</FilePath>
@@ -408,6 +403,21 @@
               <FileName>dataX.s</FileName>
               <FileType>2</FileType>
               <FilePath>.\dataX.s</FilePath>
+            </File>
+            <File>
+              <FileName>dataXWINS.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\dataXWINS.s</FilePath>
+            </File>
+            <File>
+              <FileName>dataOWINS.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\dataOWINS.s</FilePath>
+            </File>
+            <File>
+              <FileName>dataDRAW.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\dataDRAW.s</FilePath>
             </File>
           </Files>
         </Group>

@@ -27,20 +27,28 @@ GPIOC_ODR      EQU     GPIOC_BASE + 0x14
 INTERVAL       EQU     0x566004
 
 ;--- TFT control-line masks ---
-TFT_CS         EQU     (1 << 8)
-TFT_DC         EQU     (1 << 9)
-TFT_WR         EQU     (1 << 10)
-TFT_RD         EQU     (1 << 11)
-TFT_RST        EQU     (1 << 12)
+TFT_RST         EQU     (1 << 8)
+TFT_RD          EQU     (1 << 10)
+TFT_WR          EQU     (1 << 11)
+TFT_DC          EQU     (1 << 12)
+TFT_CS          EQU     (1 << 15)
 
 ;--- Colors ---
-Black          EQU     0x0000
-White          EQU     0xFFFF
+Red     EQU 0Xf800 
+Green   EQU 0xF0FF
+Blue    EQU 0x02ff 
+Yellow  EQU 0xFfe0
+White   EQU 0xffff
+Black	EQU 0x0000
 XO_array       DCW     0x00000000
 
 
     AREA    CODEY, CODE, READONLY
-
+	IMPORT X1
+	IMPORT O1
+	IMPORT XWINS
+	IMPORT OWINS
+	IMPORT ta3adol
     EXPORT  SETUP
     EXPORT  TFT_WriteCommand
     EXPORT  TFT_WriteData
@@ -52,7 +60,9 @@ XO_array       DCW     0x00000000
     EXPORT  delay
     EXPORT  Draw_XO
     EXPORT  Check_Win
-    EXPORT  Draw_Result
+	EXPORT	DrawTA3ADOL
+	EXPORT	DrawOWINS
+	EXPORT	DrawXWINS		
     EXPORT  Update_Left_Sidebar
 	EXPORT  TFT_ReDrawSquare
 
@@ -60,292 +70,371 @@ XO_array       DCW     0x00000000
 ;------------------------
 ; SETUP
 ;------------------------
-SETUP    FUNCTION
-    PUSH    {R0-R2, LR}
+SETUP FUNCTION
+	PUSH {R0-R2, LR}
+	; Enable GPIOA clock
+	LDR R0, =RCC_AHB1ENR ; Address of RCC_APB2ENR register
+	LDR R1, [R0] ; Read the current value of RCC_APB2ENR
+	MOV R2, #1
+	ORR R1, R1, R2
+	STR R1, [R0] ; Write the updated value back to RCC_APB2ENR
 
-    LDR     R0, =RCC_AHB1ENR
-    LDR     R1, [R0]
-    ORR     R1, R1, #1
-    STR     R1, [R0]
 
-    LDR     R0, =RCC_AHB1ENR
-    LDR     R1, [R0]
-    ORR     R1, R1, LSL #1
-    STR     R1, [R0]
+	LDR R0, =RCC_AHB1ENR         ;PORT B CLOCK
+	LDR R1, [R0]                 
+	MOV R2, #1
+	ORR R1, R1, R2, LSL #1       		
+	STR R1, [R0]                 
 
-    LDR     R0, =RCC_AHB1ENR
-    LDR     R1, [R0]
-    ORR     R1, R1, LSL #2
-    STR     R1, [R0]
+	LDR R0, =RCC_AHB1ENR         ;PORT c CLOCK
+	LDR R1, [R0]                 
+	MOV R2, #1
+	ORR R1, R1, R2, LSL #2      		
+	STR R1, [R0]    
 
-    LDR     R0, =GPIOA_BASE
-    LDR     R2, =0x55555555
-    STR     R2, [R0]
+	; Configure PORT A AS OUTPUT 
+	LDR R0, =GPIOA_BASE                  
+	MOV R2, #0x55555555    
+	STR R2, [R0]
 
-    LDR     R0, =GPIOB_BASE
-    MOV     R2, #0
-    STR     R2, [R0]
 
-    LDR     R0, =GPIOC_BASE
-    LDR     R2, =0x55555555
-    STR     R2, [R0]
+	; Configure PORT B AS INPUT 
+	LDR R0, =GPIOB_BASE                  
+	MOV R2, #0x00000000    
+	STR R2, [R0]
 
-    LDR     R0, =GPIOA_SPEEDR
-    LDR     R2, =0xFFFFFFFF
-    STR     R2, [R0]
-    LDR     R0, =GPIOB_SPEEDR
-    STR     R2, [R0]
-    LDR     R0, =GPIOC_SPEEDR
-    STR     R2, [R0]
+	; Configure PORT C AS OUTPUT 
+	LDR R0, =GPIOC_BASE          
+	MOV R2, #0x55555555     
+	STR R2, [R0]                 
 
-    LDR     R0, =GPIOA_OTYPER
-    MOV     R2, #0
-    STR     R2, [R0]
-    LDR     R0, =GPIOB_OTYPER
-    STR     R2, [R0]
-    LDR     R0, =GPIOC_OTYPER
-    STR     R2, [R0]
 
-    LDR     R0, =GPIOA_PUPDR
-    LDR     R2, =0x55555555
-    STR     R2, [R0]
-    LDR     R0, =GPIOB_PUPDR
-    STR     R2, [R0]
-    LDR     R0, =GPIOC_PUPDR
-    STR     R2, [R0]
+	;SPEED PORT A
+	LDR R0, =GPIOA_SPEEDR
+	MOV R2, #0xFFFFFFFF
+	STR R2, [R0]
 
-    POP     {R0-R2, PC}
+	;SPEED PORT B
+	LDR R0, =GPIOB_SPEEDR
+	MOV R2, #0xFFFFFFFF
+	STR R2, [R0]
+
+	;SPEED PORT C
+	LDR R0, =GPIOC_SPEEDR
+	MOV R2, #0xFFFFFFFF
+	STR R2, [R0]
+
+	BL HI
+	LTORG
+HI	
+
+	;PUSH/PULL
+	LDR R0, =GPIOA_OTYPER
+	MOV R2, #0x00000000
+	STR R2, [R0]
+
+	;PUSH/PULL
+	LDR R0, =GPIOB_OTYPER
+	MOV R2, #0x00000000
+	STR R2, [R0]
+
+	;PUSH/PULL
+	LDR R0, =GPIOC_OTYPER
+	MOV R2, #0x00000000
+	STR R2, [R0]
+
+
+	;PULL UP 
+	LDR R0, =GPIOA_PUPDR
+	MOV R2, #0x55555555
+	STR R2, [R0]
+
+	;PULL UP 
+	LDR R0, =GPIOB_PUPDR
+	MOV R2, #0x55555555
+	STR R2, [R0]
+
+	;PULL UP 
+	LDR R0, =GPIOC_PUPDR
+	MOV R2, #0x55555555
+	STR R2, [R0]
+
+
+	POP{R0-R2, PC}
 	ENDFUNC
 
-
-;------------------------
-; TFT_WriteCommand
-;------------------------
+	; *************************************************************
+	; TFT Write Command (R0 = command)
+	; *************************************************************
 TFT_WriteCommand FUNCTION
-    PUSH    {R1-R2, LR}
+	PUSH {R1-R2, LR}
 
-    LDR     R1, =GPIOA_ODR
-    LDR     R2, [R1]
-    BIC     R2, R2, #TFT_CS
-    STR     R2, [R1]
+	; Set CS low
+	LDR R1, =GPIOA_ODR
+	LDR R2, [R1]
+	BIC R2, R2, #TFT_CS
+	STR R2, [R1]
 
-    BIC     R2, R2, #TFT_DC
-    STR     R2, [R1]
+	; Set DC (RS) low for command
+	BIC R2, R2, #TFT_DC
+	STR R2, [R1]
 
-    ORR     R2, R2, #TFT_RD
-    STR     R2, [R1]
+	; Set RD high (not used in write operation)
+	ORR R2, R2, #TFT_RD
+	STR R2, [R1]
 
-    BIC     R2, R2, #0xFF
-    AND     R0, R0, #0xFF
-    ORR     R2, R2, R0
-    STR     R2, [R1]
+	; Send command (R0 contains command)
+	BIC R2, R2, #0xFF   ; Clear data bits PA0-PA7
+	AND R0, R0, #0xFF   ; Ensure only 8 bits
+	ORR R2, R2, R0      ; Combine with control bits
+	STR R2, [R1]
 
-    BIC     R2, R2, #TFT_WR
-    STR     R2, [R1]
-    ORR     R2, R2, #TFT_WR
-    STR     R2, [R1]
+	BL H
+	LTORG
+H	
+	; Generate WR pulse (low > high)
+	BIC R2, R2, #TFT_WR
+	STR R2, [R1]
+	ORR R2, R2, #TFT_WR
+	STR R2, [R1]
+	; Set CS high
+	ORR R2, R2, #TFT_CS
+	STR R2, [R1]
 
-    ORR     R2, R2, #TFT_CS
-    STR     R2, [R1]
-
-    POP     {R1-R2, PC}
+	POP {R1-R2, PC}
+	BX LR
 	ENDFUNC
 
+	; *************************************************************
+	; TFT Write Data (R0 = data)
+	; *************************************************************
+TFT_WriteData FUNCTION
+	PUSH {R1-R2, LR}
 
-;------------------------
-; TFT_WriteData
-;------------------------
-TFT_WriteData    FUNCTION
-    PUSH    {R1-R2, LR}
 
-    LDR     R1, =GPIOA_ODR
-    LDR     R2, [R1]
-    BIC     R2, R2, #TFT_CS
-    STR     R2, [R1]
+	; Set CS low
+	LDR R1, =GPIOA_ODR
+	LDR R2, [R1]
+	BIC R2, R2, #TFT_CS
+	STR R2, [R1]
 
-    ORR     R2, R2, #TFT_DC
-    STR     R2, [R1]
+	; Set DC (RS) high for data
+	ORR R2, R2, #TFT_DC
+	STR R2, [R1]
 
-    ORR     R2, R2, #TFT_RD
-    STR     R2, [R1]
+	; Set RD high (not used in write operation)
+	ORR R2, R2, #TFT_RD
+	STR R2, [R1]
+	; Send data (R0 contains data)
+	BIC R2, R2, #0xFF   ; Clear data bits PE0-PE7
+	AND R0, R0, #0xFF   ; Ensure only 8 bits
+	ORR R2, R2, R0      ; Combine with control bits
+	STR R2, [R1]
+	BL I
+	LTORG
+I	
+	; Generate WR pulse
+	BIC R2, R2, #TFT_WR
+	STR R2, [R1]
+	ORR R2, R2, #TFT_WR
+	STR R2, [R1]
+	; Set CS high
+	ORR R2, R2, #TFT_CS
+	STR R2, [R1]
 
-    BIC     R2, R2, #0xFF
-    AND     R0, R0, #0xFF
-    ORR     R2, R2, R0
-    STR     R2, [R1]
-
-    BIC     R2, R2, #TFT_WR
-    STR     R2, [R1]
-    ORR     R2, R2, #TFT_WR
-    STR     R2, [R1]
-
-    ORR     R2, R2, #TFT_CS
-    STR     R2, [R1]
-
-    POP     {R1-R2, PC}
-    BX      LR
+	POP {R1-R2, PC}
+	BX LR
 	ENDFUNC
 
+	; *************************************************************
+	; TFT Initialization
+	; *************************************************************
+TFT_Init FUNCTION
+	PUSH {R0-R2, LR}
 
-;------------------------
-; TFT_Init
-;------------------------
-TFT_Init    FUNCTION
-    PUSH    {R0-R2, LR}
+	BL HIl
+	LTORG
+HIl	
+	; Reset sequence
+	LDR R1, =GPIOA_ODR
+	LDR R2, [R1]
 
-    LDR     R1, =GPIOA_ODR
-    LDR     R2, [R1]
-    BIC     R2, R2, #TFT_RST
-    STR     R2, [R1]
-    BL      delay
+	; Reset low
+	BIC R2, R2, #TFT_RST
+	STR R2, [R1]
+	BL delay
 
-    ORR     R2, R2, #TFT_RST
-    STR     R2, [R1]
-    BL      delay
+	; Reset high
+	ORR R2, R2, #TFT_RST
+	STR R2, [R1]
+	BL delay
+	; Set Pixel Format (16-bit)
+	MOV R0, #0x3A
+	BL TFT_WriteCommand
+	MOV R0, #0x55
+	BL TFT_WriteData
+	BL HIj
+	LTORG
+HIj	
+	; Set Contrast VCOM
+	MOV R0, #0xC5
+	BL TFT_WriteCommand
+	MOV R0, #0x54  ;SET VCOMH TO BIG VALUE
+	BL TFT_WriteData
+	MOV R0, #0x00  ;SET VCOML TO SMALL VALUE
+	BL TFT_WriteData
 
-    MOV     R0, #0x3A
-    BL      TFT_WriteCommand
-    MOV     R0, #0x55
-    BL      TFT_WriteData
 
-    MOV     R0, #0xC5
-    BL      TFT_WriteCommand
-    MOV     R0, #0x54
-    BL      TFT_WriteData
-    MOV     R0, #0x00
-    BL      TFT_WriteData
 
-    MOV     R0, #0x36
-    BL      TFT_WriteCommand
-    MOV     R0, #0x08
-    BL      TFT_WriteData
+	MOV R0,#0x36
+	BL TFT_WriteCommand
 
-    MOV     R0, #0x11
-    BL      TFT_WriteCommand
-    BL      delay
+	MOV R0,#0x08
+	BL TFT_WriteData
 
-    MOV     R0, #0x29
-    BL      TFT_WriteCommand
+	; Sleep Out
+	MOV R0, #0x11
+	BL TFT_WriteCommand
+	BL delay
 
-    POP     {R0-R2, PC}
-    BX      LR
+	; Enable Color Inversion
+	;MOV R0, #0x21      ; Command for Color Inversion ON
+	;BL TFT_WriteCommand
+
+
+	; Display ON
+	MOV R0, #0x29
+	BL TFT_WriteCommand
+
+	POP {R0-R2, PC}
+	BX LR
 	ENDFUNC
 
+; *************************************************************
+; TFT Draw Image (R1 = X, R2 = Y, R3 = Image Address)
+; *************************************************************
+TFT_DrawImage FUNCTION
+	PUSH {R0,R4-R12, LR}
 
-;------------------------
-; TFT_DrawImage
-;------------------------
-TFT_DrawImage    FUNCTION
-    PUSH    {R0,R4-R12, LR}
 
-    LDR     R4, [R3], #4    ; width
-    LDR     R5, [R3], #4    ; height
+	; Load image width and height
+	LDR R4, [R3], #4  ; Load width  (R3 = Width)
+	LDR R5, [R3], #4  ; Load height (R4 = Height)
 
-    MOV     R0, #0x2A
-    BL      TFT_WriteCommand
+	; =====================
+	; Set Column Address (X Start, X End)
+	; =====================
+	MOV R0, #0x2A
+	BL TFT_WriteCommand
+	MOV R0,R1,LSR #8
+	BL TFT_WriteData
+	UXTB R0,R1
+	;MOV R0, R1  ; X Start
+	BL TFT_WriteData
+	ADD R0, R1, R4
+	SUB R0, R0, #1  ; X End = X + Width - 1	
+	MOV R0,R0,LSR #8
+	BL TFT_WriteData
+	ADD R0, R1, R4
+	SUB R0, R0, #1  ; X End = X + Width - 1
+	BL TFT_WriteData
 
-    ; column start/end
-    MOV     R0, R1, LSR #8
-    BL      TFT_WriteData
-    UXTB    R0, R1
-    BL      TFT_WriteData
-    ADD     R0, R1, R4
-    SUB     R0, R0, #1
-    MOV     R0, R0, LSR #8
-    BL      TFT_WriteData
-    ADD     R0, R1, R4
-    SUB     R0, R0, #1
-    BL      TFT_WriteData
+; =====================
+; Set Page Address (Y Start, Y End)
+; =====================
+	MOV R0, #0x2B
+	BL TFT_WriteCommand
+	MOV R0,R2,LSR #8
+	BL TFT_WriteData
+	UXTB R0,R2
+	;MOV R0, R1  ; X Start
+	BL TFT_WriteData
+	ADD R0, R2, R5
+	SUB R0, R0, #1  ; X End = X + Width - 1	
+	MOV R0,R0,LSR #8
+	BL TFT_WriteData
+	ADD R0, R2, R5
+	SUB R0, R0, #1  ; X End = X + Width - 1
+	BL TFT_WriteData
 
-    MOV     R0, #0x2B
-    BL      TFT_WriteCommand
+; =====================
+; Start Writing Pixels
+; =====================
+	MOV R0, #0x2C
+	BL TFT_WriteCommand	
 
-    ; page start/end
-    MOV     R0, R2, LSR #8
-    BL      TFT_WriteData
-    UXTB    R0, R2
-    BL      TFT_WriteData
-    ADD     R0, R2, R5
-    SUB     R0, R0, #1
-    MOV     R0, R0, LSR #8
-    BL      TFT_WriteData
-    ADD     R0, R2, R5
-    SUB     R0, R0, #1
-    BL      TFT_WriteData
+; =====================
+; Send Pixel Data (BGR565)
+; =====================
+	MUL R6, R4, R5  ; Total pixels = Width × Height
+TFT_ImageLoop
+	LDRH R0, [R3], #2 ; Load one pixel (16-bit BGR565)
+	MOV R1, R0, LSR #8 ; Extract high byte
+	AND R2, R0, #0xFF ; Extract low byte
 
-    MOV     R0, #0x2C
-    BL      TFT_WriteCommand
 
-    MUL     R6, R4, R5      ; pixel count
+	MOV R0, R1         ; Send High Byte first
+	BL TFT_WriteData
+	MOV R0, R2         ; Send Low Byte second
+	BL TFT_WriteData
 
-ImageLoop
-    LDRH    R0, [R3], #2
-    MOV     R1, R0, LSR #8
-    AND     R2, R0, #0xFF
-    MOV     R0, R1
-    BL      TFT_WriteData
-    MOV     R0, R2
-    BL      TFT_WriteData
-    SUBS    R6, R6, #1
-    BNE     ImageLoop
+	SUBS R6, R6, #1
+	BNE TFT_ImageLoop
 
-    POP     {R0,R4-R12, PC}
-    BX      LR
+	POP {R0,R4-R12, PC}
+	BX LR
 	ENDFUNC
-
 
 ;------------------------
 ; TFT_DrawGrid
 ;------------------------
 TFT_DrawGrid    FUNCTION
-    PUSH    {R0-R10, LR}
+	PUSH {R0-R10, LR}
+	MOV R6,#0X0000
+	MOV R7,#0X0140
+	MOV R8,#0X0000
+	MOV R9,#0X01E0
+    ; Fill screen with color (area)
+    MOV R0, #Black
+	BL TFT_Filldraw4INP
+	MOV R6,#0X0002
+	MOV R7,#0X0138
+	MOV R8,#0X0002
+	MOV R9,#0X0138
+    ; Fill screen with color (area)
+    MOV R0, #White
+    BL TFT_Filldraw4INP
+	MOV R6,#0X0062
+	MOV R7,#0X0070
+	MOV R8,#0X0002
+	MOV R9,#0X0138
+    ; Fill screen with color (line)
+    MOV R0, #Black
+    BL TFT_Filldraw4INP
+	MOV R6,#0X00D0
+	MOV R7,#0X00DE
+	MOV R8,#0X0002
+	MOV R9,#0X0138
+    ; Fill screen with color (line)
+    MOV R0, #Black
+    BL TFT_Filldraw4INP
+	MOV R6,#0X0002
+	MOV R7,#0X0138
+	MOV R8,#0X0062
+	MOV R9,#0X0070
 
-    MOV     R6, #0
-    LDR     R7, =0x0139
-    MOV     R8, #0
-    LDR     R9, =0x01DE
-    MOV     R0, #Black
-    BL      TFT_Filldraw4INP
-
-    MOV     R6, #2
-    LDR     R7, =0x0137
-    MOV     R8, #2
-    LDR     R9, =0x0137
-    LDR     R0, =White
-    BL      TFT_Filldraw4INP
-
-    MOV     R6, #0x62
-    MOV     R7, #0x70
-    MOV     R8, #2
-    LDR     R9, =0x0137
-    MOV     R0, #Black
-    BL      TFT_Filldraw4INP
-
-    MOV     R6, #0xD0
-    MOV     R7, #0xDE
-    MOV     R8, #2
-    LDR     R9, =0x0137
-    MOV     R0, #Black
-    BL      TFT_Filldraw4INP
-
-    MOV     R6, #2
-    LDR     R7, =0x0137
-    MOV     R8, #0x62
-    MOV     R9, #0x70
-    MOV     R0, #Black
-    BL      TFT_Filldraw4INP
-
-    MOV     R6, #2
-    LDR     R7, =0x0137
-    MOV     R8, #0xD0
-    MOV     R9, #0xDE
-    MOV     R0, #Black
-    BL      TFT_Filldraw4INP
-
-    ;...etc. (rest unchanged)...
-
-    POP     {R0-R10, PC}
-    BX      LR
+    ; Fill screen with color (line)
+    MOV R0, #Black
+    BL TFT_Filldraw4INP
+	MOV R6,#0X0002
+	MOV R7,#0X0138
+	MOV R8,#0X00D0
+	MOV R9,#0X00DE
+    ; Fill screen with color (line)
+    MOV R0, #Black
+    BL TFT_Filldraw4INP
+	POP {R0-R10, LR}
+    BX LR
 	ENDFUNC
 
 
@@ -354,123 +443,151 @@ TFT_DrawGrid    FUNCTION
 ;(0->Nochange,1->Up 2->Down 4->Left 8->right)
 ; *************************************************************
 TFT_ReDrawSquare FUNCTION
-	PUSH{R8,LR}
-	
-	BL TFT_Filldraw4INP ; Remove Square -> By change the color to BG Color
+	 PUSH{R12,LR}
+	 
+	 BL TFT_Filldraw4INP ; Remove Square -> By change the color to BG Color
 
-	MOV R12 , R10
-	AND R12 , #0x000F
-	
-	CMP R12 , #1
-	BEQ MOVE_UP
-		
-	CMP R12 , #2
-	BEQ MOVE_DOWN
-	
-	CMP R12 , #4
-	BEQ MOVE_LEFT
-	
-	CMP R12 , #8
-	BEQ MOVE_RIGHT
-	
+	 MOV R12 , R10 
+	 AND R12 , #0x000F
+	 
+	 CMP R12 , #1
+	 BEQ MOVE_UP
+	  
+	 CMP R12 , #2
+	 BEQ MOVE_DOWN
+	 
+	 CMP R12 , #4
+	 BEQ MOVE_LEFT
+	 
+	 CMP R12 , #8
+	 BEQ MOVE_RIGHT
+	 
 MOVE_UP
-	CMP R8 , #0xDC
-	BHS DEFAULT
-	ADD R8 , R8 , #0x6E
-	ADD R9 , R9 , #0X6E
-	B DEFAULT
-	
+	 CMP R8 , #0xDE ; checking the start
+	 BHS DEFAULT
+	 ADD R8 , R8 , #0x6E
+	 ADD R9 , R9 , #0X6E
+	 B DEFAULT
+	 
 MOVE_DOWN
-	CMP R8 , #50
-	BLS DEFAULT
-	SUB R8 , R8 , #0x6E
-	SUB R9 , R9 , #0X6E
-	B DEFAULT
-	
+	 CMP R8 , #0x02
+	 BLS DEFAULT
+	 SUB R8 , R8 , #0x6E
+	 SUB R9 , R9 , #0X6E
+	 B DEFAULT
+	 
 MOVE_RIGHT
-	CMP R6 , #50
-	BEQ DEFAULT
-	SUB R6 , R6 , #0x6E
-	SUB R7 , R7 , #0x6E
-	B DEFAULT
-	
+	 CMP R6 , #0x02
+	 BLS DEFAULT
+	 SUB R6 , R6 , #0x6E
+	 SUB R7 , R7 , #0x6E
+	 B DEFAULT
+	 
 MOVE_LEFT
-	CMP R6 , #0xDC
-	BEQ DEFAULT
-	ADD R6 , R6 , #0x6E
-	ADD R7 , R7 , #0x6E
-	B DEFAULT
-	
+	 CMP R6 , #0xDE
+	 BHS DEFAULT
+	 ADD R6 , R6 , #0x6E
+	 ADD R7 , R7 , #0x6E
+	 B DEFAULT
+	 
 DEFAULT
-	MOV R0 , R11
-	BL TFT_Filldraw4INP
-	
-	pop{R8,PC}
-	ENDFUNC
-
+	 MOV R0 , R11
+	 BL TFT_Filldraw4INP
+	 
+	 pop{R12,PC}
+	 ENDFUNC
 ;------------------------
 ; TFT_Filldraw4INP  color-R0  R6,R7-column start/end   R8,R9-page start/end
 ;------------------------
 TFT_Filldraw4INP    FUNCTION
-    PUSH    {R1-R5, LR}
+    PUSH {R1-R5, LR}
+    
+    ; Save color
+    MOV R5, R0
 
-    MOV     R5, R0
-
-    MOV     R0, #0x2A
-    BL      TFT_WriteCommand
-
-    MOV     R10, R6, LSR #8
-    MOV     R0, R10
-    BL      TFT_WriteData
-    MOV     R0, R6
-    BL      TFT_WriteData
-
-    MOV     R10, R7, LSR #8
-    MOV     R0, R10
-    BL      TFT_WriteData
-    MOV     R0, R7
-    BL      TFT_WriteData
-
-    MOV     R0, #0x2B
-    BL      TFT_WriteCommand
-
-    MOV     R10, R8, LSR #8
-    MOV     R0, R10
-    BL      TFT_WriteData
-    MOV     R0, R8
-    BL      TFT_WriteData
-
-    MOV     R10, R9, LSR #8
-    MOV     R0, R10
-    BL      TFT_WriteData
-    MOV     R0, R9
-    BL      TFT_WriteData
-
-    MOV     R0, #0x2C
-    BL      TFT_WriteCommand
-
-    MOV     R1, R5, LSR #8
-    AND     R2, R5, #0xFF
-
-    LDR     R3, =153600
+    ; Set PAGE Address (0-239)
+    MOV R0, #0x2A
+    BL TFT_WriteCommand
+  
+  ;start row
+	MOV R10,R6
+	MOV R10,R10,LSR #8
 	
-FillLoopdraw4INP
-    MOV     R0, R1
-    BL      TFT_WriteData
-    MOV     R0, R2
-    BL      TFT_WriteData
-    SUBS    R3, R3, #1
-    BNE     FillLoopdraw4INP
+	MOV R0,R10		
+    BL TFT_WriteData
+    MOV R0,R6		
+    BL TFT_WriteData
+	
+  ;end row
+  	MOV R10,R7
+	MOV R10,R10,LSR #8
+	MOV R0, R10 		; High byte of 0x013F (319)
+    BL TFT_WriteData
+    MOV R0, R7      ; low byte of 0x013F (319)
+    BL TFT_WriteData
+	
+	
 
-    POP     {R1-R5, PC}
-    BX      LR
+
+
+    ; Set COL Address (0-319)
+    MOV R0, #0x2B
+    BL TFT_WriteCommand	
+	MOV R10,R8
+	MOV R10,R10,LSR #8
+    ;start col
+	MOV R0, R10
+    BL TFT_WriteData
+    MOV R0, R8
+    BL TFT_WriteData
+    ;end col
+	MOV R10,R9
+	MOV R10,R10,LSR #8
+	MOV R0, R10      ; High byte of 0x01DF (479)
+    BL TFT_WriteData
+    MOV R0, R9      ; Low byte of 0x01DF (479)
+    BL TFT_WriteData
+
+    ; Memory Write
+    MOV R0, #0x2C
+    BL TFT_WriteCommand
+
+    ; Prepare color bytes
+    MOV R1, R5, LSR #8     ; High byte
+    AND R2, R5, #0xFF      ; Low byte
+
+    ; Fill screen with color (320x480 = 153600 pixels)
+    LDR R3, =153600
+FillLoopdraw4INP
+    ; Write high byte
+    MOV R0, R1
+    BL TFT_WriteData
+    
+    ; Write low byte
+    MOV R0, R2
+    BL TFT_WriteData
+    
+    SUBS R3, R3, #1
+    BNE FillLoopdraw4INP
+
+    POP {R1-R5, LR}
+    BX LR
 	ENDFUNC
 
 
 ;------------------------
 ; GET_state  (debounced)
 ;------------------------
-GET_state    FUNCTION
+GET_state FUNCTION
+	PUSH {LR}
+	MOV R10,#0
+	LDR R0, =GPIOB_IDR   ; Load address of input data register
+	LDR R10, [R0]         ; Read GPIOB input register   ; Shift right to get PC8 at bit 0 and PC9 at bit 1 and PC10 at bit 2 and PC11 at bit 3
+	POP {PC}
+	ENDFUNC	
+	
+	
+GET_state2    FUNCTION
     PUSH    {R0-R4, LR}
 
     MOV     R0, #25
@@ -529,23 +646,165 @@ Draw_XO    FUNCTION
 ;------------------------
 ; Check_Win  (todo)
 ;------------------------
-Check_Win    FUNCTION
-    PUSH    {LR}
-    ;TODO
-    POP     {PC}
+Check_Win FUNCTION
+	PUSH{R0-R12, LR}
+	
+	LDR R0,=XO_array
+	; Pre-load all needed constants into registers
+    LDR R2, =0xC30C
+    LDR R3, =0x30C3
+    LDR R4, =0x3330
+    LDR R5, =0x30303
+    LDR R6, =0x30C30
+    LDR R7, =0x2082
+    LDR R8, =0x2220
+    LDR R9, =0x8208
+    LDR R10, =0x20820
+    LDR R11, =0x20202
+    LDR R12, =0x2AAAA
+	
+    LDR R1, [R0]
+    AND R1, R1, R2      ; was #0xC30C
+    CMP R1, R2
+    BEQ win_x
+	
+    LDR R1, [R0]
+    AND R1, R1, #0x3F
+    CMP R1, #0x3F
+    BEQ win_x
+	
+	LDR R1, [R0]
+	AND R1, R1, R3      ; was #0x30C3
+	CMP R1, R3
+	BEQ win_x
+	
+    LDR R1, [R0]
+    AND R1, R1, R4      ; was #0x3330
+    CMP R1, R4
+    BEQ win_x
+    
+    LDR R1, [R0]
+    AND R1, R1, R5      ; was #0x30303
+    CMP R1, R5
+    BEQ win_x
+	
+    LDR R1, [R0]
+    AND R1, R1, R6      ; was #0x30C30
+    CMP R1, R6
+    BEQ win_x
+    
+    LDR R1, [R0]
+    AND R1, R1, #0xFC0
+    CMP R1, #0xFC0
+    BEQ win_x
+
+    LDR R1, [R0]
+    AND R1, R1, #0x3F000
+    CMP R1, #0x3F000
+    BEQ win_x
+
+	;;;;;;;;;;;;;;;;;;;;;;;
+    ; Check O wins
+    LDR R1, [R0]
+    AND R1, R1, R7      ; was #0x2082
+    CMP R1, R7
+    BEQ win_o
+
+    LDR R1, [R0]
+    AND R1, R1, R8      ; was #0x2220
+    CMP R1, R8
+    BEQ win_o
+    
+    LDR R1, [R0]
+    AND R1, R1, #0x2A
+    CMP R1, #0x2A
+    BEQ win_o
+    
+    LDR R1, [R0]
+    AND R1, R1, R9      ; was #0x8208
+    CMP R1, R9
+    BEQ win_o
+	
+    LDR R1, [R0]
+    AND R1, R1, R10     ; was #0x20820
+    CMP R1, R10
+    BEQ win_o
+    
+    LDR R1, [R0]
+    AND R1, R1, #0xA80
+    CMP R1, #0xA80
+    BEQ win_o
+    
+    LDR R1, [R0]
+    AND R1, R1, #0x2A000
+    CMP R1, #0x2A000
+    BEQ win_o
+	
+    LDR R1, [R0]
+    AND R1, R1, R11      ; was #0x20202
+    CMP R1, R11
+    BEQ win_o
+    ; Check Draw wins
+    LDR R1, [R0]
+    AND R1, R1, R12      ; was #0x2AAAA
+    CMP R1, R12
+    BEQ ta3adol_check
+win_x
+	BL DrawXWINS
+	BL wala7aga
+win_o	
+	BL DrawOWINS
+	BL wala7aga
+ta3adol_check
+	BL DrawTA3ADOL
+	BL wala7aga
+wala7aga
+	POP{R0-R12,PC}
 	ENDFUNC
+	
 
-
-;------------------------
-; Draw_Result  (todo)
-;------------------------
-Draw_Result    FUNCTION
-    PUSH    {LR}
-    ;TODO
-    POP     {PC}
+DrawXWINS	FUNCTION
+	PUSH {R0-R12, LR}
+	MOV R6,#0X0000
+	MOV R7,#0X0140
+	MOV R8,#0X0000
+	MOV R9,#0X01E0
+    ; Fill screen with color (area)
+    MOV R0, #Black
+	BL TFT_Filldraw4INP
+	MOV R1,#80
+	MOV R2,#120
+	LDR R3, =XWINS
+	POP {R0-R12, PC}
 	ENDFUNC
-
-
+DrawOWINS	FUNCTION
+	PUSH {R0-R12, LR}
+	MOV R6,#0X0000
+	MOV R7,#0X0140
+	MOV R8,#0X0000
+	MOV R9,#0X01E0
+    ; Fill screen with color (area)
+    MOV R0, #Black
+	BL TFT_Filldraw4INP
+	MOV R1,#80
+	MOV R2,#120
+	LDR R3, =OWINS
+	POP {R0-R12, PC}
+	ENDFUNC
+DrawTA3ADOL	FUNCTION
+	PUSH {R0-R12, LR}
+	MOV R6,#0X0000
+	MOV R7,#0X0140
+	MOV R8,#0X0000
+	MOV R9,#0X01E0
+    ; Fill screen with color (area)
+    MOV R0, #Black
+	BL TFT_Filldraw4INP
+	MOV R1,#80
+	MOV R2,#120
+	LDR R3, =ta3adol
+	POP {R0-R12, PC}
+	ENDFUNC
 ;------------------------
 ; Update_Left_Sidebar  (todo)
 ;------------------------
