@@ -245,8 +245,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>.\O1.s</PathWithFileName>
-      <FilenameWithoutPath>O1.s</FilenameWithoutPath>
+      <PathWithFileName>.\dataO.s</PathWithFileName>
+      <FilenameWithoutPath>dataO.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -257,8 +257,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>.\X1.s</PathWithFileName>
-      <FilenameWithoutPath>X1.s</FilenameWithoutPath>
+      <PathWithFileName>.\dataX.s</PathWithFileName>
+      <FilenameWithoutPath>dataX.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

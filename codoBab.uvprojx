@@ -400,14 +400,14 @@
               <FilePath>.\benchy.s</FilePath>
             </File>
             <File>
-              <FileName>O1.s</FileName>
+              <FileName>dataO.s</FileName>
               <FileType>2</FileType>
-              <FilePath>.\O1.s</FilePath>
+              <FilePath>.\dataO.s</FilePath>
             </File>
             <File>
-              <FileName>X1.s</FileName>
+              <FileName>dataX.s</FileName>
               <FileType>2</FileType>
-              <FilePath>.\X1.s</FilePath>
+              <FilePath>.\dataX.s</FilePath>
             </File>
           </Files>
         </Group>
