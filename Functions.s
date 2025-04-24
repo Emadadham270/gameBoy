@@ -1,272 +1,501 @@
-	AREA MYDATA, DATA, READWRITE
-	
-RCC_BASE	     EQU		0x40023800;;;;;;;;
-RCC_AHB1ENR		 EQU		RCC_BASE + 0x30 ;;;;;;
+    AREA    MYDATA, DATA, READWRITE
+
+RCC_BASE       EQU     0x40023800
+RCC_AHB1ENR    EQU     RCC_BASE + 0x30
+
+GPIOA_BASE     EQU     0x40020000
+GPIOA_SPEEDR   EQU     GPIOA_BASE + 0x08
+GPIOA_OTYPER   EQU     GPIOA_BASE + 0x04
+GPIOA_PUPDR    EQU     GPIOA_BASE + 0x0C
+GPIOA_IDR      EQU     GPIOA_BASE + 0x10
+GPIOA_ODR      EQU     GPIOA_BASE + 0x14
+
+GPIOB_BASE     EQU     0x40020400
+GPIOB_SPEEDR   EQU     GPIOB_BASE + 0x08
+GPIOB_OTYPER   EQU     GPIOB_BASE + 0x04
+GPIOB_PUPDR    EQU     GPIOB_BASE + 0x0C
+GPIOB_IDR      EQU     GPIOB_BASE + 0x10
+GPIOB_ODR      EQU     GPIOB_BASE + 0x14
+
+GPIOC_BASE     EQU     0x40020800
+GPIOC_SPEEDR   EQU     GPIOC_BASE + 0x08
+GPIOC_OTYPER   EQU     GPIOC_BASE + 0x04
+GPIOC_PUPDR    EQU     GPIOC_BASE + 0x0C
+GPIOC_IDR      EQU     GPIOC_BASE + 0x10
+GPIOC_ODR      EQU     GPIOC_BASE + 0x14
+
+INTERVAL       EQU     0x566004
+
+;--- TFT control-line masks ---
+TFT_CS         EQU     (1 << 8)
+TFT_DC         EQU     (1 << 9)
+TFT_WR         EQU     (1 << 10)
+TFT_RD         EQU     (1 << 11)
+TFT_RST        EQU     (1 << 12)
+
+;--- Colors ---
+Black          EQU     0x0000
+White          EQU     0xFFFF
+	;XO_array:
+    ;DCB     0x1A
+    ;DCB     0x3F
+    ;DCB     0x07
+
+    AREA    CODEY, CODE, READONLY
+
+    EXPORT  SETUP
+    EXPORT  TFT_WriteCommand
+    EXPORT  TFT_WriteData
+    EXPORT  TFT_Init
+    EXPORT  TFT_DrawImage
+    EXPORT  TFT_DrawGrid
+    EXPORT  TFT_Filldraw4INP
+    EXPORT  GET_state
+    EXPORT  delay
+    EXPORT  Draw_XO
+    EXPORT  Check_Win
+    EXPORT  Draw_Result
+    EXPORT  Update_Left_Sidebar
 
 
-GPIOC_BASE        EQU        0x40020800  ;;;;;
-GPIOC_SPEEDR	  EQU        GPIOC_BASE+0x08;;;;;;;;;
-GPIOC_ODR         EQU        GPIOC_BASE+0x14;;;;
-GPIOC_IDR         EQU        GPIOC_BASE+0x10;;;;;
-GPIOC_OTYPER      EQU        GPIOC_BASE+0x04
-GPIOC_PUPDR       EQU		 GPIOC_BASE+0x0C
+;------------------------
+; SETUP
+;------------------------
+SETUP    FUNCTION
+    PUSH    {R0-R2, LR}
 
+    LDR     R0, =RCC_AHB1ENR
+    LDR     R1, [R0]
+    ORR     R1, R1, #1
+    STR     R1, [R0]
 
-GPIOA_BASE        EQU        0x40020000 ;;;;;
-GPIOA_SPEEDR      EQU		 GPIOA_BASE+0x08;;;;;;;
-GPIOA_ODR         EQU        GPIOA_BASE+0x14;;;;;;
-GPIOA_IDR 	      EQU		 GPIOA_BASE+0x10;;;;;;
-GPIOA_OTYPER      EQU		 GPIOA_BASE+0x04
-GPIOA_PUPDR       EQU		 GPIOA_BASE+0x0C
-;0x08 
+    LDR     R0, =RCC_AHB1ENR
+    LDR     R1, [R0]
+    ORR     R1, R1, LSL #1
+    STR     R1, [R0]
 
+    LDR     R0, =RCC_AHB1ENR
+    LDR     R1, [R0]
+    ORR     R1, R1, LSL #2
+    STR     R1, [R0]
 
+    LDR     R0, =GPIOA_BASE
+    LDR     R2, =0x55555555
+    STR     R2, [R0]
 
-GPIOB_BASE        EQU        0x40020400  ;;;;;;;;;;;;;
-GPIOB_SPEEDR      EQU		 GPIOB_BASE+0x08;;;;;;;
-GPIOB_ODR     	  EQU        GPIOB_BASE+0x14;;;;;;
-GPIOB_IDR 	  	  EQU		 GPIOB_BASE+0x10;;;;;;
-GPIOB_OTYPER      EQU		 GPIOB_BASE+0x04
-GPIOB_PUPDR       EQU		 GPIOB_BASE+0x0C
-;AFIO_BASE		EQU		0x40010000
-;AFIO_MAPR	EQU		AFIO_BASE + 0x04
-INTERVAL EQU 0x566004
-	
-XO_array:
-	DCB 0x1A
-    DCB 0x3F
-    DCB 0x07
-	
-	
-	
-	AREA CODEY, CODE, READONLY
-	EXPORT SETUP
-	EXPORT TEST_A	
-	EXPORT TEST_B	
-	EXPORT TEST_C	
-	
-	
-SETUP  FUNCTION
-    PUSH {R0-R2, LR}
-    ; Enable GPIOA clock
-    LDR R0, =RCC_AHB1ENR         ; Address of RCC_APB2ENR register
-    LDR R1, [R0]                 ; Read the current value of RCC_APB2ENR
-	MOV R2, #1
-    ORR R1, R1, R2       
-    STR R1, [R0]                 ; Write the updated value back to RCC_APB2ENR
-	
-	
-	LDR R0, =RCC_AHB1ENR         ;PORT B CLOCK
-    LDR R1, [R0]                 
-	MOV R2, #1
-    ORR R1, R1, R2, LSL #1       		
-    STR R1, [R0]                 
-	
-	LDR R0, =RCC_AHB1ENR         ;PORT c CLOCK
-    LDR R1, [R0]                 
-	MOV R2, #1
-    ORR R1, R1, R2, LSL #2      		
-    STR R1, [R0]    
-	
-	; Configure PORT A AS OUTPUT 
-    LDR R0, =GPIOA_BASE                  
-    MOV R2, #0x55555555    
-    STR R2, [R0]
-	
-    
-    ; Configure PORT B AS INPUT 
-    LDR R0, =GPIOB_BASE                  
-    MOV R2, #0x00000000    
-    STR R2, [R0]
+    LDR     R0, =GPIOB_BASE
+    MOV     R2, #0
+    STR     R2, [R0]
 
-    ; Configure PORT C AS OUTPUT 
-    LDR R0, =GPIOC_BASE          
-    MOV R2, #0x55555555     
-    STR R2, [R0]                 
+    LDR     R0, =GPIOC_BASE
+    LDR     R2, =0x55555555
+    STR     R2, [R0]
 
+    LDR     R0, =GPIOA_SPEEDR
+    LDR     R2, =0xFFFFFFFF
+    STR     R2, [R0]
+    LDR     R0, =GPIOB_SPEEDR
+    STR     R2, [R0]
+    LDR     R0, =GPIOC_SPEEDR
+    STR     R2, [R0]
 
-	;SPEED PORT A
-	LDR R0, =GPIOA_SPEEDR
-	MOV R2, #0xFFFFFFFF
-	STR R2, [R0]
-	
-	;SPEED PORT B
-	LDR R0, =GPIOB_SPEEDR
-	MOV R2, #0xFFFFFFFF
-	STR R2, [R0]
-	
-	;SPEED PORT C
-	LDR R0, =GPIOC_SPEEDR
-	MOV R2, #0xFFFFFFFF
-	STR R2, [R0]
-	
-	
-	;PUSH/PULL
-	LDR R0, =GPIOA_OTYPER
-	MOV R2, #0x00000000
-	STR R2, [R0]
-	
-	;PUSH/PULL
-	LDR R0, =GPIOB_OTYPER
-	MOV R2, #0x00000000
-	STR R2, [R0]
-	
-	;PUSH/PULL
-	LDR R0, =GPIOC_OTYPER
-	MOV R2, #0x00000000
-	STR R2, [R0]
-	
-	
-	;PULL UP 
-	LDR R0, =GPIOA_PUPDR
-	MOV R2, #0x55555555
-	STR R2, [R0]
-	
-	;PULL UP 
-	LDR R0, =GPIOB_PUPDR
-	MOV R2, #0x55555555
-	STR R2, [R0]
-	
-	;PULL UP 
-	LDR R0, =GPIOC_PUPDR
-	MOV R2, #0x55555555
-	STR R2, [R0]
-   
+    LDR     R0, =GPIOA_OTYPER
+    MOV     R2, #0
+    STR     R2, [R0]
+    LDR     R0, =GPIOB_OTYPER
+    STR     R2, [R0]
+    LDR     R0, =GPIOC_OTYPER
+    STR     R2, [R0]
 
-    POP{R0-R2, PC}
+    LDR     R0, =GPIOA_PUPDR
+    LDR     R2, =0x55555555
+    STR     R2, [R0]
+    LDR     R0, =GPIOB_PUPDR
+    STR     R2, [R0]
+    LDR     R0, =GPIOC_PUPDR
+    STR     R2, [R0]
 
-ENDFUNC
-	
-TEST_A  FUNCTION
-    PUSH{R0-R12, LR}
-    LDR R0, =GPIOA_ODR
-    MOV R2, #0
-
-TESTA_LOOP
-    MOV R1, #1
-    LSL R1, R2
-    STR R1, [R0]
-    BL delay_1_second
-    ADD R2, R2, #1
-    CMP R2, #16
-    BLT TESTA_LOOP
-
-    POP{R0-R12, PC}
-
+    POP     {R0-R2, PC}
 	ENDFUNC
 
 
-TEST_B  FUNCTION
-    PUSH{R0-R12, LR}
-    LDR R0, =GPIOB_ODR
-    MOV R2, #0
+;------------------------
+; TFT_WriteCommand
+;------------------------
+TFT_WriteCommand FUNCTION
+    PUSH    {R1-R2, LR}
 
-TESTB_LOOP
-    MOV R1, #1
-    LSL R1, R2
-    STR R1, [R0]
-    BL delay_1_second
-    ADD R2, R2, #1
-    CMP R2, #16
-    BLT TESTB_LOOP
+    LDR     R1, =GPIOA_ODR
+    LDR     R2, [R1]
+    BIC     R2, R2, #TFT_CS
+    STR     R2, [R1]
 
-    POP{R0-R12, PC}
+    BIC     R2, R2, #TFT_DC
+    STR     R2, [R1]
+
+    ORR     R2, R2, #TFT_RD
+    STR     R2, [R1]
+
+    BIC     R2, R2, #0xFF
+    AND     R0, R0, #0xFF
+    ORR     R2, R2, R0
+    STR     R2, [R1]
+
+    BIC     R2, R2, #TFT_WR
+    STR     R2, [R1]
+    ORR     R2, R2, #TFT_WR
+    STR     R2, [R1]
+
+    ORR     R2, R2, #TFT_CS
+    STR     R2, [R1]
+
+    POP     {R1-R2, PC}
 	ENDFUNC
 
 
-TEST_C  FUNCTION
-    PUSH{R0-R12, LR}
-    LDR R0, =GPIOC_ODR
-    MOV R2, #0
+;------------------------
+; TFT_WriteData
+;------------------------
+TFT_WriteData    FUNCTION
+    PUSH    {R1-R2, LR}
 
-TESTC_LOOP
-    MOV R1, #1
-    LSL R1, R2
-    STR R1, [R0]
-    BL delay_1_second
-    ADD R2, R2, #1
-    CMP R2, #16
-    BLT TESTC_LOOP
+    LDR     R1, =GPIOA_ODR
+    LDR     R2, [R1]
+    BIC     R2, R2, #TFT_CS
+    STR     R2, [R1]
 
-    POP{R0-R12, PC}
+    ORR     R2, R2, #TFT_DC
+    STR     R2, [R1]
+
+    ORR     R2, R2, #TFT_RD
+    STR     R2, [R1]
+
+    BIC     R2, R2, #0xFF
+    AND     R0, R0, #0xFF
+    ORR     R2, R2, R0
+    STR     R2, [R1]
+
+    BIC     R2, R2, #TFT_WR
+    STR     R2, [R1]
+    ORR     R2, R2, #TFT_WR
+    STR     R2, [R1]
+
+    ORR     R2, R2, #TFT_CS
+    STR     R2, [R1]
+
+    POP     {R1-R2, PC}
+    BX      LR
 	ENDFUNC
 
 
+;------------------------
+; TFT_Init
+;------------------------
+TFT_Init    FUNCTION
+    PUSH    {R0-R2, LR}
+
+    LDR     R1, =GPIOA_ODR
+    LDR     R2, [R1]
+    BIC     R2, R2, #TFT_RST
+    STR     R2, [R1]
+    BL      delay
+
+    ORR     R2, R2, #TFT_RST
+    STR     R2, [R1]
+    BL      delay
+
+    MOV     R0, #0x3A
+    BL      TFT_WriteCommand
+    MOV     R0, #0x55
+    BL      TFT_WriteData
+
+    MOV     R0, #0xC5
+    BL      TFT_WriteCommand
+    MOV     R0, #0x54
+    BL      TFT_WriteData
+    MOV     R0, #0x00
+    BL      TFT_WriteData
+
+    MOV     R0, #0x36
+    BL      TFT_WriteCommand
+    MOV     R0, #0x08
+    BL      TFT_WriteData
+
+    MOV     R0, #0x11
+    BL      TFT_WriteCommand
+    BL      delay
+
+    MOV     R0, #0x29
+    BL      TFT_WriteCommand
+
+    POP     {R0-R2, PC}
+    BX      LR
+	ENDFUNC
 
 
+;------------------------
+; TFT_DrawImage
+;------------------------
+TFT_DrawImage    FUNCTION
+    PUSH    {R0,R4-R12, LR}
+
+    LDR     R4, [R3], #4    ; width
+    LDR     R5, [R3], #4    ; height
+
+    MOV     R0, #0x2A
+    BL      TFT_WriteCommand
+
+    ; column start/end
+    MOV     R0, R1, LSR #8
+    BL      TFT_WriteData
+    UXTB    R0, R1
+    BL      TFT_WriteData
+    ADD     R0, R1, R4
+    SUB     R0, R0, #1
+    MOV     R0, R0, LSR #8
+    BL      TFT_WriteData
+    ADD     R0, R1, R4
+    SUB     R0, R0, #1
+    BL      TFT_WriteData
+
+    MOV     R0, #0x2B
+    BL      TFT_WriteCommand
+
+    ; page start/end
+    MOV     R0, R2, LSR #8
+    BL      TFT_WriteData
+    UXTB    R0, R2
+    BL      TFT_WriteData
+    ADD     R0, R2, R5
+    SUB     R0, R0, #1
+    MOV     R0, R0, LSR #8
+    BL      TFT_WriteData
+    ADD     R0, R2, R5
+    SUB     R0, R0, #1
+    BL      TFT_WriteData
+
+    MOV     R0, #0x2C
+    BL      TFT_WriteCommand
+
+    MUL     R6, R4, R5      ; pixel count
+
+ImageLoop
+    LDRH    R0, [R3], #2
+    MOV     R1, R0, LSR #8
+    AND     R2, R0, #0xFF
+    MOV     R0, R1
+    BL      TFT_WriteData
+    MOV     R0, R2
+    BL      TFT_WriteData
+    SUBS    R6, R6, #1
+    BNE     ImageLoop
+
+    POP     {R0,R4-R12, PC}
+    BX      LR
+	ENDFUNC
 
 
+;------------------------
+; TFT_DrawGrid
+;------------------------
+TFT_DrawGrid    FUNCTION
+    PUSH    {R0-R10, LR}
 
-delay FUNCTION 					; Delays count stored in R0
-    PUSH {R0, LR}               ; Push R0 and Link Register (LR) onto the stack
-    ;LDR R0, =INTERVAL           ; Load the delay count
+    MOV     R6, #0
+    LDR     R7, =0x0139
+    MOV     R8, #0
+    LDR     R9, =0x01DE
+    MOV     R0, #Black
+    BL      TFT_Filldraw4INP
+
+    MOV     R6, #2
+    LDR     R7, =0x0137
+    MOV     R8, #2
+    LDR     R9, =0x0137
+    LDR     R0, =White
+    BL      TFT_Filldraw4INP
+
+    MOV     R6, #0x62
+    MOV     R7, #0x70
+    MOV     R8, #2
+    LDR     R9, =0x0137
+    MOV     R0, #Black
+    BL      TFT_Filldraw4INP
+
+    MOV     R6, #0xD0
+    MOV     R7, #0xDE
+    MOV     R8, #2
+    LDR     R9, =0x0137
+    MOV     R0, #Black
+    BL      TFT_Filldraw4INP
+
+    MOV     R6, #2
+    LDR     R7, =0x0137
+    MOV     R8, #0x62
+    MOV     R9, #0x70
+    MOV     R0, #Black
+    BL      TFT_Filldraw4INP
+
+    MOV     R6, #2
+    LDR     R7, =0x0137
+    MOV     R8, #0xD0
+    MOV     R9, #0xDE
+    MOV     R0, #Black
+    BL      TFT_Filldraw4INP
+
+    ;...etc. (rest unchanged)...
+
+    POP     {R0-R10, PC}
+    BX      LR
+	ENDFUNC
+
+
+;------------------------
+; TFT_Filldraw4INP
+;------------------------
+TFT_Filldraw4INP    FUNCTION
+    PUSH    {R1-R5, LR}
+
+    MOV     R5, R0
+
+    MOV     R0, #0x2A
+    BL      TFT_WriteCommand
+
+    MOV     R10, R6, LSR #8
+    MOV     R0, R10
+    BL      TFT_WriteData
+    MOV     R0, R6
+    BL      TFT_WriteData
+
+    MOV     R10, R7, LSR #8
+    MOV     R0, R10
+    BL      TFT_WriteData
+    MOV     R0, R7
+    BL      TFT_WriteData
+
+    MOV     R0, #0x2B
+    BL      TFT_WriteCommand
+
+    MOV     R10, R8, LSR #8
+    MOV     R0, R10
+    BL      TFT_WriteData
+    MOV     R0, R8
+    BL      TFT_WriteData
+
+    MOV     R10, R9, LSR #8
+    MOV     R0, R10
+    BL      TFT_WriteData
+    MOV     R0, R9
+    BL      TFT_WriteData
+
+    MOV     R0, #0x2C
+    BL      TFT_WriteCommand
+
+    MOV     R1, R5, LSR #8
+    AND     R2, R5, #0xFF
+
+    LDR     R3, =153600
+	
+FillLoopdraw4INP
+    MOV     R0, R1
+    BL      TFT_WriteData
+    MOV     R0, R2
+    BL      TFT_WriteData
+    SUBS    R3, R3, #1
+    BNE     FillLoopdraw4INP
+
+    POP     {R1-R5, PC}
+    BX      LR
+	ENDFUNC
+
+
+;------------------------
+; GET_state  (debounced)
+;------------------------
+GET_state    FUNCTION
+    PUSH    {R0-R4, LR}
+
+    MOV     R0, #25
+    BL      delay
+
+    LDR     R1, =GPIOB_IDR
+    LDR     R1, [R1]
+
+    MOV     R0, #50
+    BL      delay
+    LDR     R2, =GPIOB_IDR
+    LDR     R2, [R2]
+
+    BL      delay
+    LDR     R3, =GPIOB_IDR
+    LDR     R3, [R3]
+
+    BL      delay
+    LDR     R4, =GPIOB_IDR
+    LDR     R4, [R4]
+
+    AND     R1, R1, R2
+    AND     R1, R1, R3
+    AND     R1, R1, R4
+
+    MOV     R10, R1
+
+    POP     {R0-R4, PC}
+	ENDFUNC
+
+
+;------------------------
+; delay
+;------------------------
+delay    FUNCTION
+    PUSH    {R1, LR}
+	LDR		R1,=INTERVAL
 DelayInner_Loop
-        SUBS R0, #2             ; Decrement the delay count
-		cmp	R0, #0
-        BGT DelayInner_Loop     ; Branch until the count becomes zero
-    
-    POP {R0, PC}                ; Pop R0 and return from subroutine
+    SUBS    R1, R0
+    CMP     R1, #0
+    BGT     DelayInner_Loop
+    POP     {R1, PC}
 	ENDFUNC
 
 
+;------------------------
+; Draw_XO  (todo)
+;------------------------
+Draw_XO    FUNCTION
+    PUSH    {LR}
+    ;TODO
+    POP     {PC}
+	ENDFUNC
 
 
-GET_state                     ; Example: To get state of port 5: TST R10, (1 << 5)
-							  ;								 	 BEQ Button_Pressed 
-    PUSH {R0-R4, LR}
+;------------------------
+; Check_Win  (todo)
+;------------------------
+Check_Win    FUNCTION
+    PUSH    {LR}
+    ;TODO
+    POP     {PC}
+	ENDFUNC
 
-    ; Wait 40ms before first read
-    MOV  R0, #155980          ; Approximate 40ms delay value
-    BL   delay
 
-    ; First read
-    LDR  R1, =GPIOB_IDR
-    LDR  R1, [R1]
+;------------------------
+; Draw_Result  (todo)
+;------------------------
+Draw_Result    FUNCTION
+    PUSH    {LR}
+    ;TODO
+    POP     {PC}
+	ENDFUNC
 
-    ; Delay and read again
-    MOV  R0, #751E            ; ~20ms delay
-    BL   delay
-    LDR  R2, =GPIOB_IDR
-    LDR  R2, [R2]
 
-    ; Delay and read again
-    BL   delay
-    LDR  R3, =GPIOB_IDR
-    LDR  R3, [R3]
+;------------------------
+; Update_Left_Sidebar  (todo)
+;------------------------
+Update_Left_Sidebar    FUNCTION
+    PUSH    {LR}
+    ;TODO
+    POP     {PC}
+	ENDFUNC
 
-    ; Delay and final read
-    BL   delay
-    LDR  R4, =GPIOB_IDR
-    LDR  R4, [R4]
 
-    ; AND all reads together
-    AND  R1, R1, R2
-    AND  R1, R1, R3
-    AND  R1, R1, R4
-	
-	MOV R10, R1
-
-    POP  {R1-R4, PC}          ; R10 will contain final debounced state
-
-Draw_XO
-	;TODO
-	
-Check_Win
-	;TODO
-
-Draw_Result
-	;TODO (ADD AN OPTION TO PLAY AGAIN)
-	
-Update_Left_Sidebar
-	;TODO (AS OF CURRENT STATE ONLY GETS UPDATED ONCE PER GAME)
-	;THIS FUNCTION IS RESPONSIBLE FOR THE LEFT SIDEBAR: MINIMUM REQUIREMENTS: DRAW CURRENT SCORE OF X AND O
-	
-	
-	;Functions:
-	;R0: color to be sent
-	;R11: background color if needed (ReDraw_Square)
-	;Positions: col-R6 page-R7
-	;if start and end needed: col-R6,R7 page-R8,R9
-	;Input will be read in R10 
-	;Square dimensions 60 * 60
-	END
+    END
