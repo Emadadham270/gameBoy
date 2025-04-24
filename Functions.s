@@ -248,7 +248,18 @@ GET_state                     ; Example: To get state of port 5: TST R10, (1 << 
 
     POP  {R1-R4, PC}          ; R10 will contain final debounced state
 
+Draw_XO
+	;TODO
+	
+Check_Win
+	;TODO
 
+Draw_Result
+	;TODO (ADD AN OPTION TO PLAY AGAIN)
+	
+Update_Left_Sidebar
+	;TODO (AS OF CURRENT STATE ONLY GETS UPDATED ONCE PER GAME)
+	;THIS FUNCTION IS RESPONSIBLE FOR THE LEFT SIDEBAR: MINIMUM REQUIREMENTS: DRAW CURRENT SCORE OF X AND O
 	
 	
 	
