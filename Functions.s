@@ -36,10 +36,8 @@ TFT_RST        EQU     (1 << 12)
 ;--- Colors ---
 Black          EQU     0x0000
 White          EQU     0xFFFF
-	;XO_array:
-    ;DCB     0x1A
-    ;DCB     0x3F
-    ;DCB     0x07
+XO_array       DCW     0x00000000
+
 
     AREA    CODEY, CODE, READONLY
 
@@ -56,6 +54,7 @@ White          EQU     0xFFFF
     EXPORT  Check_Win
     EXPORT  Draw_Result
     EXPORT  Update_Left_Sidebar
+	EXPORT  TFT_ReDrawSquare
 
 
 ;------------------------
@@ -350,8 +349,62 @@ TFT_DrawGrid    FUNCTION
 	ENDFUNC
 
 
+; *************************************************************
+; ReDraw Square Centered at (x=R6, y=R7 ,ColorBackground=R0, ColorSquare=R11, Direction=R10 (0->Nochange,1->Up 2->Down 4->Left 8->right))
+; *************************************************************
+TFT_ReDrawSquare FUNCTION
+	PUSH{R8,LR}
+	
+	BL TFT_DrawSquare ; Remove Square -> By change the color to BG Color
+
+	MOV R8 , R10
+	AND R8 , #0x000F
+	
+	CMP R8 , #1
+	BEQ MOVE_UP
+		
+	CMP R8 , #2
+	BEQ MOVE_DOWN
+	
+	CMP R8 , #4
+	BEQ MOVE_LEFT
+	
+	CMP R8 , #8
+	BEQ MOVE_RIGHT
+	
+MOVE_UP
+	CMP R7 , #270
+	BEQ DEFAULT
+	ADD R7 , R7 , #0x6E
+	B DEFAULT
+	
+MOVE_DOWN
+	CMP R7 , #50
+	BEQ DEFAULT
+	SUB R7 , R7 , #0x6E
+	B DEFAULT
+	
+MOVE_RIGHT
+	CMP R6 , #50
+	BEQ DEFAULT
+	SUB R6 , R6 , #0x6E
+	B DEFAULT
+	
+MOVE_LEFT
+	CMP R6 , #270
+	BEQ DEFAULT
+	ADD R6 , R6 , #0x6E 
+	B DEFAULT
+	
+DEFAULT
+	MOV R0 , R11
+	BL TFT_DrawSquare
+	
+	pop{R8,PC}
+	ENDFUNC
+
 ;------------------------
-; TFT_Filldraw4INP
+; TFT_Filldraw4INP  color-R0  R6,R7-column start/end   R8,R9-page start/end
 ;------------------------
 TFT_Filldraw4INP    FUNCTION
     PUSH    {R1-R5, LR}
