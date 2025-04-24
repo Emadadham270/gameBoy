@@ -42,6 +42,8 @@ White   EQU 0xffff
 Black	EQU 0x0000
 XO_array       DCW     0x00000000
 
+XO_counter     DCB     0x00
+
 
     AREA    CODEY, CODE, READONLY
 	IMPORT X1
@@ -634,12 +636,149 @@ DelayInner_Loop
 
 
 ;------------------------
-; Draw_XO  (todo)
+; Draw_XO  R6,R7-column start/end   R8,R9-page start/end
 ;------------------------
 Draw_XO    FUNCTION
-    PUSH    {LR}
-    ;TODO
-    POP     {PC}
+    PUSH    {R0-R12, LR} ;R12 STORES THE CELL NUMBER
+											   ; 32   16    8    4     2     1
+	MOV R12, 0x0000       ;Lowest 6 bits in R12: up-middle-down-left-middle-right
+	
+	MOV R1, R6         ;X Coordinate For Draw image
+	MOV R2, R8		   ;Y Coordinate For Draw image
+	
+	CMP R1, #0x2       ;Right
+	BEQ rIghT
+	CMP R1, #0x70      ;Middle X
+	BEQ mIddleX
+	CMP R1, #0xDE	   ;Left
+	BEQ lEfT
+
+PageTest
+	CMP R2, #0x2       ;Down
+	BEQ dOwN
+	CMP R2, #0x70      ;Middle Y
+	BEQ mIddleY
+	CMP R2, #0xDE	   ;Up
+	BEQ uPp
+
+rIghT
+	ADD R12, #1
+	B PageTest
+mIddleX
+	ADD R12, #2
+	B PageTest
+lEfT
+	ADD R12, #4
+	B PageTest
+	
+dOwN
+	ADD R12, #8
+	B cOntinUe
+mIddleY
+	ADD R12, #16
+	B cOntinUe
+uPp
+	ADD R12, #32
+	B cOntinUe
+	
+
+cOntinUe
+	CMP R12, #36
+	BEQ onee
+	CMP R12, #34
+	BEQ twoo
+	CMP R12, #33
+	BEQ threee
+	CMP R12, #20
+	BEQ fourr
+	CMP R12, #18
+	BEQ fivee
+	CMP R12, #17
+	BEQ sixx
+	CMP R12, #12
+	BEQ sevenn
+	CMP R12, #10
+	BEQ eightt
+	CMP R12, #9
+	BEQ ninee
+	
+onee
+	MOV R12, #1
+	B cOnTINUE
+twoo
+	MOV R12, #2
+	B cOnTINUE
+threee
+	MOV R12, #3
+	B cOnTINUE
+fourr
+	MOV R12, #4
+	B cOnTINUE
+fivee
+	MOV R12, #5
+	B cOnTINUE
+sixx
+	MOV R12, #6
+	B cOnTINUE
+sevenn
+	MOV R12, #7
+	B cOnTINUE
+eightt
+	MOV R12, #8
+	B cOnTINUE
+ninee
+	MOV R12, #9
+	B cOnTINUE
+
+cOnTINUE
+	; R12 = X
+    ; R11 = (target reg)
+    LSL    R4, R12, #1      ; R0 = 2*X
+    SUBS   R4, R4, #2       ; R0 = 2*X – 2    ; base bit index
+
+    ; --- clear the two bits at [base..base+1] ---
+    MOVS   R5, #3           ; R1 = 0b11
+    LSLS   R5, R5, R4       ; R1 = 0b11 << base
+    BIC    R11, R11, R5     ; R11 &= ~(0b11 << base)
+
+    LDR R10,=XO_counter;Check counter (0 = O, 1 = X)
+	LDR R10, [R10]	   ;
+	CMP R10, #0		   ;Draw O
+	BEQ Draw_oO		   ;
+	CMP R10, #1		   ;Draw X
+	BEQ Draw_xX		   ;
+	
+Draw_oO  ;10
+	ADD R10, #1		   ;Toggle counter
+	LDR R11, =XO_array ;Store 10 in bits 2X - 1, 2X - 2
+	LDR R11, [R11]
+	; --- OR in the pattern 0b10 at [base..base+1] ---
+    MOVS   R5, #2           ; R1 = 0b10
+    LSLS   R5, R5, R4       ; R1 = 0b10 << base
+    ORRS   R11, R11, R5     ; R11 |= (0b10 << base)
+	LDR R0, =XO_array
+	STR R11, [R0]
+	LDR R3, =O1
+	BL TFT_DrawImage
+	B FiNish
+	
+Draw_xX  ;11
+	SUB R10, #1		   ;Toggle counter
+	LDR R11, =XO_array ;Store 11 in bits 2X - 1, 2X - 2
+	LDR R11, [R11]
+	; --- OR in the pattern 0b11 at [base..base+1] ---
+    MOVS   R5, #3           ; R5 = 0b11
+    LSLS   R5, R5, R4       ; R5 = 0b11 << base
+    ORRS   R11, R11, R5     ; R11 |= (0b11 << base)
+	LDR R0, =XO_array
+	STR R11, [R0]
+	LDR R3, =X1
+	BL TFT_DrawImage
+	B FiNish
+FiNish
+	LDR R0, =XO_counter
+	STR R10, [R0]
+    POP     {R0-R12, PC}
 	ENDFUNC
 
 
@@ -777,6 +916,7 @@ DrawXWINS	FUNCTION
 	LDR R3, =XWINS
 	POP {R0-R12, PC}
 	ENDFUNC
+	
 DrawOWINS	FUNCTION
 	PUSH {R0-R12, LR}
 	MOV R6,#0X0000
@@ -791,6 +931,7 @@ DrawOWINS	FUNCTION
 	LDR R3, =OWINS
 	POP {R0-R12, PC}
 	ENDFUNC
+	
 DrawTA3ADOL	FUNCTION
 	PUSH {R0-R12, LR}
 	MOV R6,#0X0000
