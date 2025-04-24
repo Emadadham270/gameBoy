@@ -193,18 +193,58 @@ TESTC_LOOP
 
 
 
-delay_1_second FUNCTION
-    PUSH {R0, LR}               ; Push R4 and Link Register (LR) onto the stack
-    LDR R0, =INTERVAL           ; Load the delay count
+delay FUNCTION 					; Delays count stored in R0
+    PUSH {R0, LR}               ; Push R0 and Link Register (LR) onto the stack
+    ;LDR R0, =INTERVAL           ; Load the delay count
 DelayInner_Loop
         SUBS R0, #2             ; Decrement the delay count
 		cmp	R0, #0
         BGT DelayInner_Loop     ; Branch until the count becomes zero
     
-    POP {R0, PC}                ; Pop R4 and return from subroutine
+    POP {R0, PC}                ; Pop R0 and return from subroutine
 	ENDFUNC
 
+
+
+
+GET_state                     ; Example: To get state of port 5: TST R10, (1 << 5)
+							  ;								 	 BEQ Button_Pressed 
+    PUSH {R0-R4, LR}
+
+    ; Wait 40ms before first read
+    MOV  R0, #155980          ; Approximate 40ms delay value
+    BL   delay
+
+    ; First read
+    LDR  R1, =GPIOB_IDR
+    LDR  R1, [R1]
+
+    ; Delay and read again
+    MOV  R0, #751E            ; ~20ms delay
+    BL   delay
+    LDR  R2, =GPIOB_IDR
+    LDR  R2, [R2]
+
+    ; Delay and read again
+    BL   delay
+    LDR  R3, =GPIOB_IDR
+    LDR  R3, [R3]
+
+    ; Delay and final read
+    BL   delay
+    LDR  R4, =GPIOB_IDR
+    LDR  R4, [R4]
+
+    ; AND all reads together
+    AND  R1, R1, R2
+    AND  R1, R1, R3
+    AND  R1, R1, R4
 	
+	MOV R10, R1
+
+    POP  {R1-R4, PC}          ; R10 will contain final debounced state
+
+
 	
 	
 	
