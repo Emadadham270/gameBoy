@@ -20,6 +20,7 @@ White          EQU     0xFFFF
 	IMPORT Check_Win
 	IMPORT Draw_Result
 	IMPORT Update_Left_Sidebar
+	IMPORT  TFT_ReDrawSquare
 
 
 __main FUNCTION
