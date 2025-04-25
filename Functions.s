@@ -319,7 +319,7 @@ HIj
 ; TFT Draw Image (R1 = X, R2 = Y, R3 = Image Address)
 ; *************************************************************
 TFT_DrawImage FUNCTION
-	PUSH {R0,R4-R12, LR}
+	PUSH {R0-R12, LR}
 
 
 	; Load image width and height
@@ -386,7 +386,7 @@ TFT_ImageLoop
 	SUBS R6, R6, #1
 	BNE TFT_ImageLoop
 
-	POP {R0,R4-R12, PC}
+	POP {R0-R12, PC}
 	BX LR
 	ENDFUNC
 
@@ -472,12 +472,13 @@ DrawBorder FUNCTION;take r1,x r2,y
 	pop{PC}
 	ENDFUNC
 	 
-TFT_MoveCursor FUNCTION;take r1,x r2,y 
+TFT_MoveCursor FUNCTION;take X-R1; Y-R2
 	 PUSH{R11-R12,LR}
 	 MOV R11, #Black
 	 BL DrawBorder
 	 BL GET_state
-	 MOV R12 , R10 
+	 MOV R12 , R10
+	 AND R12, #0x000F
 	 CMP R12 , #1
 	 BEQ MOVE_UPB
 	  
@@ -715,15 +716,12 @@ DelayInner_Loop
 
 
 ;------------------------
-; Draw_XO  R6,R7-column start/end   R8,R9-page start/end
+; Draw_XO  R1-column start   R2-page start
 ;------------------------
 Draw_XO    FUNCTION
     PUSH    {R0-R12, LR} ;R12 STORES THE CELL NUMBER
 											   ; 32   16    8    4     2     1
 	MOV R12, 0x0000       ;Lowest 6 bits in R12: up-middle-down-left-middle-right
-	
-	MOV R1, R6         ;X Coordinate For Draw image
-	MOV R2, R8		   ;Y Coordinate For Draw image
 	
 	CMP R1, #0x8       ;Right
 	BEQ rIghT
@@ -969,13 +967,13 @@ Check_Win FUNCTION
     BEQ ta3adol_check
 win_x
 	BL DrawXWINS
-	BL wala7aga
+	B wala7aga
 win_o	
 	BL DrawOWINS
-	BL wala7aga
+	B wala7aga
 ta3adol_check
 	BL DrawTA3ADOL
-	BL wala7aga
+	B wala7aga
 wala7aga
 	POP{R0-R12,PC}
 	ENDFUNC
