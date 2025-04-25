@@ -20,24 +20,12 @@ Black	EQU 0x0000
 	IMPORT GET_state
 	IMPORT delay
 	IMPORT Draw_XO
-	IMPORT Check_Win
-	IMPORT DrawTA3ADOL
-	IMPORT DrawOWINS
-	IMPORT DrawXWINS	
+	IMPORT Check_Win	
 	IMPORT Update_Left_Sidebar
 	IMPORT TFT_MoveCursor 
 	IMPORT X1
 	IMPORT O1
 	IMPORT Main_Game_XO
-		
-;X_start			DCB		0X70
-;X_end			DCB		0XD2
-;Y_start			DCB		0X70
-;Y_END			DCB		0XD2
-
-	IMPORT XWINS
-	IMPORT OWINS
-	IMPORT ta3adol
 	IMPORT DrawBorder
 X_start			DCB		0X70
 X_end			DCB		0XD2

@@ -66,6 +66,7 @@ Black		   EQU 0x0000
 	EXPORT	delay025	
     EXPORT  Draw_XO
     EXPORT  Check_Win
+	EXPORT  DrawBorder
 	EXPORT	DrawTA3ADOL
 	EXPORT	DrawOWINS
 	EXPORT	DrawXWINS		
