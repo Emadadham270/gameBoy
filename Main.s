@@ -28,12 +28,23 @@ Black	EQU 0x0000
 	IMPORT TFT_MoveCursor 
 	IMPORT X1
 	IMPORT O1
+<<<<<<< HEAD
 	IMPORT Main_Game_XO
 		
 ;X_start			DCB		0X70
 ;X_end			DCB		0XD2
 ;Y_start			DCB		0X70
 ;Y_END			DCB		0XD2
+=======
+	IMPORT XWINS
+	IMPORT OWINS
+	IMPORT ta3adol
+	IMPORT DrawBorder
+X_start			DCB		0X70
+X_end			DCB		0XD2
+Y_start			DCB		0X70
+Y_END			DCB		0XD2
+
 __main FUNCTION
     
 
@@ -50,6 +61,7 @@ __main FUNCTION
 	;BL ;DRAW PHOTO
 	;MOV R10,#0
     ; Fill screen with color (line)
+<<<<<<< HEAD
     ;MOV R0, #Black
 	;MOV R11,#Yellow
 ;INNERLOOP
@@ -70,6 +82,7 @@ __main FUNCTION
 	;LDR R3,=X1
 	;BL TFT_DrawImage
 	;BL INNERLOOP
+>>>>>>> e2e864cca641cc70fe9b7468b344deb3b3cfe279
     ENDFUNC
 	
 	END
