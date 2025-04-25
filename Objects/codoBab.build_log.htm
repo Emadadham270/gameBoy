@@ -3,13 +3,13 @@
 <pre>
 <h1>µVision Build Log</h1>
 <h2>Tool Versions:</h2>
-IDE-Version: ÂµVision V5.42.0.0
+IDE-Version: µVision V5.42.0.0
 Copyright (C) 2025 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: Omar Nagy, Cairo University Faculty of Engineering, LIC=S5IID-SZCBL-91M1K-HUWIS-SR479-UNXGM
+License Information: morcos mathieu, HP Inc., LIC=JDAR5-0D1GD-UQ8AC-QWC28-A6NJL-03QC2
  
 Tool Versions:
 Toolchain:       MDK-ARM Professional  Version: 5.42.0.0
-Toolchain Path:  C:\Users\USER\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin
+Toolchain Path:  C:\Users\mathi\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin
 C Compiler:      ArmClang.exe V6.23
 Assembler:       Armasm.exe V6.23
 Linker/Locator:  ArmLink.exe V6.23
@@ -21,35 +21,83 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.3.0.0
 Dialog DLL:      TCM.DLL V1.56.6.0
  
 <h2>Project:</h2>
-C:\Users\USER\gameBoy\codoBab.uvprojx
-Project File Date:  04/24/2025
+C:\Users\mathi\gameBoy\codoBab.uvprojx
+Project File Date:  04/25/2025
 
 <h2>Output:</h2>
-*** Using Compiler 'V6.23', folder: 'C:\Users\USER\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
+*** Using Compiler 'V6.23', folder: 'C:\Users\mathi\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'Target_1'
-armclang: warning: Your license for feature Keil will expire in 28 days [-Wlicense-management]
-"Functions.s", line 723 (column 10): Warning: A1865W: '#' not seen before constant expression
-  723 000004d6  MOV R12, 0x0000       ;Lowest 6 bits in R12: up-middle-down-left-middle-right
-                        ^
+assembling Main.s...
 "Functions.s", line 133: Warning: A1471W: Directive LTORG may be in an executable position
   133 00000060  LTORG
+"Functions.s", line 166: Warning: A1471W: Directive LTORG may be in an executable position
+  166 000000ac  LTORG
 "Functions.s", line 198: Warning: A1471W: Directive LTORG may be in an executable position
-  198 000000d8  LTORG
+  198 000000f0  LTORG
 "Functions.s", line 239: Warning: A1471W: Directive LTORG may be in an executable position
   239 00000134  LTORG
 "Functions.s", line 261: Warning: A1471W: Directive LTORG may be in an executable position
   261 00000154  LTORG
 "Functions.s", line 282: Warning: A1471W: Directive LTORG may be in an executable position
   282 00000180  LTORG
-0 Errors, 6 Warnings
-armclang: warning: Your license for feature Keil will expire in 28 days [-Wlicense-management]
+"Functions.s", line 589: Warning: A1471W: Directive LTORG may be in an executable position
+  589 0000041c  LTORG
+"Functions.s", line 675: Warning: A1471W: Directive LTORG may be in an executable position
+  675 000004a2  LTORG
+"Functions.s", line 700: Warning: A1471W: Directive LTORG may be in an executable position
+  700 000004c0  LTORG
+"Functions.s", line 713: Warning: A1471W: Directive LTORG may be in an executable position
+  713 000004ce  LTORG
+"Functions.s", line 713: Warning: A1581W: Added 2 bytes of padding at address 0x4ce
+  713 000004d0  LTORG
+"Functions.s", line 839: Warning: A1471W: Directive LTORG may be in an executable position
+  839 000005b4  LTORG
+"Functions.s", line 849: Warning: A1471W: Directive LTORG may be in an executable position
+  849 000005d0  LTORG
+"Functions.s", line 856: Warning: A1471W: Directive LTORG may be in an executable position
+  856 000005e2  LTORG
+"Functions.s", line 856: Warning: A1581W: Added 2 bytes of padding at address 0x5e2
+  856 000005e4  LTORG
+"Functions.s", line 859: Warning: A1471W: Directive LTORG may be in an executable position
+  859 000005ee  LTORG
+"Functions.s", line 859: Warning: A1581W: Added 2 bytes of padding at address 0x5ee
+  859 000005f0  LTORG
+"Functions.s", line 866: Warning: A1471W: Directive LTORG may be in an executable position
+  866 00000602  LTORG
+"Functions.s", line 866: Warning: A1581W: Added 2 bytes of padding at address 0x602
+  866 00000604  LTORG
+"Functions.s", line 873: Warning: A1471W: Directive LTORG may be in an executable position
+  873 00000616  LTORG
+"Functions.s", line 873: Warning: A1581W: Added 2 bytes of padding at address 0x616
+  873 00000618  LTORG
+"Functions.s", line 889: Warning: A1471W: Directive LTORG may be in an executable position
+  889 00000642  LTORG
+"Functions.s", line 889: Warning: A1581W: Added 2 bytes of padding at address 0x642
+  889 00000644  LTORG
+"Functions.s", line 902: Warning: A1471W: Directive LTORG may be in an executable position
+  902 0000065a  LTORG
+"Functions.s", line 902: Warning: A1581W: Added 2 bytes of padding at address 0x65a
+  902 0000065c  LTORG
+"Functions.s", line 915: Warning: A1471W: Directive LTORG may be in an executable position
+  915 00000688  LTORG
+"Functions.s", line 1038: Warning: A1471W: Directive LTORG may be in an executable position
+ 1038 000007a2  LTORG
+"Functions.s", line 1038: Warning: A1581W: Added 2 bytes of padding at address 0x7a2
+ 1038 000007a4  LTORG
+"Functions.s", line 1056: Warning: A1471W: Directive LTORG may be in an executable position
+ 1056 000007d6  LTORG
+"Functions.s", line 1056: Warning: A1581W: Added 2 bytes of padding at address 0x7d6
+ 1056 000007d8  LTORG
+"Functions.s", line 1088: Warning: A1471W: Directive LTORG may be in an executable position
+ 1088 00000814  LTORG
+"Functions.s", line 1111: Warning: A1471W: Directive LTORG may be in an executable position
+ 1111 0000084c  LTORG
+0 Errors, 32 Warnings
 assembling Functions.s...
 linking...
-Program Size: Code=2136 RO-data=259940 RW-data=4 ZI-data=1536  
+Program Size: Code=2280 RO-data=29516 RW-data=4 ZI-data=1536  
 FromELF: creating hex file...
-.\Objects\codoBab.hex: Warning: Q9931W: Your license for feature Keil will expire in 28 days
-Finished: 0 information, 1 warning and 0 error messages.
-".\Objects\codoBab.axf" - 0 Error(s), 2 Warning(s).
+".\Objects\codoBab.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -67,8 +115,8 @@ Package Vendor: Keil
 
 <h2>Collection of Component include folders:</h2>
   ./RTE/_Target_1
-  C:/Users/USER/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include
-  C:/Users/USER/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+  C:/Users/mathi/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include
+  C:/Users/mathi/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include
 
 <h2>Collection of Component Files used:</h2>
 

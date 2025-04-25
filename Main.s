@@ -21,20 +21,19 @@ Black	EQU 0x0000
 	IMPORT delay
 	IMPORT Draw_XO
 	IMPORT Check_Win
-	IMPORT	DrawTA3ADOL
-	IMPORT	DrawOWINS
-	IMPORT	DrawXWINS	
+	IMPORT DrawTA3ADOL
+	IMPORT DrawOWINS
+	IMPORT DrawXWINS	
 	IMPORT Update_Left_Sidebar
 	IMPORT TFT_MoveCursor 
 	IMPORT X1
 	IMPORT O1
-	IMPORT XWINS
-	IMPORT OWINS
-	IMPORT ta3adol
-X_start			DCB		0X70
-X_end			DCB		0XD2
-Y_start			DCB		0X70
-Y_END			DCB		0XD2
+	IMPORT Main_Game_XO
+		
+;X_start			DCB		0X70
+;X_end			DCB		0XD2
+;Y_start			DCB		0X70
+;Y_END			DCB		0XD2
 __main FUNCTION
     
 
@@ -43,34 +42,34 @@ __main FUNCTION
     ; Initialize TFT
     BL TFT_Init
     ; Fill screen with color 
-	BL TFT_DrawGrid
+	;BL TFT_DrawGrid
+	BL Main_Game_XO
 	;MOV R0,;THENUM OF THE PHOTO 
 	;MOV R5,#NUMX
 	;MOV R6, #NUMY
 	;BL ;DRAW PHOTO
-	MOV R10,#0
+	;MOV R10,#0
     ; Fill screen with color (line)
-    MOV R0, #Black
-	MOV R11,#Yellow
-INNERLOOP
-	MOV R1,#0X70
-	MOV R2,#0X70
-IN2
-	BL GET_state
-	AND R10,R10,#0X001F 
-	CMP R10,#0
-	BEQ IN2
-	CMP R10,#16
-	BEQ ENTER5
-	BL TFT_MoveCursor 
-	BL IN2
+    ;MOV R0, #Black
+	;MOV R11,#Yellow
+;INNERLOOP
+	;MOV R1,#0X70
+	;MOV R2,#0X70
+;IN2
+	;BL GET_state
+	;AND R10,R10,#0X001F 
+	;CMP R10,#0
+	;BEQ IN2
+	;CMP R10,#16
+	;BEQ ENTER5
+	;BL TFT_MoveCursor 
+	;BL IN2
 	
 	
-	
-ENTER5
-	LDR R3,=X1
-	BL TFT_DrawImage
-	BL INNERLOOP
+;ENTER5
+	;LDR R3,=X1
+	;BL TFT_DrawImage
+	;BL INNERLOOP
     ENDFUNC
 	
 	END

@@ -1,5 +1,11 @@
     AREA    MYDATA, DATA, READWRITE
 
+
+XO_array       DCW     0x00000000
+
+XO_counter     DCB     0x00
+
+
 RCC_BASE       EQU     0x40023800
 RCC_AHB1ENR    EQU     RCC_BASE + 0x30
 
@@ -27,34 +33,27 @@ GPIOC_ODR      EQU     GPIOC_BASE + 0x14
 INTERVAL       EQU     0x566004
 
 ;--- TFT control-line masks ---
-TFT_RST         EQU     (1 << 8)
-TFT_RD          EQU     (1 << 10)
-TFT_WR          EQU     (1 << 11)
-TFT_DC          EQU     (1 << 12)
-TFT_CS          EQU     (1 << 15)
+TFT_RST        EQU     (1 << 8)
+TFT_RD         EQU     (1 << 10)
+TFT_WR         EQU     (1 << 11)
+TFT_DC         EQU     (1 << 12)
+TFT_CS         EQU     (1 << 15)
 
 ;--- Colors ---
-Red     EQU 0Xf800 
-Green   EQU 0xF0FF
-Blue    EQU 0x02ff 
-Yellow  EQU 0xFfe0
-White   EQU 0xffff
-Black	EQU 0x0000
+Red     	   EQU 0Xf800 
+Green   	   EQU 0xF0FF
+Blue    	   EQU 0x02ff 
+Yellow  	   EQU 0xFfe0
+White   	   EQU 0xffff
+Black		   EQU 0x0000
 	
 
 
-
-XO_array       DCW     0x00000000
-
-XO_counter     DCB     0x00
 
 
     AREA    CODEY, CODE, READONLY
 	IMPORT X1
 	IMPORT O1
-	IMPORT XWINS
-	IMPORT OWINS
-	IMPORT ta3adol
     EXPORT  SETUP
     EXPORT  TFT_WriteCommand
     EXPORT  TFT_WriteData
@@ -70,7 +69,8 @@ XO_counter     DCB     0x00
 	EXPORT	DrawOWINS
 	EXPORT	DrawXWINS		
     EXPORT  Update_Left_Sidebar
-	EXPORT TFT_MoveCursor 
+	EXPORT  TFT_MoveCursor 
+	EXPORT  Main_Game_XO
 
 ;------------------------
 ; SETUP
@@ -163,7 +163,7 @@ HI
 	LDR R0, =GPIOC_PUPDR
 	MOV R2, #0x55555555
 	STR R2, [R0]
-
+	LTORG
 
 	POP{R0-R2, PC}
 	ENDFUNC
@@ -442,7 +442,6 @@ TFT_DrawGrid    FUNCTION
     BX LR
 	ENDFUNC
 
-
 ; *************************************************************
 ; ReDraw Square R6,R7-column start/end   R8,R9-page start/end ,ColorBackground=R0, ColorSquare=R11, Direction=R10 
 ;(0->Nochange,1->Up 2->Down 4->Left 8->right)
@@ -471,12 +470,13 @@ DrawBorder FUNCTION;take r1,x r2,y
 	BL TFT_Filldraw4INP2 ; Remove Square -> By change the color to BG Color
 	pop{PC}
 	ENDFUNC
-	 
-TFT_MoveCursor FUNCTION;take X-R1; Y-R2
+	
+TFT_MoveCursor FUNCTION; Take X-R1; Y-R2 : Input in R10
 	 PUSH{R11-R12,LR}
+	 
 	 MOV R11, #Black
 	 BL DrawBorder
-	 BL GET_state
+	 
 	 MOV R12 , R10
 	 AND R12, #0x000F
 	 CMP R12 , #1
@@ -586,6 +586,7 @@ TFT_Filldraw4INP2    FUNCTION
 
     ; Fill screen with color (320x480 = 153600 pixels)
     LDR R3, =1200
+	LTORG
 FillLoopdraw4INP2
     ; Write high byte
     MOV R0, R1
@@ -671,6 +672,7 @@ TFT_Filldraw4INP    FUNCTION
 
     ; Fill screen with color (320x480 = 153600 pixels)
     LDR R3, =153600
+	LTORG
 FillLoopdraw4INP
     ; Write high byte
     MOV R0, R1
@@ -695,6 +697,7 @@ GET_state FUNCTION
 	PUSH {LR}
 	MOV R10,#0
 	LDR R0, =GPIOB_IDR   ; Load address of input data register
+	LTORG
 	LDR R10, [R0]         ; Read GPIOB input register   ; Shift right to get PC8 at bit 0 and PC9 at bit 1 and PC10 at bit 2 and PC11 at bit 3
 	POP {PC}
 	ENDFUNC	
@@ -707,6 +710,7 @@ GET_state FUNCTION
 delay    FUNCTION
     PUSH    {R1, LR}
 	LDR		R1,=INTERVAL
+	LTORG
 DelayInner_Loop
     SUBS    R1, R0
     CMP     R1, #0
@@ -721,7 +725,7 @@ DelayInner_Loop
 Draw_XO    FUNCTION
     PUSH    {R0-R12, LR} ;R12 STORES THE CELL NUMBER
 											   ; 32   16    8    4     2     1
-	MOV R12, 0x0000       ;Lowest 6 bits in R12: up-middle-down-left-middle-right
+	MOV R12, #0x0000       ;Lowest 6 bits in R12: up-middle-down-left-middle-right
 	
 	CMP R1, #0x8       ;Right
 	BEQ rIghT
@@ -811,14 +815,28 @@ cOnTINUE
 	; R12 = X
     ; R11 = (target reg)
     LSL    R4, R12, #1      ; R0 = 2*X
-    SUBS   R4, R4, #2       ; R0 = 2*X – 2    ; base bit index
-
-    ; --- clear the two bits at [base..base+1] ---
-    MOVS   R5, #3           ; R1 = 0b11
-    LSLS   R5, R5, R4       ; R1 = 0b11 << base
+    SUBS   R4, R4, #1       ; R0 = 2*X – 1    ; base bit index
+	
+	;00010000
+	;check if bit 2X - 1 is 1
+    MOVS   R5, #1           ; R1 = 0b1
+    LSLS   R5, R5, R4       ; R1 = 0b1 << base
+    AND    R5, R11, R5      ; Masking R5 to be zero except the bit to be tested
+	
+	MOV     R6, #1
+	LSL     R6, R6, R4      ; R6 = 1 << R4
+	CMP     R5, R6          ; Compare R5 with (1 << R4)
+	;if so: Draw red border for 1 sec then draw yellow border
+    B AlreadyDrawn
+	
+	SUBS   R4, R4, #1       ; R0 = 2*X – 1    ; base bit index
+	; --- clear the two bits at [base..base+1] ---
+    MOVS   R5, #3           ; R5 = 0b11
+    LSLS   R5, R5, R4       ; R5 = 0b11 << base
     BIC    R11, R11, R5     ; R11 &= ~(0b11 << base)
 
     LDR R10,=XO_counter;Check counter (0 = O, 1 = X)
+	LTORG
 	LDR R10, [R10]	   ;
 	CMP R10, #0		   ;Draw O
 	BEQ Draw_oO		   ;
@@ -828,32 +846,47 @@ cOnTINUE
 Draw_oO  ;10
 	ADD R10, #1		   ;Toggle counter
 	LDR R11, =XO_array ;Store 10 in bits 2X - 1, 2X - 2
+	LTORG
 	LDR R11, [R11]
 	; --- OR in the pattern 0b10 at [base..base+1] ---
-    MOVS   R5, #2           ; R1 = 0b10
-    LSLS   R5, R5, R4       ; R1 = 0b10 << base
+    MOVS   R5, #2           ; R5 = 0b10
+    LSLS   R5, R5, R4       ; R5 = 0b10 << base
     ORRS   R11, R11, R5     ; R11 |= (0b10 << base)
 	LDR R0, =XO_array
+	LTORG
 	STR R11, [R0]
 	LDR R3, =O1
+	LTORG
 	BL TFT_DrawImage
 	B FiNish
 	
 Draw_xX  ;11
 	SUB R10, #1		   ;Toggle counter
 	LDR R11, =XO_array ;Store 11 in bits 2X - 1, 2X - 2
+	LTORG
 	LDR R11, [R11]
 	; --- OR in the pattern 0b11 at [base..base+1] ---
     MOVS   R5, #3           ; R5 = 0b11
     LSLS   R5, R5, R4       ; R5 = 0b11 << base
     ORRS   R11, R11, R5     ; R11 |= (0b11 << base)
 	LDR R0, =XO_array
+	LTORG
 	STR R11, [R0]
 	LDR R3, =X1
 	BL TFT_DrawImage
 	B FiNish
+	
+AlreadyDrawn    ;Draw red border momentarily then draw yellow
+	MOV R11, #Red
+	BL DrawBorder
+	MOV R0, #5
+	BL delay
+	MOV R11, #Yellow
+	BL DrawBorder
+	
 FiNish
 	LDR R0, =XO_counter
+	LTORG
 	STR R10, [R0]
     POP     {R0-R12, PC}
 	ENDFUNC
@@ -866,6 +899,7 @@ Check_Win FUNCTION
 	PUSH{R0-R12, LR}
 	
 	LDR R0,=XO_array
+	LTORG
 	; Pre-load all needed constants into registers
     LDR R2, =0xC30C
     LDR R3, =0x30C3
@@ -878,6 +912,7 @@ Check_Win FUNCTION
     LDR R10, =0x20820
     LDR R11, =0x20202
     LDR R12, =0x2AAAA
+	LTORG
 	
     LDR R1, [R0]
     AND R1, R1, R2      ; was #0xC30C
@@ -967,12 +1002,21 @@ Check_Win FUNCTION
     BEQ ta3adol_check
 win_x
 	BL DrawXWINS
+	LDR R0, [R0]
+	MOV R1, #0xFFF
+	STR R1, [R0]
 	B wala7aga
 win_o	
 	BL DrawOWINS
+	LDR R0, [R0]
+	MOV R1, #0xFFF
+	STR R1, [R0]
 	B wala7aga
 ta3adol_check
 	BL DrawTA3ADOL
+	LDR R0, [R0]
+	MOV R1, #0xFFF
+	STR R1, [R0]
 	B wala7aga
 wala7aga
 	POP{R0-R12,PC}
@@ -986,11 +1030,14 @@ DrawXWINS	FUNCTION
 	MOV R8,#0X0000
 	MOV R9,#0X01E0
     ; Fill screen with color (area)
-    MOV R0, #Black
+    MOV R0, #Green
 	BL TFT_Filldraw4INP
 	MOV R1,#80
 	MOV R2,#120
-	LDR R3, =XWINS
+	LDR R3, =X1
+	LTORG
+	BL TFT_DrawImage
+	
 	POP {R0-R12, PC}
 	ENDFUNC
 	
@@ -1001,11 +1048,14 @@ DrawOWINS	FUNCTION
 	MOV R8,#0X0000
 	MOV R9,#0X01E0
     ; Fill screen with color (area)
-    MOV R0, #Black
+    MOV R0, #Green
 	BL TFT_Filldraw4INP
 	MOV R1,#80
 	MOV R2,#120
-	LDR R3, =OWINS
+	LDR R3, =O1
+	LTORG
+	BL TFT_DrawImage
+	
 	POP {R0-R12, PC}
 	ENDFUNC
 	
@@ -1016,11 +1066,8 @@ DrawTA3ADOL	FUNCTION
 	MOV R8,#0X0000
 	MOV R9,#0X01E0
     ; Fill screen with color (area)
-    MOV R0, #Black
+    MOV R0, #Red
 	BL TFT_Filldraw4INP
-	MOV R1,#80
-	MOV R2,#120
-	LDR R3, =ta3adol
 	POP {R0-R12, PC}
 	ENDFUNC
 ;------------------------
@@ -1030,6 +1077,56 @@ Update_Left_Sidebar    FUNCTION
     PUSH    {LR}
     ;TODO
     POP     {PC}
+	ENDFUNC
+
+
+Main_Game_XO FUNCTION
+	PUSH{R0-R12,LR}
+	
+	BL TFT_DrawGrid
+	LDR R12, =XO_array  ;Store 0 in XO_array
+	LTORG
+	MOV R11, #0
+	STR R11, [R12]
+	MOV R1, #0x70
+	MOV R2, #0x70
+;MAINLOOP
+
+INPUT1233                ;Wait for input from user
+	BL GET_state
+	AND R10, #0x001F
+	CMP R10, #0      ;Keep looping while input = 0
+	BEQ INPUT1233
+	
+	CMP R10, #0x0010 ;If input == ENTER, jump to where we draw X/O and check win
+	BEQ ENTERrr
+	
+	BL TFT_MoveCursor
+	B INPUT1233
+	
+ENTERrr
+	BL Draw_XO
+	BL Check_Win
+	LDR R0, =XO_array
+	LTORG
+	LDR R0, [R0]
+	MOV R9, #0xFFF 
+	CMP R0, R9
+	
+	BEQ FinIsh
+	B INPUT1233
+	
+FinIsh
+	MOV R0, #1
+	BL delay
+	MOV R6,#0X0000
+	MOV R7,#0X0140
+	MOV R8,#0X0000
+	MOV R9,#0X01E0
+    ; Fill screen with color (area)
+    MOV R0, #Yellow
+	BL TFT_Filldraw4INP
+	POP{R0-R12,PC}
 	ENDFUNC
 
 
