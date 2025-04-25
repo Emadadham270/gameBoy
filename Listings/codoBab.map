@@ -83,8 +83,8 @@ Image Symbol Table
     $v0                                      0x080009b4   Number         0  main.o(MYCODE)
     MYIMAGE                                  0x08000a00   Section    14554  datao.o(MYIMAGE)
     MYIMAGE                                  0x080042dc   Section    14554  datax.o(MYIMAGE)
-    MYIMAGE                                  0x08007bb8   Section    76808  dataxwins.o(MYIMAGE)
-    MYIMAGE                                  0x0801a7c0   Section    76808  dataowins.o(MYIMAGE)
+    MYIMAGE                                  0x08007bb8   Section    76808  dataowins.o(MYIMAGE)
+    MYIMAGE                                  0x0801a7c0   Section    76808  dataxwins.o(MYIMAGE)
     MYIMAGE                                  0x0802d3c8   Section    76808  datadraw.o(MYIMAGE)
     XO_array                                 0x20000000   Data           2  functions.o(MYDATA)
     MYDATA                                   0x20000000   Section        3  functions.o(MYDATA)
@@ -195,8 +195,8 @@ Image Symbol Table
     __main                                   0x080009b5   Thumb Code    70  main.o(MYCODE)
     O1                                       0x08000a00   Data           0  datao.o(MYIMAGE)
     X1                                       0x080042dc   Data           0  datax.o(MYIMAGE)
-    XWINS                                    0x08007bb8   Data           0  dataxwins.o(MYIMAGE)
-    OWINS                                    0x0801a7c0   Data           0  dataowins.o(MYIMAGE)
+    OWINS                                    0x08007bb8   Data           0  dataowins.o(MYIMAGE)
+    XWINS                                    0x0801a7c0   Data           0  dataxwins.o(MYIMAGE)
     ta3adol                                  0x0802d3c8   Data           0  datadraw.o(MYIMAGE)
 
 
@@ -225,8 +225,8 @@ Memory Map of the image
     0x080042da   0x080042da   0x00000002   PAD
     0x080042dc   0x080042dc   0x000038da   Data   RO           14    MYIMAGE             datax.o
     0x08007bb6   0x08007bb6   0x00000002   PAD
-    0x08007bb8   0x08007bb8   0x00012c08   Data   RO           15    MYIMAGE             dataxwins.o
-    0x0801a7c0   0x0801a7c0   0x00012c08   Data   RO           16    MYIMAGE             dataowins.o
+    0x08007bb8   0x08007bb8   0x00012c08   Data   RO           15    MYIMAGE             dataowins.o
+    0x0801a7c0   0x0801a7c0   0x00012c08   Data   RO           16    MYIMAGE             dataxwins.o
     0x0802d3c8   0x0802d3c8   0x00012c08   Data   RO           17    MYIMAGE             datadraw.o
 
 

@@ -25,7 +25,6 @@ GPIOC_IDR      EQU     GPIOC_BASE + 0x10
 GPIOC_ODR      EQU     GPIOC_BASE + 0x14
 
 INTERVAL       EQU     0x566004
-INTERVAL025       EQU     0x159801
 ;--- TFT control-line masks ---
 TFT_RST         EQU     (1 << 8)
 TFT_RD          EQU     (1 << 10)

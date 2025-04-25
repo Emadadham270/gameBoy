@@ -32,10 +32,6 @@ Black	EQU 0x0000
 	IMPORT OWINS
 	IMPORT ta3adol
 	IMPORT DrawBorder
-X_start			DCB		0X70
-X_end			DCB		0XD2
-Y_start			DCB		0X70
-Y_END			DCB		0XD2
 __main FUNCTION
     
 
@@ -63,8 +59,6 @@ IN2
 	BEQ ENTER5
 	BL TFT_MoveCursor 
 	BL IN2
-	
-	
 	
 ENTER5
 	MOV R11,#Black
