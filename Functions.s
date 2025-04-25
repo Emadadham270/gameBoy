@@ -25,7 +25,7 @@ GPIOC_IDR      EQU     GPIOC_BASE + 0x10
 GPIOC_ODR      EQU     GPIOC_BASE + 0x14
 
 INTERVAL       EQU     0x566004
-
+INTERVAL025       EQU     0x159801
 ;--- TFT control-line masks ---
 TFT_RST         EQU     (1 << 8)
 TFT_RD          EQU     (1 << 10)
@@ -64,13 +64,15 @@ XO_counter     DCB     0x00
     EXPORT  TFT_Filldraw4INP
     EXPORT  GET_state
     EXPORT  delay
+	EXPORT	delay025	
     EXPORT  Draw_XO
     EXPORT  Check_Win
 	EXPORT	DrawTA3ADOL
 	EXPORT	DrawOWINS
 	EXPORT	DrawXWINS		
     EXPORT  Update_Left_Sidebar
-	EXPORT TFT_MoveCursor 
+	EXPORT TFT_MoveCursor
+	EXPORT DrawBorder
 
 ;------------------------
 ; SETUP
@@ -692,11 +694,11 @@ FillLoopdraw4INP
 ; GET_state  (debounced)
 ;------------------------
 GET_state FUNCTION
-	PUSH {LR}
+	PUSH {R1,LR}
 	MOV R10,#0
 	LDR R0, =GPIOB_IDR   ; Load address of input data register
 	LDR R10, [R0]         ; Read GPIOB input register   ; Shift right to get PC8 at bit 0 and PC9 at bit 1 and PC10 at bit 2 and PC11 at bit 3
-	POP {PC}
+	POP {R1,PC}
 	ENDFUNC	
 	
 	
@@ -705,16 +707,24 @@ GET_state FUNCTION
 ; delay
 ;------------------------
 delay    FUNCTION
-    PUSH    {R1, LR}
+    PUSH    {R0-R12, LR}
 	LDR		R1,=INTERVAL
 DelayInner_Loop
     SUBS    R1, R0
     CMP     R1, #0
     BGT     DelayInner_Loop
-    POP     {R1, PC}
+    POP     {R0-R12, PC}
 	ENDFUNC
 
-
+delay025   FUNCTION
+    PUSH    {R0-R12, LR}
+	LDR		R1,=INTERVAL025
+DelayInner_Loop025 
+    SUBS    R1, R0
+    CMP     R1, #0
+    BGT     DelayInner_Loop025
+    POP     {R0-R12, PC}
+	ENDFUNC
 ;------------------------
 ; Draw_XO  R1-column start   R2-page start
 ;------------------------

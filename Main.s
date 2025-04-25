@@ -31,6 +31,7 @@ Black	EQU 0x0000
 	IMPORT XWINS
 	IMPORT OWINS
 	IMPORT ta3adol
+	IMPORT DrawBorder
 X_start			DCB		0X70
 X_end			DCB		0XD2
 Y_start			DCB		0X70
@@ -50,8 +51,6 @@ __main FUNCTION
 	;BL ;DRAW PHOTO
 	MOV R10,#0
     ; Fill screen with color (line)
-    MOV R0, #Black
-	MOV R11,#Yellow
 INNERLOOP
 	MOV R1,#0X70
 	MOV R2,#0X70
@@ -68,7 +67,9 @@ IN2
 	
 	
 ENTER5
-	LDR R3,=X1
+	MOV R11,#Black
+	BL DrawBorder
+	LDR R3,=O1
 	BL TFT_DrawImage
 	BL INNERLOOP
     ENDFUNC
