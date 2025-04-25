@@ -93,8 +93,8 @@
       <flags>2</flags>
       <showCmd>3</showCmd>
       <MinPosition>
-        <xPos>-1</xPos>
-        <yPos>-1</yPos>
+        <xPos>-32000</xPos>
+        <yPos>-32000</yPos>
       </MinPosition>
       <MaxPosition>
         <xPos>-1</xPos>
@@ -3606,9 +3606,9 @@
       <ActiveTab>0</ActiveTab>
       <Doc>
         <Name>.\Functions.s</Name>
-        <ColumnNumber>17</ColumnNumber>
-        <TopLine>557</TopLine>
-        <CurrentLine>586</CurrentLine>
+        <ColumnNumber>0</ColumnNumber>
+        <TopLine>503</TopLine>
+        <CurrentLine>523</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
@@ -3642,9 +3642,9 @@
       </Doc>
       <Doc>
         <Name>.\Main.s</Name>
-        <ColumnNumber>18</ColumnNumber>
-        <TopLine>38</TopLine>
-        <CurrentLine>53</CurrentLine>
+        <ColumnNumber>15</ColumnNumber>
+        <TopLine>50</TopLine>
+        <CurrentLine>65</CurrentLine>
         <Folding>0</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>

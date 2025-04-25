@@ -473,11 +473,11 @@ DrawBorder FUNCTION;take r1,x r2,y
 	ENDFUNC
 	 
 TFT_MoveCursor FUNCTION;take r1,x r2,y 
-	 PUSH{R12,LR}
+	 PUSH{R11-R12,LR}
 	 MOV R11, #Black
 	 BL DrawBorder
 	 BL GET_state
-	 LDR R12 , [R10] 
+	 MOV R12 , R10 
 	 CMP R12 , #1
 	 BEQ MOVE_UPB
 	  
@@ -490,34 +490,35 @@ TFT_MoveCursor FUNCTION;take r1,x r2,y
 	 CMP R12 , #8
 	 BEQ MOVE_RIGHTB
 	 
+	 B DEFAULTB
 MOVE_UPB
 	 CMP R2 , #0xD8 ; checking the start
 	 BEQ DEFAULTB
-	 ADDEQ R2 , R2 , #0x68
-	 BL DEFAULTB
+	 ADD R2 , R2 , #0x68
+	 B DEFAULTB
 	 
 MOVE_DOWNB
 	 CMP R2 , #0x08
 	 BEQ DEFAULTB
-	 SUBEQ R2 , R2 , #0x68
-	 BL DEFAULTB
+	 SUB R2 , R2 , #0x68
+	 B DEFAULTB
 	 
 MOVE_RIGHTB
 	 CMP R1 , #0x08
 	 BEQ DEFAULTB
-	 SUBEQ R1 , R1 , #0x68
-	 BL DEFAULTB
+	 SUB R1 , R1 , #0x68
+	 B DEFAULTB
 	 
 MOVE_LEFTB
 	 CMP R1 , #0xD8
 	 BEQ DEFAULTB
-	 ADDEQ R1 , R1 , #0x68
-	 BL DEFAULTB
+	 ADD R1 , R1 , #0x68
+	 B DEFAULTB
 	 
 DEFAULTB
 	 MOV R11,#Yellow
 	 BL DrawBorder
-	 pop{R12,PC}
+	 pop{R11-R12,PC}
 	 ENDFUNC
 
 
