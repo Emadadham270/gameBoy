@@ -400,28 +400,28 @@ TFT_DrawGrid    FUNCTION
 	MOV R8,#0X0000
 	MOV R9,#0X01E0
     ; Fill screen with color (area)
-    MOV R0, #Black
+    MOV R11, #Black
 	BL TFT_Filldraw4INP
 	MOV R6,#0X0008
 	MOV R7,#0X0138
 	MOV R8,#0X0008
 	MOV R9,#0X0138
     ; Fill screen with color (area)
-    MOV R0, #White
+    MOV R11, #White
     BL TFT_Filldraw4INP
 	MOV R6,#0X0068
 	MOV R7,#0X0070
 	MOV R8,#0X0008
 	MOV R9,#0X0138
     ; Fill screen with color (line)
-    MOV R0, #Black
+    MOV R11, #Black
     BL TFT_Filldraw4INP
 	MOV R6,#0X00D0
 	MOV R7,#0X00D8
 	MOV R8,#0X0008
 	MOV R9,#0X0138
     ; Fill screen with color (line)
-    MOV R0, #Black
+    MOV R11, #Black
     BL TFT_Filldraw4INP
 	MOV R6,#0X0008
 	MOV R7,#0X0138
@@ -429,14 +429,14 @@ TFT_DrawGrid    FUNCTION
 	MOV R9,#0X0070
 
     ; Fill screen with color (line)
-    MOV R0, #Black
+    MOV R11, #Black
     BL TFT_Filldraw4INP
 	MOV R6,#0X0008
 	MOV R7,#0X0138
 	MOV R8,#0X00D0
 	MOV R9,#0X00D8
     ; Fill screen with color (line)
-    MOV R0, #Black
+    MOV R11, #Black
     BL TFT_Filldraw4INP
 	POP {R0-R10, LR}
     BX LR
@@ -448,35 +448,36 @@ TFT_DrawGrid    FUNCTION
 ;(0->Nochange,1->Up 2->Down 4->Left 8->right)
 ; *************************************************************
 DrawBorder FUNCTION;take r1,x r2,y 
+	PUSH{LR}
 	SUB R6,R1,#8
 	MOV R7,R1
 	SUB R8,R2,#8
 	ADD R9,R2,#0X68
-	BL TFT_Filldraw4INP ; Remove Square -> By change the color to BG Color
+	BL TFT_Filldraw4INP2 ; Remove Square -> By change the color to BG Color
 	SUB R6,R1,#8
 	ADD R7,R1,#0X68
 	SUB R8,R2,#8
 	MOV R9,R2
-	BL TFT_Filldraw4INP ; Remove Square -> By change the color to BG Color
+	BL TFT_Filldraw4INP2 ; Remove Square -> By change the color to BG Color
 	SUB R6,R1,#8
 	ADD R7,R1,#0X68
 	ADD R8,R2,#0X60
 	ADD R9,R2,#0X68
-	BL TFT_Filldraw4INP ; Remove Square -> By change the color to BG Color
+	BL TFT_Filldraw4INP2 ; Remove Square -> By change the color to BG Color
 	ADD R6,R1,#0X60
 	ADD R7,R1,#0X68
 	SUB R8,R2,#8
 	ADD R9,R2,#0X68
-	BL TFT_Filldraw4INP ; Remove Square -> By change the color to BG Color
+	BL TFT_Filldraw4INP2 ; Remove Square -> By change the color to BG Color
+	pop{PC}
 	ENDFUNC
 	 
 TFT_MoveCursor FUNCTION;take r1,x r2,y 
 	 PUSH{R12,LR}
+	 MOV R11, #Black
 	 BL DrawBorder
-	 ;BL GET_state
-	 MOV R12 , R10 
-	 AND R12 , #0x001F
-	 
+	 BL GET_state
+	 LDR R12 , [R10] 
 	 CMP R12 , #1
 	 BEQ MOVE_UPB
 	  
@@ -492,33 +493,117 @@ TFT_MoveCursor FUNCTION;take r1,x r2,y
 MOVE_UPB
 	 CMP R2 , #0xD8 ; checking the start
 	 BEQ DEFAULTB
-	 ADD R2 , R2 , #0x68
-	 B DEFAULTB
+	 ADDEQ R2 , R2 , #0x68
+	 BL DEFAULTB
 	 
 MOVE_DOWNB
 	 CMP R2 , #0x08
 	 BEQ DEFAULTB
-	 SUB R2 , R2 , #0x68
-	 B DEFAULTB
+	 SUBEQ R2 , R2 , #0x68
+	 BL DEFAULTB
 	 
 MOVE_RIGHTB
 	 CMP R1 , #0x08
 	 BEQ DEFAULTB
-	 SUB R1 , R1 , #0x68
-	 B DEFAULTB
+	 SUBEQ R1 , R1 , #0x68
+	 BL DEFAULTB
 	 
 MOVE_LEFTB
 	 CMP R1 , #0xD8
 	 BEQ DEFAULTB
-	 ADD R1 , R1 , #0x68
-	 B DEFAULTB
+	 ADDEQ R1 , R1 , #0x68
+	 BL DEFAULTB
 	 
 DEFAULTB
-	 MOV R0 , R11
+	 MOV R11,#Yellow
 	 BL DrawBorder
-	 
 	 pop{R12,PC}
 	 ENDFUNC
+
+
+
+;------------------------
+; TFT_Filldraw4INP  color-R0  R6,R7-column start/end   R8,R9-page start/end
+;------------------------
+TFT_Filldraw4INP2    FUNCTION
+    PUSH {R1-R5, LR}
+    
+    ; Save color
+    MOV R5, R11
+
+    ; Set PAGE Address (0-239)
+    MOV R0, #0x2A
+    BL TFT_WriteCommand
+  
+  ;start row
+	MOV R10,R6
+	MOV R10,R10,LSR #8
+	
+	MOV R0,R10		
+    BL TFT_WriteData
+    MOV R0,R6		
+    BL TFT_WriteData
+	
+  ;end row
+  	MOV R10,R7
+	MOV R10,R10,LSR #8
+	MOV R0, R10 		; High byte of 0x013F (319)
+    BL TFT_WriteData
+    MOV R0, R7      ; low byte of 0x013F (319)
+    BL TFT_WriteData
+	
+	
+
+
+
+    ; Set COL Address (0-319)
+    MOV R0, #0x2B
+    BL TFT_WriteCommand	
+	MOV R10,R8
+	MOV R10,R10,LSR #8
+    ;start col
+	MOV R0, R10
+    BL TFT_WriteData
+    MOV R0, R8
+    BL TFT_WriteData
+    ;end col
+	MOV R10,R9
+	MOV R10,R10,LSR #8
+	MOV R0, R10      ; High byte of 0x01DF (479)
+    BL TFT_WriteData
+    MOV R0, R9      ; Low byte of 0x01DF (479)
+    BL TFT_WriteData
+
+    ; Memory Write
+    MOV R0, #0x2C
+    BL TFT_WriteCommand
+
+    ; Prepare color bytes
+    MOV R1, R5, LSR #8     ; High byte
+    AND R2, R5, #0xFF      ; Low byte
+
+    ; Fill screen with color (320x480 = 153600 pixels)
+    LDR R3, =1200
+FillLoopdraw4INP2
+    ; Write high byte
+    MOV R0, R1
+    BL TFT_WriteData
+    
+    ; Write low byte
+    MOV R0, R2
+    BL TFT_WriteData
+    
+    SUBS R3, R3, #1
+    BNE FillLoopdraw4INP2
+
+    POP {R1-R5, LR}
+    BX LR
+	ENDFUNC
+
+
+
+
+
 
 
 
@@ -529,7 +614,7 @@ TFT_Filldraw4INP    FUNCTION
     PUSH {R1-R5, LR}
     
     ; Save color
-    MOV R5, R0
+    MOV R5, R11
 
     ; Set PAGE Address (0-239)
     MOV R0, #0x2A

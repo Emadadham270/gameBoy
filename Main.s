@@ -49,23 +49,24 @@ __main FUNCTION
 	;MOV R6, #NUMY
 	;BL ;DRAW PHOTO
 	MOV R10,#0
-	MOV R6,#0X0008
-	MOV R7,#0X0068
-	MOV R8,#0X0008
-	MOV R9,#0X0068
     ; Fill screen with color (line)
     MOV R0, #Black
 	MOV R11,#Yellow
 INNERLOOP
-	MOV R1,0X70
-	MOV R2,0X70
+	MOV R1,#0X70
+	MOV R2,#0X70
 IN2
 	BL GET_state
 	AND R10,R10,#0X001F 
+	CMP R10,#0
+	BEQ IN2
 	CMP R10,#16
 	BEQ ENTER5
 	BL TFT_MoveCursor 
 	BL IN2
+	
+	
+	
 ENTER5
 	LDR R3,=X1
 	BL TFT_DrawImage
