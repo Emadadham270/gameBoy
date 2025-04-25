@@ -40,6 +40,10 @@ Blue    EQU 0x02ff
 Yellow  EQU 0xFfe0
 White   EQU 0xffff
 Black	EQU 0x0000
+	
+
+
+
 XO_array       DCW     0x00000000
 
 XO_counter     DCB     0x00
@@ -66,8 +70,7 @@ XO_counter     DCB     0x00
 	EXPORT	DrawOWINS
 	EXPORT	DrawXWINS		
     EXPORT  Update_Left_Sidebar
-	EXPORT  TFT_ReDrawSquare
-
+	EXPORT TFT_MoveCursor 
 
 ;------------------------
 ; SETUP
@@ -399,39 +402,39 @@ TFT_DrawGrid    FUNCTION
     ; Fill screen with color (area)
     MOV R0, #Black
 	BL TFT_Filldraw4INP
-	MOV R6,#0X0002
+	MOV R6,#0X0008
 	MOV R7,#0X0138
-	MOV R8,#0X0002
+	MOV R8,#0X0008
 	MOV R9,#0X0138
     ; Fill screen with color (area)
     MOV R0, #White
     BL TFT_Filldraw4INP
-	MOV R6,#0X0062
+	MOV R6,#0X0068
 	MOV R7,#0X0070
-	MOV R8,#0X0002
+	MOV R8,#0X0008
 	MOV R9,#0X0138
     ; Fill screen with color (line)
     MOV R0, #Black
     BL TFT_Filldraw4INP
 	MOV R6,#0X00D0
-	MOV R7,#0X00DE
-	MOV R8,#0X0002
+	MOV R7,#0X00D8
+	MOV R8,#0X0008
 	MOV R9,#0X0138
     ; Fill screen with color (line)
     MOV R0, #Black
     BL TFT_Filldraw4INP
-	MOV R6,#0X0002
+	MOV R6,#0X0008
 	MOV R7,#0X0138
-	MOV R8,#0X0062
+	MOV R8,#0X0068
 	MOV R9,#0X0070
 
     ; Fill screen with color (line)
     MOV R0, #Black
     BL TFT_Filldraw4INP
-	MOV R6,#0X0002
+	MOV R6,#0X0008
 	MOV R7,#0X0138
 	MOV R8,#0X00D0
-	MOV R9,#0X00DE
+	MOV R9,#0X00D8
     ; Fill screen with color (line)
     MOV R0, #Black
     BL TFT_Filldraw4INP
@@ -444,60 +447,81 @@ TFT_DrawGrid    FUNCTION
 ; ReDraw Square R6,R7-column start/end   R8,R9-page start/end ,ColorBackground=R0, ColorSquare=R11, Direction=R10 
 ;(0->Nochange,1->Up 2->Down 4->Left 8->right)
 ; *************************************************************
-TFT_ReDrawSquare FUNCTION
-	 PUSH{R12,LR}
+DrawBorder FUNCTION;take r1,x r2,y 
+	SUB R6,R1,#8
+	MOV R7,R1
+	SUB R8,R2,#8
+	ADD R9,R2,#0X68
+	BL TFT_Filldraw4INP ; Remove Square -> By change the color to BG Color
+	SUB R6,R1,#8
+	ADD R7,R1,#0X68
+	SUB R8,R2,#8
+	MOV R9,R2
+	BL TFT_Filldraw4INP ; Remove Square -> By change the color to BG Color
+	SUB R6,R1,#8
+	ADD R7,R1,#0X68
+	ADD R8,R2,#0X60
+	ADD R9,R2,#0X68
+	BL TFT_Filldraw4INP ; Remove Square -> By change the color to BG Color
+	ADD R6,R1,#0X60
+	ADD R7,R1,#0X68
+	SUB R8,R2,#8
+	ADD R9,R2,#0X68
+	BL TFT_Filldraw4INP ; Remove Square -> By change the color to BG Color
+	ENDFUNC
 	 
-	 BL TFT_Filldraw4INP ; Remove Square -> By change the color to BG Color
-
+TFT_MoveCursor FUNCTION;take r1,x r2,y 
+	 PUSH{R12,LR}
+	 BL DrawBorder
+	 ;BL GET_state
 	 MOV R12 , R10 
-	 AND R12 , #0x000F
+	 AND R12 , #0x001F
 	 
 	 CMP R12 , #1
-	 BEQ MOVE_UP
+	 BEQ MOVE_UPB
 	  
 	 CMP R12 , #2
-	 BEQ MOVE_DOWN
+	 BEQ MOVE_DOWNB
 	 
 	 CMP R12 , #4
-	 BEQ MOVE_LEFT
+	 BEQ MOVE_LEFTB
 	 
 	 CMP R12 , #8
-	 BEQ MOVE_RIGHT
+	 BEQ MOVE_RIGHTB
 	 
-MOVE_UP
-	 CMP R8 , #0xDE ; checking the start
-	 BHS DEFAULT
-	 ADD R8 , R8 , #0x6E
-	 ADD R9 , R9 , #0X6E
-	 B DEFAULT
+MOVE_UPB
+	 CMP R2 , #0xD8 ; checking the start
+	 BEQ DEFAULTB
+	 ADD R2 , R2 , #0x68
+	 B DEFAULTB
 	 
-MOVE_DOWN
-	 CMP R8 , #0x02
-	 BLS DEFAULT
-	 SUB R8 , R8 , #0x6E
-	 SUB R9 , R9 , #0X6E
-	 B DEFAULT
+MOVE_DOWNB
+	 CMP R2 , #0x08
+	 BEQ DEFAULTB
+	 SUB R2 , R2 , #0x68
+	 B DEFAULTB
 	 
-MOVE_RIGHT
-	 CMP R6 , #0x02
-	 BLS DEFAULT
-	 SUB R6 , R6 , #0x6E
-	 SUB R7 , R7 , #0x6E
-	 B DEFAULT
+MOVE_RIGHTB
+	 CMP R1 , #0x08
+	 BEQ DEFAULTB
+	 SUB R1 , R1 , #0x68
+	 B DEFAULTB
 	 
-MOVE_LEFT
-	 CMP R6 , #0xDE
-	 BHS DEFAULT
-	 ADD R6 , R6 , #0x6E
-	 ADD R7 , R7 , #0x6E
-	 B DEFAULT
+MOVE_LEFTB
+	 CMP R1 , #0xD8
+	 BEQ DEFAULTB
+	 ADD R1 , R1 , #0x68
+	 B DEFAULTB
 	 
-DEFAULT
+DEFAULTB
 	 MOV R0 , R11
-	 BL TFT_Filldraw4INP
+	 BL DrawBorder
 	 
 	 pop{R12,PC}
 	 ENDFUNC
+
+
+
 ;------------------------
 ; TFT_Filldraw4INP  color-R0  R6,R7-column start/end   R8,R9-page start/end
 ;------------------------
@@ -589,37 +613,6 @@ GET_state FUNCTION
 	ENDFUNC	
 	
 	
-GET_state2    FUNCTION
-    PUSH    {R0-R4, LR}
-
-    MOV     R0, #25
-    BL      delay
-
-    LDR     R1, =GPIOB_IDR
-    LDR     R1, [R1]
-
-    MOV     R0, #50
-    BL      delay
-    LDR     R2, =GPIOB_IDR
-    LDR     R2, [R2]
-
-    BL      delay
-    LDR     R3, =GPIOB_IDR
-    LDR     R3, [R3]
-
-    BL      delay
-    LDR     R4, =GPIOB_IDR
-    LDR     R4, [R4]
-
-    AND     R1, R1, R2
-    AND     R1, R1, R3
-    AND     R1, R1, R4
-
-    MOV     R10, R1
-
-    POP     {R0-R4, PC}
-	ENDFUNC
-
 
 ;------------------------
 ; delay
@@ -646,19 +639,19 @@ Draw_XO    FUNCTION
 	MOV R1, R6         ;X Coordinate For Draw image
 	MOV R2, R8		   ;Y Coordinate For Draw image
 	
-	CMP R1, #0x2       ;Right
+	CMP R1, #0x8       ;Right
 	BEQ rIghT
 	CMP R1, #0x70      ;Middle X
 	BEQ mIddleX
-	CMP R1, #0xDE	   ;Left
+	CMP R1, #0xD8	   ;Left
 	BEQ lEfT
 
 PageTest
-	CMP R2, #0x2       ;Down
+	CMP R2, #0x8       ;Down
 	BEQ dOwN
 	CMP R2, #0x70      ;Middle Y
 	BEQ mIddleY
-	CMP R2, #0xDE	   ;Up
+	CMP R2, #0xD8	   ;Up
 	BEQ uPp
 
 rIghT

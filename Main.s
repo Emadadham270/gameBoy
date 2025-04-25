@@ -25,7 +25,7 @@ Black	EQU 0x0000
 	IMPORT	DrawOWINS
 	IMPORT	DrawXWINS	
 	IMPORT Update_Left_Sidebar
-	IMPORT  TFT_ReDrawSquare
+	IMPORT TFT_MoveCursor 
 	IMPORT X1
 	IMPORT O1
 	IMPORT XWINS
@@ -49,55 +49,27 @@ __main FUNCTION
 	;MOV R6, #NUMY
 	;BL ;DRAW PHOTO
 	MOV R10,#0
-	MOV R6,#0X0002
-	MOV R7,#0X0062
-	MOV R8,#0X0002
-	MOV R9,#0X0062
+	MOV R6,#0X0008
+	MOV R7,#0X0068
+	MOV R8,#0X0008
+	MOV R9,#0X0068
     ; Fill screen with color (line)
     MOV R0, #Black
-	MOV R11,#Red
-	BL TFT_ReDrawSquare
+	MOV R11,#Yellow
 INNERLOOP
-
+	MOV R1,0X70
+	MOV R2,0X70
+IN2
 	BL GET_state
-	AND R10,R10,#0X000F
-	CMP R10,#0
-	BEQ INNERLOOP
-	CMP R10,#1
-	BEQ ENTER1
-	CMP R10,#2
-	BEQ ENTER2
-	CMP R10,#4
-	BEQ ENTER3	
-	CMP R10,#8
-	BEQ ENTER4
+	AND R10,R10,#0X001F 
+	CMP R10,#16
+	BEQ ENTER5
+	BL TFT_MoveCursor 
+	BL IN2
+ENTER5
+	LDR R3,=X1
+	BL TFT_DrawImage
 	BL INNERLOOP
-ENTER1
-	BL TFT_DrawGrid
-	BL INNERLOOP
-ENTER2
-	MOV R1, #0        ; Start X
-    MOV R2, #0         ; Start Y
-	LDR R3, =XWINS     ; Load image address
-    BL TFT_DrawImage
-	BL INNERLOOP
-ENTER3
-	MOV R1, #0X02        ; Start X
-    MOV R2, #0X70         ; Start Y
-	LDR R3, =OWINS     ; Load image address
-    BL TFT_DrawImage
-	BL INNERLOOP
-ENTER4
-	MOV R1, #0X70        ; Start X
-    MOV R2, #0X70         ; Start Y
-	LDR R3, =ta3adol     ; Load image address
-    BL TFT_DrawImage
-	BL INNERLOOP	
-
     ENDFUNC
-	
-	
-	
-	
 	
 	END
