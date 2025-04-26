@@ -30,7 +30,8 @@ GPIO_ODR        EQU     0x14
 	IMPORT TFT_Filldraw4INP
 	IMPORT GET_state
 	IMPORT delay
-
+	IMPORT delaywithIN
+ 
 	IMPORT Main_Game_XO
 
 __main FUNCTION
