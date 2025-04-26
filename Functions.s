@@ -63,7 +63,7 @@ Black		   EQU 0x0000
     EXPORT  TFT_Filldraw4INP
     EXPORT  GET_state
     EXPORT  delay
-	EXPORT	delay025	
+	
     EXPORT  Draw_XO
     EXPORT  Check_Win
 	EXPORT  DrawBorder
@@ -283,11 +283,8 @@ HIj
 	MOV R0, #0x00  ;SET VCOML TO SMALL VALUE
 	BL TFT_WriteData
 
-
-
 	MOV R0,#0x36
 	BL TFT_WriteCommand
-
 	MOV R0,#0x08
 	BL TFT_WriteData
 
@@ -299,7 +296,6 @@ HIj
 	; Enable Color Inversion
 	;MOV R0, #0x21      ; Command for Color Inversion ON
 	;BL TFT_WriteCommand
-
 
 	; Display ON
 	MOV R0, #0x29
@@ -446,22 +442,22 @@ DrawBorder FUNCTION;take r1,x r2,y
 	MOV R7,R1
 	SUB R8,R2,#8
 	ADD R9,R2,#0X68
-	BL TFT_Filldraw4INP2 ; Remove Square -> By change the color to BG Color
+	BL TFT_Filldraw4INP ; Remove Square -> By change the color to BG Color
 	SUB R6,R1,#8
 	ADD R7,R1,#0X68
 	SUB R8,R2,#8
 	MOV R9,R2
-	BL TFT_Filldraw4INP2 ; Remove Square -> By change the color to BG Color
+	BL TFT_Filldraw4INP ; Remove Square -> By change the color to BG Color
 	SUB R6,R1,#8
 	ADD R7,R1,#0X68
 	ADD R8,R2,#0X60
 	ADD R9,R2,#0X68
-	BL TFT_Filldraw4INP2 ; Remove Square -> By change the color to BG Color
+	BL TFT_Filldraw4INP ; Remove Square -> By change the color to BG Color
 	ADD R6,R1,#0X60
 	ADD R7,R1,#0X68
 	SUB R8,R2,#8
 	ADD R9,R2,#0X68
-	BL TFT_Filldraw4INP2 ; Remove Square -> By change the color to BG Color
+	BL TFT_Filldraw4INP ; Remove Square -> By change the color to BG Color
 	pop{R0-R12,PC}
 	ENDFUNC
 	
@@ -518,88 +514,6 @@ DEFAULTB
 
 
 
-;------------------------
-; TFT_Filldraw4INP  color-R0  R6,R7-column start/end   R8,R9-page start/end
-;------------------------
-TFT_Filldraw4INP2    FUNCTION
-    PUSH {R1-R5, LR}
-    
-    ; Save color
-    MOV R5, R11
-
-    ; Set PAGE Address (0-239)
-    MOV R0, #0x2A
-    BL TFT_WriteCommand
-  
-  ;start row
-	MOV R10,R6
-	MOV R10,R10,LSR #8
-	
-	MOV R0,R10		
-    BL TFT_WriteData
-    MOV R0,R6		
-    BL TFT_WriteData
-	
-  ;end row
-  	MOV R10,R7
-	MOV R10,R10,LSR #8
-	MOV R0, R10 		; High byte of 0x013F (319)
-    BL TFT_WriteData
-    MOV R0, R7      ; low byte of 0x013F (319)
-    BL TFT_WriteData
-	
-	
-
-
-
-    ; Set COL Address (0-319)
-    MOV R0, #0x2B
-    BL TFT_WriteCommand	
-	MOV R10,R8
-	MOV R10,R10,LSR #8
-    ;start col
-	MOV R0, R10
-    BL TFT_WriteData
-    MOV R0, R8
-    BL TFT_WriteData
-    ;end col
-	MOV R10,R9
-	MOV R10,R10,LSR #8
-	MOV R0, R10      ; High byte of 0x01DF (479)
-    BL TFT_WriteData
-    MOV R0, R9      ; Low byte of 0x01DF (479)
-    BL TFT_WriteData
-
-    ; Memory Write
-    MOV R0, #0x2C
-    BL TFT_WriteCommand
-
-    ; Prepare color bytes
-    MOV R1, R5, LSR #8     ; High byte
-    AND R2, R5, #0xFF      ; Low byte
-
-    ; Fill screen with color (320x480 = 153600 pixels)
-    LDR R3, =1200
-FillLoopdraw4INP2
-    ; Write high byte
-    MOV R0, R1
-    BL TFT_WriteData
-    
-    ; Write low byte
-    MOV R0, R2
-    BL TFT_WriteData
-    
-    SUBS R3, R3, #1
-    BNE FillLoopdraw4INP2
-
-    POP {R1-R5, LR}
-    BX LR
-	ENDFUNC
-
-
-
-
-
 
 
 
@@ -607,7 +521,7 @@ FillLoopdraw4INP2
 ; TFT_Filldraw4INP  color-R0  R6,R7-column start/end   R8,R9-page start/end
 ;------------------------
 TFT_Filldraw4INP    FUNCTION
-    PUSH {R1-R5, LR}
+    PUSH {R1-R5,R10,R11,R12, LR}
     
     ; Save color
     MOV R5, R11
@@ -662,9 +576,12 @@ TFT_Filldraw4INP    FUNCTION
     ; Prepare color bytes
     MOV R1, R5, LSR #8     ; High byte
     AND R2, R5, #0xFF      ; Low byte
-
+	SUB	R11,R7,R6
+	ADD R11,#10
+	SUB	R12,R9,R8
+	ADD R12,#10
     ; Fill screen with color (320x480 = 153600 pixels)
-    LDR R3, =153600
+    MUL R3,R11,R12
 FillLoopdraw4INP
     ; Write high byte
     MOV R0, R1
@@ -677,7 +594,7 @@ FillLoopdraw4INP
     SUBS R3, R3, #1
     BNE FillLoopdraw4INP
 
-    POP {R1-R5, LR}
+    POP {R1-R5,R10,R11,R12, LR}
     BX LR
 	ENDFUNC
 
@@ -711,15 +628,6 @@ DelayInner_Loop
     POP     {R0-R12, PC}
 	ENDFUNC
 
-delay025   FUNCTION
-    PUSH    {R0-R12, LR}
-	LDR		R1,=INTERVAL025
-DelayInner_Loop025 
-    SUBS    R1, R0
-    CMP     R1, #0
-    BGT     DelayInner_Loop025
-    POP     {R0-R12, PC}
-	ENDFUNC
 ;------------------------
 ; Draw_XO  R1-column start   R2-page start
 ;------------------------
@@ -729,42 +637,42 @@ Draw_XO    FUNCTION
 	MOV R12, #0x0000       ;Lowest 6 bits in R12: up-middle-down-left-middle-right
 	
 	CMP R1, #0x8       ;Right
-	BEQ rIghT
+	BEQ Right
 	CMP R1, #0x70      ;Middle X
-	BEQ mIddleX
+	BEQ MiddleX
 	CMP R1, #0xD8	   ;Left
-	BEQ lEfT
+	BEQ Left
 
 PageTest
 	CMP R2, #0x8       ;Down
-	BEQ dOwN
+	BEQ Down
 	CMP R2, #0x70      ;Middle Y
-	BEQ mIddleY
+	BEQ MiddleY
 	CMP R2, #0xD8	   ;Up
-	BEQ uPp
+	BEQ Up
 
-rIghT
+Right
 	ADD R12, #1
 	B PageTest
-mIddleX
+MiddleX
 	ADD R12, #2
 	B PageTest
-lEfT
+Left
 	ADD R12, #4
 	B PageTest
 	
-dOwN
+Down
 	ADD R12, #8
-	B cOntinUe
-mIddleY
+	B Continue1
+MiddleY
 	ADD R12, #16
-	B cOntinUe
-uPp
+	B Continue1
+Up
 	ADD R12, #32
-	B cOntinUe
+	B Continue1
 	
 
-cOntinUe
+Continue1
 	CMP R12, #36
 	BEQ onee
 	CMP R12, #34
@@ -786,52 +694,48 @@ cOntinUe
 	
 onee
 	MOV R12, #1
-	B cOnTINUE
+	B Continue2
 twoo
 	MOV R12, #2
-	B cOnTINUE
+	B Continue2
 threee
 	MOV R12, #3
-	B cOnTINUE
+	B Continue2
 fourr
 	MOV R12, #4
-	B cOnTINUE
+	B Continue2
 fivee
 	MOV R12, #5
-	B cOnTINUE
+	B Continue2
 sixx
 	MOV R12, #6
-	B cOnTINUE
+	B Continue2
 sevenn
 	MOV R12, #7
-	B cOnTINUE
+	B Continue2
 eightt
 	MOV R12, #8
-	B cOnTINUE
+	B Continue2
 ninee
 	MOV R12, #9
-	B cOnTINUE
+	B Continue2
 
-cOnTINUE
-	LDR 	R11,=XO_array
-	LDR 	R11,[R11]
-    LSL    R4, R12, #1      ; R0 = 2*X
-    SUBS   R4, R4, #1       ; R0 = 2*X – 1    ; base bit index
-	
-	;check if bit 2X - 1 is 1
-    MOVS   R5, #1           ; R1 = 0b1
-    LSLS   R5, R5, R4       ; R1 = 0b1 << base
-    AND    R5, R11, R5      ; Masking R5 to be zero except the bit to be tested
-	
-	MOV     R6, #1
-	LSL     R6, R6, R4      ; R6 = 1 << R4
-	CMP     R5, R6          ; Compare R5 with (1 << R4)
-	;if so: Draw red border for 1 sec then draw yellow border
-    BEQ AlreadyDrawn
-	
-	SUBS   R4, R4, #1       ; R0 = 2*X – 1    ; base bit index
+Continue2
+	LDR   R11, =XO_array
+	LDR   R11, [R11]          ; R11 = bitmap word
+	LSL   R4, R12, #1         ; R4 = 2 * X
+	SUB   R4, R4, #2          ; R4 = 2*X – 2
+	MOV R5, #3 ; R5 = 0b11
+	LSL R5, R5, R4 ; R5 = 3 << R4
+	AND R5,R11,R5
+	LSR R5, R5, R4 ; R5 = 3 << R4
+
+	CMP R5,#2
+	BEQ   AlreadyDrawn
+	CMP R5,#1
+	BEQ   AlreadyDrawn
 	; --- clear the two bits at [base..base+1] ---
-    MOVS   R5, #3           ; R5 = 0b11
+    MOV   R5, #3           ; R5 = 0b11
     LSLS   R5, R5, R4       ; R5 = 0b11 << base
     BIC    R11, R11, R5     ; R11 &= ~(0b11 << base)
 
@@ -846,12 +750,11 @@ cOnTINUE
 		   ;
 Draw_xX  ;11
 	SUB R10, #1		   ;Toggle counter
-	LDR R11, =XO_array ;Store 11 in bits 2X - 1, 2X - 2
-	LDR R11, [R11]
 	; --- OR in the pattern 0b11 at [base..base+1] ---
-    MOVS   R5, #3           ; R5 = 0b11
-    LSLS   R5, R5, R4       ; R5 = 0b11 << base
-    ORRS   R11, R11, R5     ; R11 |= (0b11 << base)
+	MOV   R5, #1           ; R5 = 0b01
+	;SUB		R4 ,R4,#1
+    LSL   R5, R5, R4       ; R5 = 0b11 << base
+    ORR   R11, R11, R5     ; R11 |= (0b11 << base)
 	LDR R0, =XO_array
 	STR R11, [R0]
 	LDR R3, =X1
@@ -863,12 +766,10 @@ Draw_xX  ;11
 	
 Draw_oO  ;10
 	ADD R10, #1		   ;Toggle counter
-	LDR R11, =XO_array ;Store 10 in bits 2X - 1, 2X - 2
-	LDR R11, [R11]
 	; --- OR in the pattern 0b10 at [base..base+1] ---
-    MOVS   R5, #2           ; R5 = 0b10
-    LSLS   R5, R5, R4       ; R5 = 0b10 << base
-    ORRS   R11, R11, R5     ; R11 |= (0b10 << base)
+    MOV   R5, #2           ; R5 = 0b10
+    LSL   R5, R5, R4       ; R5 = 0b10 << base
+    ORR   R11, R11, R5     ; R11 |= (0b10 << base)
 	LDR R0, =XO_array
 	STR R11, [R0]
 	LDR R3, =O1
@@ -891,36 +792,34 @@ FiNish
 	
     POP     {R0-R12, PC}
 	ENDFUNC
-INC1
 
 ;------------------------
 ; Check_Win  (todo)
 ;------------------------
 Check_Win FUNCTION
 	PUSH{R0-R12, LR}
-	
+	MOV	R1,#0
 	LDR R0,=XO_array
 	; Pre-load all needed constants into registers
-    LDR R2, =0xC30C
-    LDR R3, =0x30C3
-    LDR R4, =0x3330
-    LDR R5, =0x30303
-    LDR R6, =0x30C30
-    LDR R7, =0x2082
-    LDR R8, =0x2220
-    LDR R9, =0x8208
-    LDR R10, =0x20820
-    LDR R11, =0x20202
-    LDR R12, =0x2AAAA
+    LDR R2, =0x4104		 ; 0000 0100 0001 0000 0100
+    LDR R3, =0x1041		 ; 0000 0001 0000 0100 0001
+    LDR R4, =0x1110		 ; 0000 0001 0001 0001 0000
+	LDR R5,  =0x10101    ; 0001 0000 0001 0000 0001  
+	LDR R6,  =0x10410    ; 0001 0000 0100 0001 0000  
+	LDR R7,  =0x2082     ; 0000 0010 0000 1000 0010     + 
+	LDR R8,  =0x2220     ; 0000 0010 0010 0010 0000      
+	LDR R9,  =0x8208     ; 0000 1000 0010 0000 1000      
+	LDR R10, =0x20820    ; 0010 0000 1000 0010 0000  
+	LDR R11, =0x20202    ; 0010 0000 0010 0000 0010
 	
     LDR R1, [R0]
-    AND R1, R1, R2      ; was #0xC30C
+    AND R1, R1, R2      ; was #0x4104
     CMP R1, R2
     BEQ win_x
 	
     LDR R1, [R0]
-    AND R1, R1, #0x3F
-    CMP R1, #0x3F
+    AND R1, R1, #0x15
+    CMP R1, #0x15
     BEQ win_x
 	
 	LDR R1, [R0]
@@ -944,13 +843,13 @@ Check_Win FUNCTION
     BEQ win_x
     
     LDR R1, [R0]
-    AND R1, R1, #0xFC0
-    CMP R1, #0xFC0
+    AND R1, R1, #0x540
+    CMP R1, #0x540
     BEQ win_x
 
     LDR R1, [R0]
-    AND R1, R1, #0x3F000
-    CMP R1, #0x3F000
+    AND R1, R1, #0x15000
+    CMP R1, #0x15000
     BEQ win_x
 
 	;;;;;;;;;;;;;;;;;;;;;;;
@@ -995,10 +894,11 @@ Check_Win FUNCTION
     CMP R1, R11
     BEQ win_o
     ; Check Draw wins
-    LDR R1, [R0]
-    AND R1, R1, R12      ; was #0x2AAAA
-    CMP R1, R12
-    BEQ ta3adol_check
+    ;LDR R1, [R0]
+    ;AND R1, R1, R12      ; was #0x2AAAA
+    ;CMP R1, R12
+    ;BEQ ta3adol_check
+	B wala7aga
 win_x
 	BL DrawXWINS
 	LDR R0, [R0]
@@ -1085,7 +985,7 @@ Main_Game_XO FUNCTION
 	MOV R11, #0
 	STR R11, [R12]
 	LDR R12, =XO_counter  ;Store 0 in XO_counter
-	MOV R11, #0
+	MOV R11, #1
 	STR R11, [R12]
 MAINLOOP	
 	MOV R1, #0x70
