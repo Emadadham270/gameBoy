@@ -3,7 +3,8 @@
 
 XO_array       DCD     0x00000000
 
-XO_counter     DCB     0x00
+XO_Turn     DCB     0x00
+XO_counter  DCD     0x00
 
 
 RCC_BASE       EQU     0x40023800
@@ -741,7 +742,7 @@ Continue2
     LSL   R5, R5, R4       ; R5 = 0b11 << base
     BIC    R11, R11, R5     ; R11 &= ~(0b11 << base)
 
-    LDR R10,=XO_counter;Check counter (0 = O, 1 = X)
+    LDR R10,=XO_Turn   ;Check turn (0 = O, 1 = X)
 	LDR R10, [R10]	   ;
 	AND R10,R10,#2
 	CMP R10, #2		   ;Draw X
@@ -749,26 +750,30 @@ Continue2
 	CMP R10, #0		   ;Draw O
 	BEQ Draw_oO		
 
-   ;
-		   ;
-Draw_xX  ;11
-	SUB R10, #2	   ;Toggle counter
-	; --- OR in the pattern 0b11 at [base..base+1] ---
+
+Draw_xX  ;01
+	SUB R10, #2	    	   ;Toggle turn
+	; --- OR in the pattern 0b01 at [base..base+1] ---
 	MOV   R5, #1           ; R5 = 0b01
-	;SUB		R4 ,R4,#1
-    LSL   R5, R5, R4       ; R5 = 0b11 << base
-    ORR   R11, R11, R5     ; R11 |= (0b11 << base)
+    LSL   R5, R5, R4       ; R5 = 0b01 << base
+    ORR   R11, R11, R5     ; R11 |= (0b01 << base)
 	LDR R0, =XO_array
 	STR R11, [R0]
 	LDR R3, =X1
 	BL TFT_DrawImage
-	LDR R0, =XO_counter
+	LDR R0, =XO_Turn
 	STR R10, [R0]
+	
+	LDR R0, =XO_counter    ; Increment counter
+	LDR R10, [R0]
+	ADD R10, #1
+	STR R10, [R0]
+	
 	B FiNish	 
 	
 	
 Draw_oO  ;10
-	ADD R10, #2		   ;Toggle counter
+	ADD R10, #2		   	   ;Toggle turn
 	; --- OR in the pattern 0b10 at [base..base+1] ---
     MOV   R5, #2           ; R5 = 0b10
     LSL   R5, R5, R4       ; R5 = 0b10 << base
@@ -777,8 +782,14 @@ Draw_oO  ;10
 	STR R11, [R0]
 	LDR R3, =O1
 	BL TFT_DrawImage
-	LDR R0, =XO_counter
+	LDR R0, =XO_Turn
 	STR R10, [R0]
+	
+	LDR R0, =XO_counter    ; Increment counter
+	LDR R10, [R0]
+	ADD R10, #1
+	STR R10, [R0]
+	
 	B FiNish
 	
 
@@ -896,27 +907,27 @@ Check_Win FUNCTION
     AND R1, R1, R11      ; was #0x20202
     CMP R1, R11
     BEQ win_o
-    ; Check Draw wins
-    ;LDR R1, [R0]
-    ;AND R1, R1, R12      ; was #0x2AAAA
-    ;CMP R1, R12
-    ;BEQ ta3adol_check
+    
+	; Check Draw
+	LDR R6, =XO_counter
+	LDR R6, [R6]
+	CMP R6, #0x9
+	BEQ ta3adol_check
+	
+	;else
 	B wala7aga
 win_x
 	BL DrawXWINS
-	LDR R0, [R0]
 	MOV R1, #0xFFFFFFFF
 	STR R1, [R0]
 	B wala7aga
 win_o	
 	BL DrawOWINS
-	LDR R0, [R0]
 	MOV R1, #0xFFFFFFFF
 	STR R1, [R0]
 	B wala7aga
 ta3adol_check
 	BL DrawTA3ADOL
-	LDR R0, [R0]
 	MOV R1, #0xFFFFFFFF
 	STR R1, [R0]
 	B wala7aga
@@ -932,13 +943,12 @@ DrawXWINS	FUNCTION
 	MOV R8,#0X0000
 	MOV R9,#0X01E0
     ; Fill screen with color (area)
-    MOV R11, #Green
+    MOV R11, #White
 	BL TFT_Filldraw4INP
-	MOV R1,#80
-	MOV R2,#120
+	MOV R1,#113
+	MOV R2,#193
 	LDR R3, =X1
 	BL TFT_DrawImage
-	BL FinIsh
 	POP {R0-R12, PC}
 	ENDFUNC
 	
@@ -949,13 +959,12 @@ DrawOWINS	FUNCTION
 	MOV R8,#0X0000
 	MOV R9,#0X01E0
     ; Fill screen with color (area)
-    MOV R11, #Green
+    MOV R11, #White
 	BL TFT_Filldraw4INP
-	MOV R1,#80
-	MOV R2,#120
+	MOV R1,#113
+	MOV R2,#193
 	LDR R3, =O1
 	BL TFT_DrawImage
-	BL FinIsh
 	POP {R0-R12, PC}
 	ENDFUNC
 	
@@ -968,22 +977,7 @@ DrawTA3ADOL	FUNCTION
     ; Fill screen with color (area)
     MOV R11, #Red
 	BL TFT_Filldraw4INP
-	BL FinIsh
 	POP {R0-R12, PC}
-
-
-FinIsh
-	MOV R0, #1
-	BL delay
-FINISH_IN1	
-	BL GET_state
-	AND R10,R10, #0x001F
-	CMP R10, #00      ;Keep looping while input = 0
-	BEQ FINISH_IN1
-	LDR R0, =XO_array
-	MOV R1,0X00000000
-	STR R1, [R0]
-	POP{R0-R12,PC}
 	ENDFUNC
 ;------------------------
 ; Update_Left_Sidebar  (todo)
@@ -997,13 +991,17 @@ Update_Left_Sidebar    FUNCTION
 
 Main_Game_XO FUNCTION
 	PUSH{R0-R12,LR}
-out	
+	
+	LDR R12, =XO_Turn  ;Store 0 in XO_Turn
+	MOV R11, #0x0010
+	STR R11, [R12]
+Restart	
 	BL TFT_DrawGrid
 	LDR R12, =XO_array  ;Store 0 in XO_array
 	MOV R11, #0
 	STR R11, [R12]
-	LDR R12, =XO_counter  ;Store 0 in XO_counter
-	MOV R11, #0X0010
+	LDR R12, =XO_counter  ;Reset counter
+	MOV R11, #0
 	STR R11, [R12]
 MAINLOOP	
 	MOV R1, #0x70
@@ -1017,7 +1015,8 @@ INPUT1233                ;Wait for input from user
 	CMP R10, #00      ;Keep looping while input = 0
 	BEQ INPUT1233
 	
-	CMP R10, #0x0010 ;If input == ENTER, jump to where we draw X/O and check win
+	;If input == ENTER, draw X/O and check win
+	CMP R10, #0x0010 
 	BEQ ENTERrr
 	
 	BL TFT_MoveCursor
@@ -1031,10 +1030,19 @@ ENTERrr
 	BL Check_Win
 	LDR R0, =XO_array
 	LDR R0, [R0]
-	CMP R0,#0
-	BEQ out
+	CMP R0,#0xFFFFFFFF
+	BEQ EndGame
 	B MAINLOOP
-	ENDFUNC
 
+EndGame
+INPUT123                ;Wait for input from user
+	BL GET_state
+	AND R10,R10, #0x001F
+	CMP R10, #00      ;Keep looping while input = 0
+	BEQ INPUT123
+	B Restart
+
+
+	ENDFUNC
 
     END

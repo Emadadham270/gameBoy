@@ -22,24 +22,21 @@ Dialog DLL:      TCM.DLL V1.56.6.0
  
 <h2>Project:</h2>
 C:\Users\USER\gameBoy\codoBab.uvprojx
-Project File Date:  04/25/2025
+Project File Date:  04/26/2025
 
 <h2>Output:</h2>
 *** Using Compiler 'V6.23', folder: 'C:\Users\USER\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'Target_1'
 armclang: warning: Your license for feature Keil will expire in 27 days [-Wlicense-management]
-"Functions.s", line 984 (column 9): Warning: A1865W: '#' not seen before constant expression
-  984 0000075c  MOV R1,0X00000000
-                       ^
-"Functions.s", line 276: Warning: A1471W: Directive LTORG may be in an executable position
-  276 00000134  LTORG
-"Functions.s", line 1040: Warning: A1581W: Added 2 bytes of padding at address 0x7ce
- 1040 000007d0     END
-0 Errors, 3 Warnings
+"Functions.s", line 7: Warning: A1581W: Added 3 bytes of padding at address 0x5
+    7 00000008 XO_counter  DCD     0x00
+"Functions.s", line 277: Warning: A1471W: Directive LTORG may be in an executable position
+  277 00000134  LTORG
+0 Errors, 2 Warnings
 armclang: warning: Your license for feature Keil will expire in 27 days [-Wlicense-management]
 assembling Functions.s...
 linking...
-Program Size: Code=2232 RO-data=37284 RW-data=8 ZI-data=1536  
+Program Size: Code=2248 RO-data=37284 RW-data=12 ZI-data=1536  
 FromELF: creating hex file...
 .\Objects\codoBab.hex: Warning: Q9931W: Your license for feature Keil will expire in 27 days
 Finished: 0 information, 1 warning and 0 error messages.
@@ -74,7 +71,7 @@ Package Vendor: Keil
       Include file:  Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
       Source file:   MDK/Device/Source/ARM/STM32F4xx_OTP.s
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:00
 </pre>
 </body>
 </html>
