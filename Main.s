@@ -17,7 +17,6 @@ Black	EQU 0x0000
 	IMPORT TFT_WriteData
 	IMPORT TFT_Init
 	IMPORT TFT_DrawImage
-	IMPORT TFT_DrawGrid
 	IMPORT TFT_Filldraw4INP
 	IMPORT GET_state
 	IMPORT delay

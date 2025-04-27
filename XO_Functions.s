@@ -22,7 +22,6 @@ Black		   EQU 0x0000
 	IMPORT  TFT_Filldraw4INP
     IMPORT  delay
 	IMPORT  GET_state
-
 	EXPORT  Main_Game_XO
 	
 

@@ -5,9 +5,8 @@ Component: Arm Compiler for Embedded 6.23 Tool: armlink [5f102400]
 Section Cross References
 
     main.o(MYDATAS) refers (Special) to functions.o(CODEY) for GET_state
-    main.o(MYDATAS) refers (Special) to xo_functions.o(CODEY) for TFT_DrawGrid
     main.o(MYCODE) refers (Special) to functions.o(CODEY) for GET_state
-    main.o(MYCODE) refers (Special) to xo_functions.o(CODEY) for TFT_DrawGrid
+    main.o(MYCODE) refers to xo_functions.o(CODEY) for Main_Game_XO
     xo_functions.o(MYDATA) refers (Special) to functions.o(CODEY) for TFT_WriteCommand
     xo_functions.o(CODEY) refers (Special) to functions.o(CODEY) for TFT_WriteCommand
     xo_functions.o(CODEY) refers to xo_functions.o(MYDATA) for XO_array
@@ -70,7 +69,15 @@ Image Symbol Table
     $v0                                      0x080001f0   Number         0  functions.o(CODEY)
     CODEY                                    0x080001f0   Section      704  functions.o(CODEY)
     $v0                                      0x080004b0   Number         0  xo_functions.o(CODEY)
+    TFT_DrawGrid                             0x080004b1   Thumb Code   154  xo_functions.o(CODEY)
     CODEY                                    0x080004b0   Section     1272  xo_functions.o(CODEY)
+    DrawBorder                               0x0800054b   Thumb Code    84  xo_functions.o(CODEY)
+    TFT_MoveCursor                           0x0800059f   Thumb Code    96  xo_functions.o(CODEY)
+    Draw_XO                                  0x080005ff   Thumb Code   380  xo_functions.o(CODEY)
+    Check_Win                                0x0800077b   Thumb Code   264  xo_functions.o(CODEY)
+    DrawXWINS                                0x08000883   Thumb Code    46  xo_functions.o(CODEY)
+    DrawOWINS                                0x080008b1   Thumb Code    46  xo_functions.o(CODEY)
+    DrawTA3ADOL                              0x080008df   Thumb Code    32  xo_functions.o(CODEY)
     $v0                                      0x080009a8   Number         0  main.o(MYCODE)
     MYCODE                                   0x080009a8   Section       12  main.o(MYCODE)
     MYIMAGE                                  0x080009b4   Section    18440  datao.o(MYIMAGE)
@@ -172,14 +179,6 @@ Image Symbol Table
     TFT_Filldraw4INP                         0x080003eb   Thumb Code   152  functions.o(CODEY)
     GET_state                                0x08000483   Thumb Code    22  functions.o(CODEY)
     delay                                    0x08000499   Thumb Code    16  functions.o(CODEY)
-    TFT_DrawGrid                             0x080004b1   Thumb Code   154  xo_functions.o(CODEY)
-    DrawBorder                               0x0800054b   Thumb Code    84  xo_functions.o(CODEY)
-    TFT_MoveCursor                           0x0800059f   Thumb Code    96  xo_functions.o(CODEY)
-    Draw_XO                                  0x080005ff   Thumb Code   380  xo_functions.o(CODEY)
-    Check_Win                                0x0800077b   Thumb Code   264  xo_functions.o(CODEY)
-    DrawXWINS                                0x08000883   Thumb Code    46  xo_functions.o(CODEY)
-    DrawOWINS                                0x080008b1   Thumb Code    46  xo_functions.o(CODEY)
-    DrawTA3ADOL                              0x080008df   Thumb Code    32  xo_functions.o(CODEY)
     Main_Game_XO                             0x08000903   Thumb Code   130  xo_functions.o(CODEY)
     __main                                   0x080009a9   Thumb Code    12  main.o(MYCODE)
     O1                                       0x080009b4   Data           0  datao.o(MYIMAGE)
