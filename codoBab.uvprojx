@@ -405,9 +405,9 @@
               <FilePath>.\dataX.s</FilePath>
             </File>
             <File>
-              <FileName>benchy.s</FileName>
+              <FileName>XO_Functions.s</FileName>
               <FileType>2</FileType>
-              <FilePath>.\benchy.s</FilePath>
+              <FilePath>.\XO_Functions.s</FilePath>
             </File>
           </Files>
         </Group>
