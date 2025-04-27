@@ -6,11 +6,11 @@ XO_array       DCD     0x00000000
 XO_Turn     DCB     0x00
 XO_counter  DCD     0x00
 
-
 RCC_BASE       EQU     0x40023800
 RCC_AHB1ENR    EQU     RCC_BASE + 0x30
 
 GPIOA_BASE     EQU     0x40020000
+GPIOA_MODER	   EQU     0x40020000
 GPIOA_SPEEDR   EQU     GPIOA_BASE + 0x08
 GPIOA_OTYPER   EQU     GPIOA_BASE + 0x04
 GPIOA_PUPDR    EQU     GPIOA_BASE + 0x0C
@@ -18,18 +18,12 @@ GPIOA_IDR      EQU     GPIOA_BASE + 0x10
 GPIOA_ODR      EQU     GPIOA_BASE + 0x14
 
 GPIOB_BASE     EQU     0x40020400
+GPIOB_MODER	   EQU     0x40020400
 GPIOB_SPEEDR   EQU     GPIOB_BASE + 0x08
 GPIOB_OTYPER   EQU     GPIOB_BASE + 0x04
 GPIOB_PUPDR    EQU     GPIOB_BASE + 0x0C
 GPIOB_IDR      EQU     GPIOB_BASE + 0x10
 GPIOB_ODR      EQU     GPIOB_BASE + 0x14
-
-GPIOC_BASE     EQU     0x40020800
-GPIOC_SPEEDR   EQU     GPIOC_BASE + 0x08
-GPIOC_OTYPER   EQU     GPIOC_BASE + 0x04
-GPIOC_PUPDR    EQU     GPIOC_BASE + 0x0C
-GPIOC_IDR      EQU     GPIOC_BASE + 0x10
-GPIOC_ODR      EQU     GPIOC_BASE + 0x14
 
 INTERVAL       EQU     0x566004
 INTERVAL025       EQU     0x159801
@@ -55,7 +49,6 @@ Black		   EQU 0x0000
     AREA    CODEY, CODE, READONLY
 	IMPORT X1
 	IMPORT O1
-    EXPORT  SETUP
     EXPORT  TFT_WriteCommand
     EXPORT  TFT_WriteData
     EXPORT  TFT_Init
@@ -64,7 +57,7 @@ Black		   EQU 0x0000
     EXPORT  TFT_Filldraw4INP
     EXPORT  GET_state
     EXPORT  delay
-	
+	EXPORT	CONFIGURE_PORTS
     EXPORT  Draw_XO
     EXPORT  Check_Win
 	EXPORT  DrawBorder
@@ -77,99 +70,69 @@ Black		   EQU 0x0000
 
 
 
-;------------------------
-; SETUP
-;------------------------
-SETUP FUNCTION
-	PUSH {R0-R2, LR}
-	; Enable GPIOA clock
-	LDR R0, =RCC_AHB1ENR ; Address of RCC_APB2ENR register
-	LDR R1, [R0] ; Read the current value of RCC_APB2ENR
-	MOV R2, #1
-	ORR R1, R1, R2
-	STR R1, [R0] ; Write the updated value back to RCC_APB2ENR
+;-----------------------------------------
+; Initially call in main function
+;-----------------------------------------
+CONFIGURE_PORTS FUNCTION
+    PUSH{R0-R1,LR}
+    
+    ;SET the clock of  C B A  PORTS
+    LDR R0, =RCC_AHB1ENR
+    LDR R1, [R0]
+    ORR R1, R1 , #0x07 ;00000111 -> HGFEDCBA 
+    STR R1, [R0]
 
+;-----------------------------------------
+; PART A
+;-----------------------------------------
 
-	LDR R0, =RCC_AHB1ENR         ;PORT B CLOCK
-	LDR R1, [R0]                 
-	MOV R2, #1
-	ORR R1, R1, R2, LSL #1       		
-	STR R1, [R0]                 
+    ;SET THE PORT A AS OUTPUT 
+    LDR R0, =GPIOA_MODER
+    LDR R1, =0x55555555  ;0101010101---01 -> OUTPUT ;WHY LDR NOT MOV ? MOV CAN'T MOVE LARGER THAN NON-ZERO 16 BITS 
+    STR R1, [R0]
+    
+    ;SET THE SPEED OF THE PORT A as HIGH SPEED
+    LDR R0, =GPIOA_SPEEDR
+    LDR R1, =0xFFFFFFFF  ;1111111--11 -> High Speed
+    STR R1, [R0]
 
-	LDR R0, =RCC_AHB1ENR         ;PORT c CLOCK
-	LDR R1, [R0]                 
-	MOV R2, #1
-	ORR R1, R1, R2, LSL #2      		
-	STR R1, [R0]    
-
-	; Configure PORT A AS OUTPUT 
-	LDR R0, =GPIOA_BASE                  
-	MOV R2, #0x55555555    
-	STR R2, [R0]
-
-
-	; Configure PORT B AS INPUT 
-	LDR R0, =GPIOB_BASE                  
-	MOV R2, #0x00000000    
-	STR R2, [R0]
-
-	; Configure PORT C AS OUTPUT 
-	LDR R0, =GPIOC_BASE          
-	MOV R2, #0x55555555     
-	STR R2, [R0]                 
-
-
-	;SPEED PORT A
-	LDR R0, =GPIOA_SPEEDR
-	MOV R2, #0xFFFFFFFF
-	STR R2, [R0]
-
-	;SPEED PORT B
-	LDR R0, =GPIOB_SPEEDR
-	MOV R2, #0xFFFFFFFF
-	STR R2, [R0]
-
-	;SPEED PORT C
-	LDR R0, =GPIOC_SPEEDR
-	MOV R2, #0xFFFFFFFF
-	STR R2, [R0]
-
-
-
-	;PUSH/PULL
+    ;PUSH/PULL
 	LDR R0, =GPIOA_OTYPER
-	MOV R2, #0x00000000
-	STR R2, [R0]
+	MOV R1, #0x00000000
+	STR R1, [R0]
 
-	;PUSH/PULL
-	LDR R0, =GPIOB_OTYPER
-	MOV R2, #0x00000000
-	STR R2, [R0]
+    ;SET THE PUPDR OF THE PORT A as PULL-UP
+ 	LDR R0, =GPIOA_PUPDR
+ 	LDR R1, =0x55555555
+ 	STR R1, [R0]
 
-	;PUSH/PULL
-	LDR R0, =GPIOC_OTYPER
-	MOV R2, #0x00000000
-	STR R2, [R0]
+;-----------------------------------------
+; PART B
+;-----------------------------------------
 
+    ;SET THE PORT B AS INPUT  
+ 	LDR R0, =GPIOB_MODER             
+ 	MOV R1, #0x00000000    ;00000--00 -> INPUT
+ 	STR R1, [R0]
 
-	;PULL UP 
-	LDR R0, =GPIOA_PUPDR
-	MOV R2, #0x55555555
-	STR R2, [R0]
+    ;SET THE SPEED OF THE PORT B as HIGH SPEED
+ 	LDR R0, =GPIOB_SPEEDR
+ 	LDR R1, =0xFFFFFFFF
+ 	STR R1, [R0]
 
-	;PULL UP 
-	LDR R0, =GPIOB_PUPDR
-	MOV R2, #0x55555555
-	STR R2, [R0]
+	;SET THE TYPE OF PORT B AS PUSH-PULL
+ 	LDR R0, =GPIOB_OTYPER
+ 	MOV R1, #0x00000000
+ 	STR R1, [R0]
 
-	;PULL UP 
-	LDR R0, =GPIOC_PUPDR
-	MOV R2, #0x55555555
-	STR R2, [R0]
+	;SET THE PUPDR OF THE PORT B as PULL-UP
+ 	LDR R0, =GPIOB_PUPDR
+ 	LDR R1, =0x55555555
+ 	STR R1, [R0]
 
-	POP{R0-R2, PC}
-	ENDFUNC
-
+    POP{R0-R1,PC}
+    ENDFUNC	
+	
 	; *************************************************************
 	; TFT Write Command (R0 = command)
 	; *************************************************************
@@ -273,9 +236,9 @@ TFT_Init FUNCTION
 	BL TFT_WriteCommand
 	MOV R0, #0x55
 	BL TFT_WriteData
-	BL HIj
+	BL HI
 	LTORG
-HIj	
+HI
 	; Set Contrast VCOM
 	MOV R0, #0xC5
 	BL TFT_WriteCommand
@@ -293,7 +256,6 @@ HIj
 	MOV R0, #0x11
 	BL TFT_WriteCommand
 	BL delay
-
 	; Enable Color Inversion
 	;MOV R0, #0x21      ; Command for Color Inversion ON
 	;BL TFT_WriteCommand

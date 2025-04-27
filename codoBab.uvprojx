@@ -404,6 +404,11 @@
               <FileType>2</FileType>
               <FilePath>.\dataX.s</FilePath>
             </File>
+            <File>
+              <FileName>benchy.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\benchy.s</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
