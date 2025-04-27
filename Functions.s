@@ -56,6 +56,7 @@ Black		   EQU 0x0000
     EXPORT  TFT_DrawGrid
     EXPORT  TFT_Filldraw4INP
     EXPORT  GET_state
+    EXPORT  delaywithIN
     EXPORT  delay
 	EXPORT	CONFIGURE_PORTS
     EXPORT  Draw_XO
@@ -324,7 +325,7 @@ TFT_DrawImage FUNCTION
 ; =====================
 ; Send Pixel Data (BGR565)
 ; =====================
-	MUL R6, R4, R5  ; Total pixels = Width × Height
+	MUL R6, R4, R5  ; Total pixels = Width Ã— Height
 TFT_ImageLoop
 	LDRH R0, [R3], #2 ; Load one pixel (16-bit BGR565)
 	MOV R1, R0, LSR #8 ; Extract high byte
@@ -571,7 +572,7 @@ GET_state FUNCTION
 	LDR R0, =GPIOB_IDR   ; Load address of input data register
 	LDR R10, [R0]         ; Read GPIOB input register   ; Shift right to get PC8 at bit 0 and PC9 at bit 1 and PC10 at bit 2 and PC11 at bit 3
 	MOV	R0,#10
-	BL delay
+	BL delaywithIN
 	POP {R1,PC}
 	ENDFUNC	
 	
@@ -588,6 +589,21 @@ DelayInner_Loop
     SUBS    R1, R0
     CMP     R1, #0
     BGT     DelayInner_Loop
+    POP     {R0-R12, PC}
+	ENDFUNC
+
+;------------------------
+; delaywithIN
+; R0 -> Input
+;------------------------
+delaywithIN    FUNCTION
+    PUSH    {R0-R12, LR}
+	LDR		R1,=INTERVAL
+	
+delaywithINInner_Loop
+    SUBS    R1, R0
+    CMP     R1, #0
+    BGT     delaywithINInner_Loop
     POP     {R0-R12, PC}
 	ENDFUNC
 
@@ -689,7 +705,7 @@ Continue2
 	;MOV	  R11,#0
 	LSL   R4, R12, #1         ; R4 = 2 * X
 	SUB   R4, R4, #2
-	; R4 = 2*X – 2
+	; R4 = 2*X Â– 2
 	MOV R5, #3 ; R5 = 0b11
 	LSL R5, R5, R4 ; R5 = 3 << R4
 	AND R5,R11,R5
@@ -760,7 +776,7 @@ AlreadyDrawn    ;Draw red border momentarily then draw yellow
 	MOV R11, #Red
 	BL DrawBorder
 	MOV R0, #5
-	BL delay
+	BL delaywithIN
 	MOV R11, #Yellow
 	BL DrawBorder
 	
