@@ -22,14 +22,7 @@ Black		   EQU 0x0000
 	IMPORT  TFT_Filldraw4INP
     IMPORT  delay
 	IMPORT  GET_state
-	EXPORT  TFT_DrawGrid
-    EXPORT  Draw_XO
-    EXPORT  Check_Win
-	EXPORT  DrawBorder
-	EXPORT	DrawTA3ADOL
-	EXPORT	DrawOWINS
-	EXPORT	DrawXWINS		
-	EXPORT  TFT_MoveCursor 
+
 	EXPORT  Main_Game_XO
 	
 
