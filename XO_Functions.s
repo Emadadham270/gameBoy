@@ -14,7 +14,6 @@ White   	   EQU 0xffff
 Black		   EQU 0x0000	
 	
 	AREA    CODEY, CODE, READONLY
-	IMPORT X1
 	IMPORT O1
     IMPORT  TFT_WriteCommand
     IMPORT  TFT_WriteData
@@ -278,7 +277,7 @@ Continue2
 	CMP R10, #2		   ;Draw X
 	BEQ Draw_xX
 	CMP R10, #0		   ;Draw O
-	BEQ Draw_oO		
+	BEQ Draw_oO
 
 
 Draw_xX  ;01
@@ -289,8 +288,9 @@ Draw_xX  ;01
     ORR   R11, R11, R5     ; R11 |= (0b01 << base)
 	LDR R0, =XO_array
 	STR R11, [R0]
-	LDR R3, =X1
-	BL TFT_DrawImage
+	MOV R3, #0x60
+	LDR R11, =Black
+	BL Draw_X
 	LDR R0, =XO_Turn
 	STR R10, [R0]
 	
@@ -300,7 +300,7 @@ Draw_xX  ;01
 	STR R10, [R0]
 	
 	B FiNish	 
-	
+	LTORG
 	
 Draw_oO  ;10
 	ADD R10, #2		   	   ;Toggle turn
@@ -321,7 +321,7 @@ Draw_oO  ;10
 	STR R10, [R0]
 	
 	B FiNish
-	
+	LTORG
 
 	
 AlreadyDrawn    ;Draw red border momentarily then draw yellow
@@ -477,8 +477,10 @@ DrawXWINS	FUNCTION
 	BL TFT_Filldraw4INP
 	MOV R1,#113
 	MOV R2,#193
-	LDR R3, =X1
-	BL TFT_DrawImage
+	MOV R3, #0x60
+	LDR R11, =Green
+	BL Draw_X
+	LDR R0, =XO_Turn
 	POP {R0-R12, PC}
 	ENDFUNC
 	
@@ -517,6 +519,8 @@ Update_Left_Sidebar    FUNCTION
     ;TODO
     POP     {PC}
 	ENDFUNC
+
+
 
 
 Main_Game_XO FUNCTION
@@ -575,7 +579,216 @@ INPUT123                ;Wait for input from user
 
 	ENDFUNC
 
-    END
+;-----------------------------------------------------
+; Inputs on entry: 
+;   R1 = X0,   R2 = Y0,   R3 = LEN, 
+;   R10 = THICK,  R11 = colour
+; Clobbers: R0,R4–R9,R12
+;-----------------------------------------------------
+Draw_X FUNCTION
+    PUSH   {R0-R12, LR}
+	
+	MOV R10, #7
+    ; compute HALF = THICK/2 in R5
+    MOV    R5, R10
+    LSR    R5, R5, #1
+
+    ; compute REM = THICK – HALF – 1 in R12
+    SUB    R12, R10, R5
+    SUB    R12, R12, #1
+
+    MOV    R4, #0         ; i = 0
+
+TFT_XLoop
+    ; ---- forward diagonal point (xi, yi) ----
+    ADD    R0, R1, R4     ; R0 = xi = X0 + i
+    SUB    R6, R0, R5     ; startX = xi - HALF
+    ADD    R7, R0, R12    ; endX   = xi + REM
+
+    ADD    R0, R2, R4     ; R0 = yi = Y0 + i
+    SUB    R8, R0, R5     ; startY = yi - HALF
+    ADD    R9, R0, R12    ; endY   = yi + REM
+
+    BL     TFT_Filldraw4INP
+
+    ; ---- reverse diagonal point (xj, yi) ----
+    ; compute xj = X0 + (LEN-1 - i)
+    SUB    R0, R3, R4     ; R0 = LEN - i
+    SUB    R0, R0, #1     ; R0 = LEN - 1 - i
+    ADD    R0, R1, R0     ; R0 = X0 + (LEN-1 - i)
+    SUB    R6, R0, R5     ; startX = xj - HALF
+    ADD    R7, R0, R12    ; endX   = xj + REM
+
+    ADD    R0, R2, R4     ; R0 = yi = Y0 + i
+    SUB    R8, R0, R5     ; startY = yi - HALF
+    ADD    R9, R0, R12    ; endY   = yi + REM
+
+    BL     TFT_Filldraw4INP
+
+    ; next i
+    ADD    R4, R4, #1
+    CMP    R4, R3
+    BLT    TFT_XLoop
+
+    POP    {R0-R12, PC}
+	ENDFUNC
+	
+;------------------------------------------------------------------------------
+; Draw_O FUNCTION
+;
+; Inputs on entry:
+;    R1 = X0       ? top-left corner X
+;    R2 = Y0       ? top-left corner Y
+;    R3 = LEN      ? outer diameter in pixels
+;    R10= THICK    ? border thickness
+;    R11= colour   ? pen colour
+;
+; Clobbers: R0, R4–R9, R12
+; Preserves: R1,R2,R3,R10,R11,LR
+;------------------------------------------------------------------------------
+Draw_O  FUNCTION
+	PUSH {R0-R12, LR}
+
+	MOV R10, #7
+	;-- compute HALF = THICK/2, REM = THICK–HALF–1  (exactly as in Draw_X)
+	MOV R5, R10
+	LSR R5, R5, #1           ; R5 = floor(THICK/2)
+	SUB R12, R10, R5         ; R12 = THICK – HALF
+	SUB R12, R12, #1         ; R12 = THICK – HALF – 1
+
+	;-- radius = floor(LEN/2)
+	MOV R0, R3
+	LSR R0, R0, #1           ; R0 = radius
+	MOV R4, R0               ; use R4 for y
+	MOV R6, R0               ; use R6 for x
+
+	;-- centre = (X0 + radius, Y0 + radius)
+	ADD R8, R1, R0           ; R8 = Cx
+	ADD R9, R2, R0           ; R9 = Cy
+
+	;-- decision variable d = 1 – radius
+	MOV R7, #1
+	SUB R7, R7, R0           ; R7 = 1 – R
+
+BresLoop
+	CMP R6, R4          ; while x <= y
+	BGT BresDone
+
+	BL  Plot8           ; plot the 8 symmetric points
+
+	ADD R6, #1          ; x = x + 1
+	ADD R7, R7, R6, LSL #1   ; d = d + 2*x
+	ADD R7, #1          ; d = d + 1
+
+	CMP R7, #0
+	BLT BresLoop        ; if d < 0, keep y
+
+	SUB R4, R4, #1      ; y = y - 1
+	SUB R7, R7, R4, LSL #1   ; d = d - 2*y
+	ADD R7, #1          ; d = d + 1
+	B   BresLoop
+
+BresDone
+	POP {R0-R12, PC}
+	ENDFUNC
 
 
+;------------------------------------------------------------------------------
+; Plot8: draw one THICK×THICK square at each of the eight
+;        (±x,±y),(±y,±x) locations around the centre
+;
+; Entry:
+;    R8 = Cx, R9 = Cy,
+;    R6 = x,  R4 = y,
+;    R5 = HALF, R12 = REM,
+;    R11 = colour
+; Clobbers: R0–R3,R6–R9,R10–R12
+; Preserves: all caller regs via full push/pop
+; Returns via PC
+;------------------------------------------------------------------------------
+Plot8
+    PUSH    {R0-R12, LR}    ; save absolutely everything
 
+    ; stash the “true” inputs into dedicated temps
+    MOV     R2, R8          ; R2 ? Cx
+    MOV     R3, R9          ; R3 ? Cy
+    MOV     R10, R6         ; R10? x
+    MOV     R11, R4         ; R11? y
+    ; (we’ll clobber R6–R9 freely, they get restored at the end)
+
+; Octant #1  (+x, +y)
+    ADD     R0, R2, R10     ; px = Cx +  x
+    ADD     R1, R3, R11     ; py = Cy +  y
+    SUB     R6, R0, R5      ; startX = px – HALF
+    ADD     R7, R0, R12     ; endX   = px + REM
+    SUB     R8, R1, R5      ; startY = py – HALF
+    ADD     R9, R1, R12     ; endY   = py + REM
+    BL      TFT_Filldraw4INP
+
+; Octant #2  (+y, +x)
+    ADD     R0, R2, R11     ; px = Cx +  y
+    ADD     R1, R3, R10     ; py = Cy +  x
+    SUB     R6, R0, R5
+    ADD     R7, R0, R12
+    SUB     R8, R1, R5
+    ADD     R9, R1, R12
+    BL      TFT_Filldraw4INP
+
+; Octant #3  (–y, +x)
+    SUB     R0, R2, R11     ; px = Cx –  y
+    ADD     R1, R3, R10     ; py = Cy +  x
+    SUB     R6, R0, R5
+    ADD     R7, R0, R12
+    SUB     R8, R1, R5
+    ADD     R9, R1, R12
+    BL      TFT_Filldraw4INP
+
+; Octant #4  (–x, +y)
+    SUB     R0, R2, R10     ; px = Cx –  x
+    ADD     R1, R3, R11     ; py = Cy +  y
+    SUB     R6, R0, R5
+    ADD     R7, R0, R12
+    SUB     R8, R1, R5
+    ADD     R9, R1, R12
+    BL      TFT_Filldraw4INP
+
+; Octant #5  (–x, –y)
+    SUB     R0, R2, R10     ; px = Cx –  x
+    SUB     R1, R3, R11     ; py = Cy –  y
+    SUB     R6, R0, R5
+    ADD     R7, R0, R12
+    SUB     R8, R1, R5
+    ADD     R9, R1, R12
+    BL      TFT_Filldraw4INP
+
+; Octant #6  (–y, –x)
+    SUB     R0, R2, R11     ; px = Cx –  y
+    SUB     R1, R3, R10     ; py = Cy –  x
+    SUB     R6, R0, R5
+    ADD     R7, R0, R12
+    SUB     R8, R1, R5
+    ADD     R9, R1, R12
+    BL      TFT_Filldraw4INP
+
+; Octant #7  (+y, –x)
+    ADD     R0, R2, R11     ; px = Cx +  y
+    SUB     R1, R3, R10     ; py = Cy –  x
+    SUB     R6, R0, R5
+    ADD     R7, R0, R12
+    SUB     R8, R1, R5
+    ADD     R9, R1, R12
+    BL      TFT_Filldraw4INP
+
+; Octant #8  (+x, –y)
+    ADD     R0, R2, R10     ; px = Cx +  x
+    SUB     R1, R3, R11     ; py = Cy –  y
+    SUB     R6, R0, R5
+    ADD     R7, R0, R12
+    SUB     R8, R1, R5
+    ADD     R9, R1, R12
+    BL      TFT_Filldraw4INP
+
+    POP     {R0-R12, PC}    ; restore all caller state & return
+	
+	
+	END
