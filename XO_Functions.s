@@ -107,7 +107,7 @@ DrawBorder FUNCTION;take r1,x r2,y
 	pop{R0-R12,PC}
 	ENDFUNC
 	
-TFT_MoveCursor FUNCTION; Take X-R1; Y-R2 : Input in R10
+TFT_MoveCursor FUNCTION ; Take X-R1; Y-R2 : Input in R10
 	 PUSH{R11-R12,LR}
 	 
 	 MOV R11, #Black
