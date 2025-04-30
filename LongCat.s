@@ -39,7 +39,7 @@ SnakeMap
 ; TFT_DrawMap
 ;------------------------
 TFT_DrawMap    FUNCTION
-	PUSH {R0-R10, LR}
+	PUSH {R0-R12, LR}
 	;TODO
 	
 	POP {R0-R12, PC}
@@ -49,7 +49,7 @@ TFT_DrawMap    FUNCTION
 ; Draw_Snake_Movement
 ;------------------------
 Draw_Snake_Movement FUNCTION
-	PUSH {R0-R10, LR}
+	PUSH {R0-R12, LR}
 	;TODO
 	
 	POP {R0-R12, PC}
@@ -59,7 +59,7 @@ Draw_Snake_Movement FUNCTION
 ; Move_Snake
 ;------------------------
 Move_Snake FUNCTION
-	PUSH {R0-R10, LR}
+	PUSH {R0-R12, LR}
 	;TODO
 	
 	POP {R0-R12, PC}
@@ -69,7 +69,7 @@ Move_Snake FUNCTION
 ; Check_End
 ;------------------------
 Check_End FUNCTION
-	PUSH {R0-R10, LR}
+	PUSH {R0-R12, LR}
 	;TODO
 	
 	POP {R0-R12, PC}
