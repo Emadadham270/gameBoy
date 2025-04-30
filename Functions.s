@@ -216,9 +216,7 @@ TFT_Init FUNCTION
 	BL TFT_WriteCommand
 	MOV R0, #0x55
 	BL TFT_WriteData
-	BL HI
-	LTORG
-HI
+
 	; Set Contrast VCOM
 	MOV R0, #0xC5
 	BL TFT_WriteCommand
@@ -326,7 +324,7 @@ TFT_ImageLoop
 
 
 ;------------------------
-; TFT_Filldraw4INP  color-R0  R6,R7-column start/end   R8,R9-page start/end
+; TFT_Filldraw4INP  color-R11  R6,R7-column start/end   R8,R9-page start/end
 ;------------------------
 TFT_Filldraw4INP    FUNCTION
     PUSH {R1-R5,R10,R11,R12, LR}
@@ -437,3 +435,4 @@ DelayInner_Loop
     POP     {R0-R12, PC}
 	ENDFUNC
 
+END
