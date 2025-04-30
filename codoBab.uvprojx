@@ -399,6 +399,11 @@
               <FileType>2</FileType>
               <FilePath>.\XO_Functions.s</FilePath>
             </File>
+            <File>
+              <FileName>LongCat.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\LongCat.s</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

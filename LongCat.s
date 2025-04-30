@@ -1,13 +1,13 @@
-    AREA    LEVELSDATA, DATA, READONLY
+	AREA    MYDATA, DATA, READONLY
+Level1Map
+	DCB 0xD1
+	DCB 0xD9
+	DCB 0xCB
+    DCB 0x81
+	DCB 0xA5
+	DCB 0x81
 
-Level1Map      DCB #0b11000001
-			   DCB #0b11001001
-			   DCB #0b11001011
-			   DCB #0b10000001
-			   DCB #0b10100101
-			   DCB #0b10000001
-
-Leve1StartCell DCB #36
+Leve1StartCell DCB 36
 		;--- Colors ---
 Red     	   EQU 0XF800 
 Green   	   EQU 0x07E0
@@ -15,11 +15,16 @@ Blue    	   EQU 0x001F
 Yellow  	   EQU 0xFFE0
 White   	   EQU 0xFFFF
 Black		   EQU 0x0000	
-		
-	AREA    MYDATA, DATA, READWRITE
 
+	AREA USEABLE, DATA, READWRITE
 
-
+SnakeMap
+	DCB 0x00
+	DCB 0x00
+	DCB 0x00
+    DCB 0x00
+	DCB 0x00
+	DCB 0x00
 	
 	AREA    CODEY, CODE, READONLY
     IMPORT  TFT_WriteCommand
@@ -69,3 +74,4 @@ Check_End FUNCTION
 	
 	POP {R0-R12, PC}
 	ENDFUNC
+	END

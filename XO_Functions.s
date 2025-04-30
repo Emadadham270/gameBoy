@@ -3,8 +3,9 @@
 
 XO_array       DCD     0x00000000
 
-XO_Turn     DCB     0x00
+XO_Turn     DCD     0x00
 XO_counter  DCD     0x00
+	
 ;--- Colors ---
 Red     	   EQU 0Xf800 
 Green   	   EQU 0xF0FF
