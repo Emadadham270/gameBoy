@@ -184,8 +184,8 @@ LoopLEFT
         ADDS R5, R5, #1          ; colomn++
         ; R5 will remain <=7 as long as we branched here
         ;ADDS R1, R1, #1       ; row-pointer++
-		MOV R2, #1
-        LSL R2, R2, R5
+		MOV R2, #1             ;R2= 0....00000001
+        LSL R2, R2, R5         ;R2= 0....00100000
 		
         LDRB R7, [R1]            ; R7 = map[row]
         TST R7, R2              ; test the bit at “col”
