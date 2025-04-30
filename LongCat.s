@@ -60,7 +60,6 @@ Draw_Snake_Movement FUNCTION
 ;------------------------
 Move_Snake FUNCTION
 	PUSH {R0-R12, LR}
-;TODO
 	LDRB R0, =SnakeMap
 
 	MOV R12 , R7
