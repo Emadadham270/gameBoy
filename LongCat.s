@@ -60,7 +60,7 @@ Draw_Snake_Movement FUNCTION
 ;------------------------
 Move_Snake FUNCTION
 	PUSH {R0-R12, LR}
-	LDRB R0, =SnakeMap
+	LDRB R0, =SnakeMap; load the address
 
 	MOV R12 , R7
 	AND R12, #0x000F
@@ -78,7 +78,7 @@ Move_Snake FUNCTION
 	BEQ MOVE_RIGHTS
 	 
 MOVE_UPS
-		MOV R4, R3              ; R4 = our “current cell index”
+		MOV R4, R3   			; R4 = our “current cell index”
         ; split R3 into row/col
         MOV R6, R4, LSR #3      ; R6 = row = R4/8
         AND R5, R4, #7          ; R5 = col = R4%8
@@ -164,8 +164,94 @@ LoopDown
 
 
 MOVE_LEFTS
+		MOV R4, R3   			; R4 = our “current cell index”
+        ; split R3 into row/col
+        MOV R6, R4, LSR #3      ; R6 = row = R4/8
+        AND R5, R4, #7          ; R5 = col = R4%8
+
+        ; compute pointer to that row in the byte array
+        ADD R1, R0, R6          ; R1 = &SnakeMap[row]
+        ; compute bitmask = 1<<col in R2
+        MOV R2, #1
+        LSL R2, R2, R5
+
+        ; if we’re already in the left side  , there is nothing below
+        CMP R5, #7
+        BEQ Return               ; R4 still = start
+
+LoopLEFT
+        ; move one colomn "left"
+        ADDS R5, R5, #1          ; colomn++
+        ; R5 will remain <=7 as long as we branched here
+        ;ADDS R1, R1, #1       ; row-pointer++
+		MOV R2, #1
+        LSL R2, R2, R5
+		
+        LDRB R7, [R1]            ; R7 = map[row]
+        TST R7, R2              ; test the bit at “col”
+        BNE Return           ; if bit==1 ? wall
+
+        ; it was 0 ? valid; mark it visited by setting bit to 1
+        ORR R7, R7, R2
+        STRB R7, [R1]
+
+        ; record that we have moved one colomn left
+        ADD R4, R4, #1        ; new index = old index + 8
+
+        ; if we still have another row below, loop
+        CMP R5, #7
+        BNE LoopLEFT
+
+        ; we fell off after marking the downmost cell; that’s our result
+        B Return
+        ; as soon as we hit a 1-bit, we stop.
+        ; R4 still holds the index one row below (the last valid cell).
+
+	
 MOVE_RIGHTS
-	 
+		MOV R4, R3   			; R4 = our “current cell index”
+        ; split R3 into row/col
+        MOV R6, R4, LSR #3      ; R6 = row = R4/8
+        AND R5, R4, #7          ; R5 = col = R4%8
+
+        ; compute pointer to that row in the byte array
+        ADD R1, R0, R6          ; R1 = &SnakeMap[row]
+        ; compute bitmask = 1<<col in R2
+        MOV R2, #1
+        LSL R2, R2, R5
+
+        ; if we’re already in the right	side  , there is nothing below
+        CMP R5, #0
+        BEQ Return               ; R4 still = start
+
+LoopRGHIT
+        ; move one colomn "left"
+        SUBS R5, R5, #1          ; colomn--
+        ; R5 will remain <=0 as long as we branched here
+        ;ADDS R1, R1, #1       ; row-pointer++
+		MOV R2, #1
+        LSL R2, R2, R5
+		
+        LDRB R7, [R1]            ; R7 = map[row]
+        TST R7, R2              ; test the bit at “col”
+        BNE Return           ; if bit==1 ? wall
+
+        ; it was 0 ? valid; mark it visited by setting bit to 1
+        ORR R7, R7, R2
+        STRB R7, [R1]
+
+        ; record that we have moved one colomn left
+        SUB R4, R4, #1        ; new index = old index + 8
+
+        ; if we still have another row below, loop
+        CMP R5, #0
+        BNE LoopRGHIT
+
+        ; we fell off after marking the downmost cell; that’s our result
+        B Return
+        ; as soon as we hit a 1-bit, we stop.
+        ; R4 still holds the index one row below (the last valid cell).
+
 	 
 Return
 	POP {R0-R12, PC}
