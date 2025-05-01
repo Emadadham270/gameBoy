@@ -471,7 +471,110 @@ LoopRGHIT
 Return
 	POP {R0-R2, R4-R7, PC}
 	ENDFUNC
+;------------------------
+; check win
+;------------------------
+check_win FUNCTION
+	PUSH{R0-R12,PC}
+    LDR R4, =SnakeMap          // Load base address of the 6-byte grid into R4
 
+    // Check if all 6 bytes are 0xFF (win condition)
+    LDRB R5, [R4, #0]      // Load byte for row 1 (top)
+    CMP R5, #0xFF
+    BNE check_neighbors    // If not 0xFF, proceed to check neighbors
+    LDRB R5, [R4, #1]      // Load byte for row 2
+    CMP R5, #0xFF
+    BNE check_neighbors
+    LDRB R5, [R4, #2]      // Load byte for row 3
+    CMP R5, #0xFF
+    BNE check_neighbors
+    LDRB R5, [R4, #3]      // Load byte for row 4
+    CMP R5, #0xFF
+    BNE check_neighbors
+    LDRB R5, [R4, #4]      // Load byte for row 5
+    CMP R5, #0xFF
+    BNE check_neighbors
+    LDRB R5, [R4, #5]      // Load byte for row 6 (bottom)
+    CMP R5, #0xFF
+    BNE check_neighbors
+
+    // All bytes are 0xFF, player wins
+    MOV R0, #1             // Return 1 for win
+    B WINNER                  // Return from function
+
+check_neighbors
+    // Compute row and column from cell number in R3 (0 to 47)
+    LSR R6, R3, #3         // R6 = k = R3 / 8 (row index from bottom, 0 to 5)
+    AND R7, R3, #7         // R7 = m = R3 % 8 (bit position in byte)
+    MOV R8, #5             // R8 will hold row index from top (0 to 5)
+    SUB R8, R8, R6         // r = 5 - k (row index: 5 for bottom, 0 for top)
+    MOV R9, #7             // R9 will hold column index (0 to 7, left to right)
+    SUB R9, R9, R7         // c = 7 - m (column: 7 for right, 0 for left)
+
+    // Initialize flag: all_neighbors_one = 1
+    MOV R10, #1            // R10 = 1, assume all neighbors are 1 until proven otherwise
+
+    // Check up neighbor (r-1, c) if r > 0
+    CMP R8, #0             // Is row > 0?
+    BLE skip_up            // Skip if r <= 0 (no up neighbor)
+    SUB R11, R8, #1        // R11 = r - 1 (row above)
+    LDRB R5, [R4, R11]     // Load byte for row r-1
+    MOV R12, #7            // Compute bit position
+    SUB R12, R12, R9       // bit = 7 - c (bit 7 is col 0, bit 0 is col 7)
+    MOV R0, #1
+    LSL R0, R0, R12        // R0 = 1 << bit (mask for neighbor's bit)
+    TST R5, R0             // Test if bit is 1
+    BNE skip_up            // If bit is 1, skip to next check
+    MOV R10, #0            // Bit is 0, set all_neighbors_one to 0
+skip_up
+
+    // Check down neighbor (r+1, c) if r < 5
+    CMP R8, #5             // Is row < 5?
+    BGE skip_down          // Skip if r >= 5 (no down neighbor)
+    ADD R11, R8, #1        // R11 = r + 1 (row below)
+    LDRB R5, [R4, R11]     // Load byte for row r+1
+    TST R5, R0             // Test same bit position (7 - c)
+    BNE skip_down          // If bit is 1, skip
+    MOV R10, #0            // Bit is 0, set all_neighbors_one to 0
+skip_down
+
+    // Load current row's byte for left and right checks
+    LDRB R5, [R4, R8]      // R5 = byte for current row r
+
+    // Check left neighbor (r, c-1) if c > 0
+    CMP R9, #0             // Is column > 0?
+    BLE skip_left          // Skip if c <= 0 (no left neighbor)
+    MOV R12, #8
+    SUB R12, R12, R9       // bit = 8 - c = 7 - (c - 1) (e.g., c=1 -> bit=7)
+    MOV R0, #1
+    LSL R0, R0, R12        // R0 = 1 << bit
+    TST R5, R0             // Test if bit is 1
+    BNE skip_left          // If bit is 1, skip
+    MOV R10, #0            // Bit is 0, set all_neighbors_one to 0
+skip_left
+
+    // Check right neighbor (r, c+1) if c < 7
+    CMP R9, #7             // Is column < 7?
+    BGE skip_right         // Skip if c >= 7 (no right neighbor)
+    MOV R12, #6
+    SUB R12, R12, R9       // bit = 6 - c = 7 - (c + 1) (e.g., c=0 -> bit=6)
+    MOV R0, #1
+    LSL R0, R0, R12        // R0 = 1 << bit
+    TST R5, R0             // Test if bit is 1
+    BNE skip_right         // If bit is 1, skip
+    MOV R10, #0            // Bit is 0, set all_neighbors_one to 0
+skip_right
+
+    // Determine result
+    CMP R10, #1            // Are all existing neighbors 1?
+    BNE continue_game      // If not, game continues
+    MOV R0, #-1            // All neighbors are 1 and not all grid is 1, lose
+    BX LR
+
+continue_game
+    MOV R0, #0             // Game continues
+    POP{R0-R12,PC}
+	ENDFUNC
 ;------------------------
 ; Check_End
 ;------------------------
