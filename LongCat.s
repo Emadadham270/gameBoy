@@ -1,6 +1,6 @@
 	AREA    MYDATA, DATA, READONLY
 Level1Map
-	DCB 0xD1
+	DCB 0xC1
 	DCB 0xD9
 	DCB 0xCB
     DCB 0x81
@@ -71,7 +71,7 @@ TFT_DrawMap    FUNCTION
 	;Now all screen in blue, which is the background
 	;We need to get the level map to draw it 
 	LDR R0, =Level1Map   ; Load address of Level Map into R0
-    MOV R11,#Green 	 ; square color
+    MOV R11,#Green 	 	 ; square color
 	
 	MOV R1,#10		;START X
 	MOV R3,#0		;START row
@@ -79,8 +79,7 @@ TFT_DrawMap    FUNCTION
 ROW_LOOP
     CMP R3, #6			; Check if all 6 rows processed
     BEQ FINISH_MAP
-	ADD R7, R0,R3		; R7 = ADDRESS OF CURRENT ROW
-    LDR R9, [R7]		; R9 HAS THE CELLS OF THIS ROW 
+    LDRB R9, [R0, R3]		; R9 HAS THE CELLS OF THIS ROW 
 
     MOV R4, #0          ;START COL
     MOV R2, #40			; START Y
@@ -130,62 +129,75 @@ Draw_Snake_Movement FUNCTION
 	MOV R0, #15
 ;DELAY
 	
-	CMP R7 , #1
-	BNE SKIP_UP
-	
+	CMP R7 , #4
+	BNE SKIP_Left
+	; status: 1 -> up, 2->down, 4->left, 8->right
 ;-----------
 ; Input -> UP 
 ;-----------
 	
-	
-UP_LOOP	
-	
-	ADD R7 , R6 , #50
-	ADD R9 , R8 , #50
+	; Filldraw4Input: R6,R7-column start/end   R8,R9-page start/end
+;------------------------
+
+	ADD R7, R6, #50 
+Left_LOOP	
+
+	ADD R9, R8, #50
 	BL TFT_Filldraw4INP
+	BL delay
 	
-	ADD R3 , R3 , #8
-	ADD R8 , R8 , #50
+	ADD R8, #25
+	ADD R9, #25
+	BL TFT_Filldraw4INP
+	BL delay
+	
+	ADD R3, R3, #1
+	ADD R8, #25
 	CMP R3 , R4
-	BNE UP_LOOP
+	BNE Left_LOOP
 	
 	B DRAW_HEAD
 
-SKIP_UP
+SKIP_Left
 
-	CMP R7 , #2
-	BNE SKIP_DOWN
+	CMP R7 , #8
+	BNE SKIP_Right
 	
 	;-----------
 	;Input -> Down
 	;-----------
 
+	ADD R7, R6, #50
+Right_LOOP
 
-DOWN_LOOP
-
-	ADD R7 , R6 , #50
-	ADD R9 , R8 , #50
+	ADD R9, R8, #50
 	BL TFT_Filldraw4INP
+	BL delay
 	
-	SUB R3 , R3 , #8
-	SUB R8 , R8 , #50
+	SUB R8, #25
+	SUB R9, #25
+	BL TFT_Filldraw4INP
+	BL delay
+	
+	SUB R3, R3, #1
+	SUB R8, #25
 	CMP R3 , R4
-	BNE DOWN_LOOP
+	BNE Right_LOOP
 	
 	B DRAW_HEAD
 
 	
 	
-SKIP_DOWN
+SKIP_Right
 	
-	CMP R7 , #4
-	BNE SKIP_LEFT
+	CMP R7 , #1
+	BNE SKIP_Up
 	
 ;-----------
 ;Input -> UP
 ;-----------
 	ADD R9, R8, #50    ;CONSTANT X
-LEFT_LOOP
+Up_LOOP
 
 	ADD R7, R6, #50
 	BL TFT_Filldraw4INP
@@ -199,34 +211,39 @@ LEFT_LOOP
 	ADD R3, R3, #1
 	ADD R6, #25
 	CMP R3, R4
-	BNE LEFT_LOOP
+	BNE Up_LOOP
 	
 	B DRAW_HEAD
 	
-SKIP_LEFT
+SKIP_Up
 
-	CMP R7 , #8
-	BNE SKIP_RIGHT
+	CMP R7 , #2
+	BNE SKIP_Down
 	
 	;-----------
 	;Input -> RIGHT
 	;-----------
-	
-RIGHT_LOOP
+	ADD R9, R8, #50    ;CONSTANT X
+Down_LOOP
 
-	ADD R7 , R6 , #50
-	ADD R9 , R8 , #50
+	ADD R7, R6, #50
 	BL TFT_Filldraw4INP
+	BL delay
 	
-	SUB R3 , R3 , #1
-	SUB R6 , R6 , #50
+	SUB R6, #25
+	SUB R7, #25
+	BL TFT_Filldraw4INP
+	BL delay
+	
+	SUB R3, R3, #1
+	SUB R6, #25
 	CMP R3 , R4
-	BNE RIGHT_LOOP
+	BNE Down_LOOP
 	
 	B DRAW_HEAD
 	
 	
-SKIP_RIGHT
+SKIP_Down
 
 DRAW_HEAD
 
@@ -238,7 +255,6 @@ DRAW_HEAD
 	
 	POP {R0-R12, PC}
 	ENDFUNC
-	
 	
 ;------------------------
 ; Get_Coordinates
@@ -266,211 +282,243 @@ Get_Coordinates FUNCTION
 ; Move_Snake Input R7
 ;------------------------
 Move_Snake FUNCTION
-	PUSH {R0-R12, LR}
-	LDR R0, =SnakeMap; load the address
+	POP {R0-R2, R4-R7, PC}
 
-	MOV R12 , R7
-	AND R12, #0x000F
+	MOV R1 , R7
+	AND R1, #0x000F
 	
-	CMP R12 , #1
+	CMP R1 , #1
 	BEQ MOVE_UPS
 	  
-	CMP R12 , #2
+	CMP R1 , #2
 	BEQ MOVE_DOWNS
 	 
-	CMP R12 , #4
+	CMP R1 , #4
 	BEQ MOVE_LEFTS
 	 
-	CMP R12 , #8
+	CMP R1 , #8
 	BEQ MOVE_RIGHTS
+	
+	B Return
 	 
 MOVE_UPS
-		MOV R4, R3   			; R4 = our “current cell index”
-        ; split R3 into row/col
-        MOV R6, R4, LSR #3      ; R6 = row = R4/8
-        AND R5, R4, #7          ; R5 = col = R4%8
+	LDR R0, =SnakeMap; load the address
+	MOV R4, R3   			; R4 = our “current cell index”
+    ; split R3 into row/col
+    MOV R6, R4, LSR #3      ; R6 = row = R4/8
+    AND R5, R4, #7          ; R5 = col = R4%8
+	
+    ; compute bitmask = 1<<col in R2
+    MOV R2, #1
+    LSL R2, R2, R5
 
-        ; compute pointer to that row in the byte array
-        ADD R1, R0, R6          ; R1 = &SnakeMap[row]
-        ; compute bitmask = 1<<col in R2
-        MOV R2, #1
-        LSL R2, R2, R5
-
-        ; if we’re already in the top row (row==0), there is nothing below
-        CMP R6, #5
-        BEQ Return               ; R4 still = start
+    ; if we’re already in the top row (row==0), there is nothing below
+    CMP R6, #5
+    BEQ Return               ; R4 still = start
 
 LoopUp
-        ; move one row “up”
-    ADDS R6, R6, #1          ; row++
-        ; R6 will remain <=5 as long as we branched here
-    ADDS R1, R1, #1          ; row-pointer++
-
-    LDRB R7, [R1]            ; R7 = map[row]
+	LDR R0, =SnakeMap; load the address
+    ; move one row “up”
+    ADDS R6, #1          ; row++
+    ; R6 will remain <=5 as long as we branched here
+    LDRB R7, [R0, R6]            ; R7 = map[row]
     TST R7, R2              ; test the bit at “col”
     BNE Return           ; if bit==1 ? wall
 
-        ; it was 0 ? valid; mark it visited by setting bit to 1
+    ; it was 0 ? valid; mark it visited by setting bit to 1
     ORR R7, R7, R2
-    STRB R7, [R1]
+    STRB R7, [R0, R6]
 
     ; record that we have moved one row up
-    ADD R4, R4, #8          ; new index = old index + 8
+    ADD R4, #8          ; new index = old index + 8
 
     ; if we still have another row below, loop
     CMP R6, #5
 	BNE LoopUp
-
         ; we fell off after marking the downmost cell; that’s our result
-        B Return
+    B Return
         ; as soon as we hit a 1-bit, we stop.
         ; R4 still holds the index one row below (the last valid cell).
 
 	
 MOVE_DOWNS
-		MOV R4, R3              ; R4 = our “current cell index”
-        ; split R3 into row/col
-        MOV R6, R4, LSR #3      ; R6 = row = R4/8
-        AND R5, R4, #7          ; R5 = col = R4%8
-
-        ; compute pointer to that row in the byte array
-        ADD R1, R0, R6          ; R1 = &SnakeMap[row]
-        ; compute bitmask = 1<<col in R2
-        MOV R2, #1
-        LSL R2, R2, R5
-
-        ; if we’re already in the bottom row (row==0), there is nothing below
-        CMP R6, #0
-        BEQ Return               ; R4 still = start
+	MOV R4, R3              ; R4 = our “current cell index”
+    ; split R3 into row/col
+    MOV R6, R4, LSR #3      ; R6 = row = R4/8
+    AND R5, R4, #7          ; R5 = col = R4%8
+    ; compute pointer to that row in the byte array
+    ; compute bitmask = 1<<col in R2
+    MOV R2, #1
+    LSL R2, R2, R5
+    ; if we’re already in the bottom row (row==0), there is nothing below
+    CMP R6, #0
+    BEQ Return               ; R4 still = start
 
 LoopDown
-        ; move one row “down”
-        SUBS R6, R6, #1          ; row--
-        ; R6 will remain >=0 as long as we branched here
-        SUB R1, R1, #1          ; row-pointer--
+	LDR R0, =SnakeMap; load the address
+    ; move one row “down”
+    SUBS R6, #1          ; row--
+    ; R6 will remain >=0 as long as we branched here
 
-        LDRB R7, [R1]            ; R7 = map[row]
-        TST R7, R2              ; test the bit at “col”
-        BNE Return           ; if bit==1 ? wall
+    LDRB R7, [R0, R6]            ; R7 = map[row]
+    TST R7, R2              ; test the bit at “col”
+    BNE Return           ; if bit==1 ? wall
 
-        ; it was 0 ? valid; mark it visited by setting bit to 1
-        ORR R7, R7, R2
-        STRB R7, [R1]
+    ; it was 0 ? valid; mark it visited by setting bit to 1
+    ORR R7, R7, R2
+    STRB R7, [R0, R6]
 
-        ; record that we have moved one row down
-        SUB R4, R4, #8          ; new index = old index - 8
+    ; record that we have moved one row down
+    SUB R4, #8          ; new index = old index - 8
 
-        ; if we still have another row below, loop
-        CMP R6, #0
-        BNE LoopDown
+    ; if we still have another row below, loop
+    CMP R6, #0
+    BNE LoopDown
 
-        ; we fell off after marking the downmost cell; that’s our result
-        B Return
-        ; as soon as we hit a 1-bit, we stop.
-        ; R4 still holds the index one row below (the last valid cell).
+    ; we fell off after marking the downmost cell; that’s our result
+    B Return
+    ; as soon as we hit a 1-bit, we stop.
+    ; R4 still holds the index one row below (the last valid cell).
 
 
 MOVE_LEFTS
-		MOV R4, R3   			; R4 = our “current cell index”
-        ; split R3 into row/col
-        MOV R6, R4, LSR #3      ; R6 = row = R4/8
-        AND R5, R4, #7          ; R5 = col = R4%8
+	MOV R4, R3   			; R4 = our “current cell index”
+    ; split R3 into row/col
+    MOV R6, R4, LSR #3      ; R6 = row = R4/8
+    AND R5, R4, #7          ; R5 = col = R4%8
 
-        ; compute pointer to that row in the byte array
-        ADD R1, R0, R6          ; R1 = &SnakeMap[row]
-        ; compute bitmask = 1<<col in R2
-        MOV R2, #1
-        LSL R2, R2, R5
+    ; compute bitmask = 1<<col in R2
+    MOV R2, #1
+    LSL R2, R2, R5
 
-        ; if we’re already in the left side  , there is nothing below
-        CMP R5, #7
-        BEQ Return               ; R4 still = start
+    ; if we’re already in the left side  , there is nothing below
+    CMP R5, #7
+    BEQ Return               ; R4 still = start
 
 LoopLEFT
-        ; move one colomn "left"
-        ADDS R5, R5, #1          ; colomn++
-        ; R5 will remain <=7 as long as we branched here
-        ;ADDS R1, R1, #1       ; row-pointer++
-		MOV R2, #1             ;R2= 0....00000001
-        LSL R2, R2, R5         ;R2= 0....00100000
+	; move one colomn "left"
+    ADDS R5, #1         ; colomn++
+    ; R5 will remain <=7 as long as we branched here
+	MOV R2, #1              ;R2= 0....00000001
+    LSL R2, R2, R5          ;R2= 0....00100000
 		
-        LDRB R7, [R1]            ; R7 = map[row]
-        TST R7, R2              ; test the bit at “col”
-        BNE Return           ; if bit==1 ? wall
+	LDR R0, =Level1Map
+    LDRB R7, [R0, R6]       ; R7 = map[row]
+    TST R7, R2              ; test the bit at “col”
+    BNE Return           	; if bit==1 ? wall
 
-        ; it was 0 ? valid; mark it visited by setting bit to 1
-        ORR R7, R7, R2
-        STRB R7, [R1]
+    ; it was 0 ? valid; mark it visited by setting bit to 1
+    ORR R7, R7, R2
+    STRB R7, [R0, R6]
 
-        ; record that we have moved one colomn left
-        ADD R4, R4, #1        ; new index = old index + 8
+    ; record that we have moved one colomn left
+    ADD R4, #1        ; new index = old index + 8
 
-        ; if we still have another row below, loop
-        CMP R5, #7
-        BNE LoopLEFT
+    ; if we still have another row below, loop
+    CMP R5, #7
+    BNE LoopLEFT
 
-        ; we fell off after marking the downmost cell; that’s our result
-        B Return
-        ; as soon as we hit a 1-bit, we stop.
-        ; R4 still holds the index one row below (the last valid cell).
+    ; we fell off after marking the leftmost cell; that’s our result
+    B Return
+    ; as soon as we hit a 1-bit, we stop.
+    ; R4 still holds the index one row below (the last valid cell).
 
 	
 MOVE_RIGHTS
-		MOV R4, R3   			; R4 = our “current cell index”
-        ; split R3 into row/col
-        MOV R6, R4, LSR #3      ; R6 = row = R4/8
-        AND R5, R4, #7          ; R5 = col = R4%8
+	MOV R4, R3   			; R4 = our “current cell index”
+    ; split R3 into row/col
+    MOV R6, R4, LSR #3      ; R6 = row = R4/8
+    AND R5, R4, #7          ; R5 = col = R4%8
 
-        ; compute pointer to that row in the byte array
-        ADD R1, R0, R6          ; R1 = &SnakeMap[row]
-        ; compute bitmask = 1<<col in R2
-        MOV R2, #1
-        LSL R2, R2, R5
+    ; compute bitmask = 1<<col in R2
+    MOV R2, #1
+    LSL R2, R2, R5
 
-        ; if we’re already in the right	side  , there is nothing below
-        CMP R5, #0
-        BEQ Return               ; R4 still = start
+    ; if we’re already in the right	side  , there is nothing below
+    CMP R5, #0
+    BEQ Return               ; R4 still = start
 
 LoopRGHIT
-        ; move one colomn "left"
-        SUBS R5, R5, #1          ; colomn--
-        ; R5 will remain <=0 as long as we branched here
-        ;ADDS R1, R1, #1       ; row-pointer++
-		MOV R2, #1
-        LSL R2, R2, R5
+    ; move one colomn "left"
+    SUBS R5, #1          ; colomn--
+    ; R5 will remain <=0 as long as we branched here
+	MOV R2, #1
+    LSL R2, R2, R5
 		
-        LDRB R7, [R1]            ; R7 = map[row]
-        TST R7, R2              ; test the bit at “col”
-        BNE Return           ; if bit==1 ? wall
+	LDR R0, =SnakeMap	 ; load the address
+    LDRB R7, [R0, R6]    ; R7 = map[row]
+    TST R7, R2           ; test the bit at “col”
+    BNE Return           ; if bit==1 ? wall
 
-        ; it was 0 ? valid; mark it visited by setting bit to 1
-        ORR R7, R7, R2
-        STRB R7, [R1]
+    ; it was 0 ? valid; mark it visited by setting bit to 1
+    ORR R7, R7, R2
+    STRB R7, [R0, R6]
 
-        ; record that we have moved one colomn left
-        SUB R4, R4, #1        ; new index = old index + 8
+    ; record that we have moved one colomn right
+    SUB R4, #1        ; new index = old index + 8
 
-        ; if we still have another row below, loop
-        CMP R5, #0
-        BNE LoopRGHIT
+    ; if we still have another column right, loop
+    CMP R5, #0
+    BNE LoopRGHIT
 
-        ; we fell off after marking the downmost cell; that’s our result
-        B Return
-        ; as soon as we hit a 1-bit, we stop.
-        ; R4 still holds the index one row below (the last valid cell).
+    ; we fell off after marking the rightmost cell; that’s our result
+    B Return
+    ; as soon as we hit a 1-bit, we stop.
+    ; R4 still holds the the last valid cell.
 
 	 
 Return
-	POP {R0-R12, PC}
+	POP {R0-R2, R4-R7, PC}
 	ENDFUNC
 
 ;------------------------
 ; Check_End
 ;------------------------
 Check_End FUNCTION
-	PUSH {R0-R12, LR}
+	PUSH {R0-R11, LR}
 	;TODO
+	MOV R12, #0
+	POP {R0-R11, PC}
+	ENDFUNC
 	
+	
+;------------------------
+; MainGame_LongCat
+;------------------------
+MainGame_LongCat FUNCTION
+    PUSH {R0-R12, LR}
+	MOV R2, #6          ; number of bytes to copy
+	LDR R0, =Level1Map
+    LDR R1, =SnakeMap   ; destination base address
+CopyLoop
+	LDRB R3, [R0], #1 ; load byte from [R0], then R0++
+	STRB R3, [R1], #1 ; store byte to [R1], then R1++
+	SUBS R2, #1 	  ; decrement counter
+	BNE CopyLoop
+	
+	BL TFT_DrawMap
+	
+	LDR R3, =Leve1StartCell
+	LDRB R3, [R3]
+	MOV R4, R3
+MaiN__LooP
+	BL Draw_Snake_Movement
+	BL Check_End
+	CMP R12, #0xFFFFFFFF
+	BEQ end_geme
+	
+INPUT1234                ;Wait for input from user
+	BL GET_state
+	AND R10,R10, #0x000F
+	CMP R10, #00      ;Keep looping while input = 0 or ENTER
+	BEQ INPUT1234
+	
+	BL Move_Snake
+	
+	B MaiN__LooP
+	
+end_geme
 	POP {R0-R12, PC}
 	ENDFUNC
 	END
+		

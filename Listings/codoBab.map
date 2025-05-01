@@ -10,9 +10,9 @@ Section Cross References
     xo_functions.o(MYDATA) refers (Special) to functions.o(CODEY) for TFT_DrawImage
     xo_functions.o(CODEY) refers (Special) to functions.o(CODEY) for TFT_DrawImage
     xo_functions.o(CODEY) refers to xo_functions.o(MYDATA) for XO_array
-    longcat.o(MYDATA) refers (Special) to functions.o(CODEY) for GET_state
-    longcat.o(USEABLE) refers (Special) to functions.o(CODEY) for GET_state
-    longcat.o(CODEY) refers (Special) to functions.o(CODEY) for GET_state
+    longcat.o(MYDATA) refers (Special) to functions.o(CODEY) for TFT_DrawImage
+    longcat.o(USEABLE) refers (Special) to functions.o(CODEY) for TFT_DrawImage
+    longcat.o(CODEY) refers (Special) to functions.o(CODEY) for TFT_DrawImage
     longcat.o(CODEY) refers to longcat.o(MYDATA) for Level1Map
     longcat.o(CODEY) refers to longcat.o(USEABLE) for SnakeMap
     startup_stm32f401xc.o(STACK) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
@@ -39,7 +39,7 @@ Removing Unused input sections from the image.
     Removing functions.o(MYDATA), (0 bytes).
     Removing longcat.o(MYDATA), (7 bytes).
     Removing longcat.o(USEABLE), (6 bytes).
-    Removing longcat.o(CODEY), (644 bytes).
+    Removing longcat.o(CODEY), (756 bytes).
     Removing system_stm32f4xx.o(.text), (0 bytes).
     Removing system_stm32f4xx.o(.ARM.exidx.text.SystemInit), (8 bytes).
     Removing system_stm32f4xx.o(.text.SystemCoreClockUpdate), (302 bytes).
@@ -48,7 +48,7 @@ Removing Unused input sections from the image.
     Removing system_stm32f4xx.o(.rodata.AHBPrescTable), (16 bytes).
     Removing system_stm32f4xx.o(.rodata.APBPrescTable), (8 bytes).
 
-12 unused section(s) (total 1003 bytes) removed from the image.
+12 unused section(s) (total 1115 bytes) removed from the image.
 
 ==============================================================================
 
