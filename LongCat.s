@@ -69,8 +69,7 @@ TFT_DrawMap    FUNCTION
 	BL TFT_Filldraw4INP
 	
 	;Now all screen in blue, which is the background
-	;We need to get the level map to draw it 
-	LDR R0, =Level1Map   ; Load address of Level Map into R0
+
     MOV R11,#Green 	 	 ; square color
 	
 	MOV R1,#10		;START X
@@ -79,6 +78,8 @@ TFT_DrawMap    FUNCTION
 ROW_LOOP
     CMP R3, #6			; Check if all 6 rows processed
     BEQ FINISH_MAP
+	
+	LDR R0, =Level1Map   ; Load address of Level Map into R0
     LDRB R9, [R0, R3]		; R9 HAS THE CELLS OF THIS ROW 
 
     MOV R4, #0          ;START COL
@@ -520,5 +521,6 @@ INPUT1234                ;Wait for input from user
 end_geme
 	POP {R0-R12, PC}
 	ENDFUNC
+	
 	END
 		
