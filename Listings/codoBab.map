@@ -39,7 +39,7 @@ Removing Unused input sections from the image.
     Removing functions.o(MYDATA), (0 bytes).
     Removing longcat.o(MYDATA), (7 bytes).
     Removing longcat.o(USEABLE), (6 bytes).
-    Removing longcat.o(CODEY), (696 bytes).
+    Removing longcat.o(CODEY), (932 bytes).
     Removing system_stm32f4xx.o(.text), (0 bytes).
     Removing system_stm32f4xx.o(.ARM.exidx.text.SystemInit), (8 bytes).
     Removing system_stm32f4xx.o(.text.SystemCoreClockUpdate), (302 bytes).
@@ -48,7 +48,7 @@ Removing Unused input sections from the image.
     Removing system_stm32f4xx.o(.rodata.AHBPrescTable), (16 bytes).
     Removing system_stm32f4xx.o(.rodata.APBPrescTable), (8 bytes).
 
-12 unused section(s) (total 1055 bytes) removed from the image.
+12 unused section(s) (total 1291 bytes) removed from the image.
 
 ==============================================================================
 
