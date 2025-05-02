@@ -517,12 +517,10 @@ check_neighbors
     // Check up neighbor (r-1, c) if r > 0
     CMP R8, #0             // Is row > 0?
     BLE skip_up            // Skip if r <= 0 (no up neighbor)
-    SUB R11, R8, #1        // R11 = r - 1 (row above)
+    ADD R11, R6, #1        // R11 = r + 1 (row above)
     LDRB R5, [R4, R11]     // Load byte for row r-1
-    MOV R12, #7            // Compute bit position
-    SUB R12, R12, R9       // bit = 7 - c (bit 7 is col 0, bit 0 is col 7)
     MOV R0, #1
-    LSL R0, R0, R12        // R0 = 1 << bit (mask for neighbor's bit)
+    LSL R0, R0, R7      // R0 = 1 << bit (mask for neighbor's bit)
     TST R5, R0             // Test if bit is 1
     BNE skip_up            // If bit is 1, skip to next check
     MOV R10, #0            // Bit is 0, set all_neighbors_one to 0
@@ -531,9 +529,9 @@ skip_up
     // Check down neighbor (r+1, c) if r < 5
     CMP R8, #5             // Is row < 5?
     BGE skip_down          // Skip if r >= 5 (no down neighbor)
-    ADD R11, R8, #1        // R11 = r + 1 (row below)
+    SUB R11, R6, #1        // R11 = r - 1 (row below)
     LDRB R5, [R4, R11]     // Load byte for row r+1
-    TST R5, R0             // Test same bit position (7 - c)
+    TST R5, R0             // Test same bit position 
     BNE skip_down          // If bit is 1, skip
     MOV R10, #0            // Bit is 0, set all_neighbors_one to 0
 skip_down
@@ -544,8 +542,8 @@ skip_down
     // Check left neighbor (r, c-1) if c > 0
     CMP R9, #0             // Is column > 0?
     BLE skip_left          // Skip if c <= 0 (no left neighbor)
-    MOV R12, #8
-    SUB R12, R12, R9       // bit = 8 - c = 7 - (c - 1) (e.g., c=1 -> bit=7)
+    LDRB R5, [R4, R6]
+    ADD R12, R7, #1      
     MOV R0, #1
     LSL R0, R0, R12        // R0 = 1 << bit
     TST R5, R0             // Test if bit is 1
@@ -556,11 +554,11 @@ skip_left
     // Check right neighbor (r, c+1) if c < 7
     CMP R9, #7             // Is column < 7?
     BGE skip_right         // Skip if c >= 7 (no right neighbor)
-    MOV R12, #6
-    SUB R12, R12, R9       // bit = 6 - c = 7 - (c + 1) (e.g., c=0 -> bit=6)
+    LDRB R5, [R4, R6]
+    SUB R12, R7, #1      
     MOV R0, #1
     LSL R0, R0, R12        // R0 = 1 << bit
-    TST R5, R0             // Test if bit is 1
+    TST R5, R0               // Test if bit is 1
     BNE skip_right         // If bit is 1, skip
     MOV R10, #0            // Bit is 0, set all_neighbors_one to 0
 skip_right
@@ -568,8 +566,9 @@ skip_right
     // Determine result
     CMP R10, #1            // Are all existing neighbors 1?
     BNE continue_game      // If not, game continues
-    MOV R0, #-1            // All neighbors are 1 and not all grid is 1, lose
-    BX LR
+    ;PUT THE LOGIC OF WINNING HERE          // All neighbors are 1 and not all grid is 1, lose
+WINNER
+	;PUT HERE THE LOGIC OF WINNING
 
 continue_game
     MOV R0, #0             // Game continues
