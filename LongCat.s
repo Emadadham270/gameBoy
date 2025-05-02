@@ -33,7 +33,8 @@ SnakeMap
 	IMPORT  TFT_Filldraw4INP
     IMPORT  delay
 	IMPORT  GET_state
-	
+	EXPORT MainGame_LongCat	
+	EXPORT Draw_Snake_Movement
 
 ;------------------------
 ; TFT_DRAWSQUARE COLOR IN R11
@@ -83,7 +84,7 @@ ROW_LOOP
     LDRB R9, [R0, R3]		; R9 HAS THE CELLS OF THIS ROW 
 
     MOV R4, #0          ;START COL
-    MOV R2, #40			; START Y
+    MOV R2, #40			;START Y
 
 COL_LOOP
     CMP R4, #8          ; Check all 8 columns
@@ -140,20 +141,21 @@ Draw_Snake_Movement FUNCTION
 	; Filldraw4Input: R6,R7-column start/end   R8,R9-page start/end
 ;------------------------
 
-	ADD R7, R6, #50 
+	 
 Left_LOOP	
-
+	ADD R7, R6, #50
 	ADD R9, R8, #50
 	BL TFT_Filldraw4INP
 	BL delay
 	
-	ADD R8, #25
-	ADD R9, #25
-	BL TFT_Filldraw4INP
-	BL delay
+	;ADD R8, #25
+	;ADD R9, #25
+	;BL TFT_Filldraw4INP
+	;BL delay
 	
 	ADD R3, R3, #1
-	ADD R8, #25
+	;ADD R8, #25
+	ADD R8, #50
 	CMP R3 , R4
 	BNE Left_LOOP
 	
@@ -168,20 +170,21 @@ SKIP_Left
 	;Input -> Down
 	;-----------
 
-	ADD R7, R6, #50
+	
 Right_LOOP
-
+	ADD R7, R6, #50
 	ADD R9, R8, #50
 	BL TFT_Filldraw4INP
 	BL delay
 	
-	SUB R8, #25
-	SUB R9, #25
-	BL TFT_Filldraw4INP
-	BL delay
+	;SUB R8, #25
+	;SUB R9, #25
+	;BL TFT_Filldraw4INP
+	;BL delay
 	
 	SUB R3, R3, #1
-	SUB R8, #25
+	;SUB R8, #25
+	SUB R8, #50
 	CMP R3 , R4
 	BNE Right_LOOP
 	
@@ -197,20 +200,21 @@ SKIP_Right
 ;-----------
 ;Input -> UP
 ;-----------
-	ADD R9, R8, #50    ;CONSTANT X
+	;ADD R9, R8, #50    ;CONSTANT X
 Up_LOOP
-
+	ADD R9, R8, #50    
 	ADD R7, R6, #50
 	BL TFT_Filldraw4INP
 	BL delay
 	
-	ADD R6, #25
-	ADD R7, #25
-	BL TFT_Filldraw4INP
-	BL delay
+	;ADD R6, #25
+	;ADD R7, #25
+	;BL TFT_Filldraw4INP
+	;BL delay
 	
-	ADD R3, R3, #1
-	ADD R6, #25
+	ADD R3, R3, #8
+	;ADD R6, #25
+	ADD R6, #50
 	CMP R3, R4
 	BNE Up_LOOP
 	
@@ -224,20 +228,21 @@ SKIP_Up
 	;-----------
 	;Input -> RIGHT
 	;-----------
-	ADD R9, R8, #50    ;CONSTANT X
+	;ADD R9, R8, #50    ;CONSTANT X
 Down_LOOP
-
+	ADD R9, R8, #50
 	ADD R7, R6, #50
 	BL TFT_Filldraw4INP
 	BL delay
 	
-	SUB R6, #25
-	SUB R7, #25
-	BL TFT_Filldraw4INP
-	BL delay
+	;SUB R6, #25
+	;SUB R7, #25
+	;BL TFT_Filldraw4INP
+	;BL delay
 	
-	SUB R3, R3, #1
-	SUB R6, #25
+	SUB R3, R3, #8
+	;SUB R6, #25
+	SUB R6, #50
 	CMP R3 , R4
 	BNE Down_LOOP
 	
@@ -250,7 +255,7 @@ DRAW_HEAD
 
 	ADD R7 , R6 , #50
 	ADD R9 , R8 , #50
-	MOV R0 , #Black
+	MOV R11 , #Black
 	BL TFT_Filldraw4INP
 	
 	
@@ -263,18 +268,19 @@ DRAW_HEAD
 ; Output : Variables -> X,Y Start Cell
 ;------------------------
 Get_Coordinates FUNCTION
-	PUSH{R0-R4,LR}
+	PUSH{R0-R5,LR}
 	
 	MOV R5, #50
-	AND R4, R10, #7			; REMAINDER
-	MUL R3, R4, R5			; 50 * REMAINDER
-	ADD R6, R3 , #10        ; X START = 10 + 50 * REMINDER
-	
 	
     MOV R4, R10, LSR #3     ; Perform logical shift right by 3 bits (divide by 8)
 	MUL R3, R4, R5			; 50 * RESULT IN R4
-	ADD R8, R3, #40        ; Y START = 10 + 50 * CELL / 8
+	ADD R6, R3, #10         ; X START = 10 + 50 * (CELL / 8)
 	
+	
+	AND R4, R10, #7			; REMAINDER
+	MUL R3, R4, R5			; 50 * REMAINDER
+	ADD R8, R3, #40        ; Y START = 40 + 50 * REMAINDER
+		
 	POP{R0-R5,PC}
 	ENDFUNC
 
@@ -489,19 +495,31 @@ Check_End FUNCTION
 MainGame_LongCat FUNCTION
     PUSH {R0-R12, LR}
 	MOV R2, #6          ; number of bytes to copy
+
+CopyLoop
 	LDR R0, =Level1Map
     LDR R1, =SnakeMap   ; destination base address
-CopyLoop
 	LDRB R3, [R0], #1 ; load byte from [R0], then R0++
 	STRB R3, [R1], #1 ; store byte to [R1], then R1++
 	SUBS R2, #1 	  ; decrement counter
 	BNE CopyLoop
 	
-	BL TFT_DrawMap
-	
+	BL TFT_DrawMap	
 	LDR R3, =Leve1StartCell
 	LDRB R3, [R3]
 	MOV R4, R3
+	MOV R10,R3
+	;MOV R6,#0X0050
+	; TO BE DELETED
+	;MOV R8,#240
+	;ADD R7 , R6 , #50
+	;ADD R9 , R8 , #50
+	;MOV R11 , #Black
+	;BL TFT_Filldraw4INP
+	;ADD R7,R6,#50
+	;MOV R9,290
+	;BL DRAW_HEAD
+
 MaiN__LooP
 	BL Draw_Snake_Movement
 	BL Check_End
@@ -523,4 +541,3 @@ end_geme
 	ENDFUNC
 	
 	END
-		
