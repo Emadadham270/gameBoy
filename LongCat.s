@@ -1,11 +1,11 @@
 	AREA    MYDATA, DATA, READONLY
 Level1Map
-	DCB 0xC1
-	DCB 0xD9
-	DCB 0xCB
-    DCB 0x81
+	DCB 0x81
 	DCB 0xA5
 	DCB 0x81
+    DCB 0xCB
+	DCB 0xC9
+	DCB 0xC1
 
 Leve1StartCell DCB 36
 		;--- Colors ---
@@ -95,6 +95,7 @@ COL_LOOP
 
     TST R9, R10         ; Test if bit is 1
     BEQ SkipDraw        ; If 0, skip
+	MOV R11,#Green
     ; If bit is 1, draw a wall block which is square
     BL TFT_DRAWSQUARE 	
 SkipDraw
@@ -108,7 +109,7 @@ Next_Row_MAP
     B ROW_LOOP
 
 FINISH_MAP
-	POP {R0-R12, LR}
+	POP {R0-R12, PC}
 	ENDFUNC
 
 
@@ -123,7 +124,8 @@ Draw_Snake_Movement FUNCTION
 	
 	MOV R10 , R3
 	BL Get_Coordinates
-	
+	CMP R3, R4
+	BEQ DRAW_HEAD
 ;R6 -> X_START_OF START CELL
 ;R8 -> Y_START_OF START CELL
 	MOV R11, #Yellow
@@ -289,7 +291,7 @@ Get_Coordinates FUNCTION
 ; Move_Snake Input R7
 ;------------------------
 Move_Snake FUNCTION
-	POP {R0-R2, R4-R7, PC}
+	POP {R0-R2, R5-R7, PC}
 
 	MOV R1 , R7
 	AND R1, #0x000F
@@ -475,7 +477,7 @@ LoopRGHIT
 
 	 
 Return
-	POP {R0-R2, R4-R7, PC}
+	POP {R0-R2, R5-R7, PC}
 	ENDFUNC
 ;------------------------
 ; check win (R1 = 0xFFFF win - R1 = 0xAAAA lose
@@ -613,7 +615,7 @@ CopyLoop
 	LDRB R3, [R3]
 	MOV R4, R3
 	MOV R10,R3
-	;MOV R6,#0X0050
+	MOV R6,#0X0050
 	; TO BE DELETED
 	;MOV R8,#240
 	;ADD R7 , R6 , #50

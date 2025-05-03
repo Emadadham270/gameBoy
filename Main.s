@@ -22,7 +22,7 @@ Black	EQU 0x0000
 	IMPORT delay
  
 	IMPORT Main_Game_XO
-
+	IMPORT MainGame_LongCat
 __main FUNCTION
 
 
@@ -31,7 +31,7 @@ __main FUNCTION
     ; Initialize TFT
     BL TFT_Init
 
-	BL Main_Game_XO
+	BL MainGame_LongCat
 
     ENDFUNC
 	
