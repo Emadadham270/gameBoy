@@ -590,7 +590,10 @@ INPUT123                ;Wait for input from user
 Draw_X FUNCTION
     PUSH   {R0-R12, LR}
 	
-	MOV R10, #7
+	ADD R1, #10
+	ADD R2, #10
+	SUB R3, #20
+	MOV R10, #8
     ; compute HALF = THICK/2 in R5
     MOV    R5, R10
     LSR    R5, R5, #1
@@ -648,8 +651,11 @@ TFT_XLoop
 ;------------------------------------------------------------------------------
 Draw_O  FUNCTION
 	PUSH {R0-R12, LR}
-
-	MOV R10, #6
+	
+	ADD R1, #10
+	ADD R2, #10
+	SUB R3, #20
+	MOV R10, #8
 	;-- compute HALF = THICK/2, REM = THICK–HALF–1  (exactly as in Draw_X)
 	MOV R5, R10
 	LSR R5, R5, #1           ; R5 = floor(THICK/2)
