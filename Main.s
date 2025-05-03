@@ -20,9 +20,12 @@ Black	EQU 0x0000
 	IMPORT TFT_Filldraw4INP
 	IMPORT GET_state
 	IMPORT delay
- 
+ 	IMPORT  TFT_DrawMazeGrid
+	IMPORT  TFT_DrawMazeGrid2
+	IMPORT  TFT_DrawMazeGrid3			
 	IMPORT Main_Game_XO
 	IMPORT MainGame_LongCat
+	IMPORT  TFT_DrawMapM
 __main FUNCTION
 
 
@@ -30,9 +33,10 @@ __main FUNCTION
 	BL CONFIGURE_PORTS
     ; Initialize TFT
     BL TFT_Init
-
+	;BL TFT_DrawMapM
 	BL MainGame_LongCat
 
     ENDFUNC
 	
 	END
+	

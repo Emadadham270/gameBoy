@@ -4,9 +4,15 @@ Level1Map
 	DCB 0xA5
 	DCB 0x81
     DCB 0xCB
-	DCB 0xC9
+	DCB 0xD9
 	DCB 0xC1
 
+	;DCB 0x81
+	;DCB 0xA5
+	;DCB 0x81
+    ;DCB 0xCB
+	;DCB 0xD9
+	;DCB 0xC1
 Leve1StartCell DCB 36
 		;--- Colors ---
 Red     	   EQU 0XF800 
@@ -150,10 +156,6 @@ Left_LOOP
 	BL TFT_Filldraw4INP
 	BL delay
 	
-	;ADD R8, #25
-	;ADD R9, #25
-	;BL TFT_Filldraw4INP
-	;BL delay
 	
 	ADD R3, R3, #1
 	;ADD R8, #25
@@ -178,11 +180,6 @@ Right_LOOP
 	ADD R9, R8, #50
 	BL TFT_Filldraw4INP
 	BL delay
-	
-	;SUB R8, #25
-	;SUB R9, #25
-	;BL TFT_Filldraw4INP
-	;BL delay
 	
 	SUB R3, R3, #1
 	;SUB R8, #25
@@ -209,10 +206,6 @@ Up_LOOP
 	BL TFT_Filldraw4INP
 	BL delay
 	
-	;ADD R6, #25
-	;ADD R7, #25
-	;BL TFT_Filldraw4INP
-	;BL delay
 	
 	ADD R3, R3, #8
 	;ADD R6, #25
@@ -236,11 +229,6 @@ Down_LOOP
 	ADD R7, R6, #50
 	BL TFT_Filldraw4INP
 	BL delay
-	
-	;SUB R6, #25
-	;SUB R7, #25
-	;BL TFT_Filldraw4INP
-	;BL delay
 	
 	SUB R3, R3, #8
 	;SUB R6, #25
@@ -327,7 +315,7 @@ MOVE_UPS
 LoopUp
 	LDR R0, =SnakeMap; load the address
     ; move one row “up”
-    ADDS R6, #1          ; row++
+    ADD R6, #1          ; row++
     ; R6 will remain <=5 as long as we branched here
     LDRB R7, [R0, R6]            ; R7 = map[row]
     TST R7, R2              ; test the bit at “col”
@@ -365,7 +353,7 @@ MOVE_DOWNS
 LoopDown
 	LDR R0, =SnakeMap; load the address
     ; move one row “down”
-    SUBS R6, #1          ; row--
+    SUB R6, #1          ; row--
     ; R6 will remain >=0 as long as we branched here
 
     LDRB R7, [R0, R6]            ; R7 = map[row]
@@ -406,7 +394,7 @@ MOVE_LEFTS
 LoopLEFT
 	LDR R0, =SnakeMap; load the address
 	; move one colomn "left"
-    ADDS R5, #1         ; colomn++
+    ADD R5, #1         ; colomn++
     ; R5 will remain <=7 as long as we branched here
 	MOV R2, #1              ;R2= 0....00000001
     LSL R2, R2, R5          ;R2= 0....00100000
@@ -448,7 +436,7 @@ MOVE_RIGHTS
 LoopRGHIT
 	LDR R0, =SnakeMap; load the address
     ; move one colomn "left"
-    SUBS R5, #1          ; colomn--
+    SUB R5, #1          ; colomn--
     ; R5 will remain <=0 as long as we branched here
 	MOV R2, #1
     LSL R2, R2, R5
@@ -509,6 +497,8 @@ skip_up
     SUB R11, R6, #1        ; R11 = r - 1 (row below)
 	LDR R4, =SnakeMap          ; Load base address of the 6-byte grid into R4
     LDRB R5, [R4, R11]     ; Load byte for row r+1
+	MOV R0, #1
+    LSL R0, R0, R7         ; R0 = 1 << bit (mask for neighbor's bit)
     TST R5, R0             ; Test same bit position 
     BNE skip_down          ; If bit is 1, skip
     B continue_game           ; Bit is 0, still can move: CONTINUE
@@ -531,7 +521,7 @@ skip_down
 skip_left
 
     ; Check right neighbor (r, c+1) if c < 7
-    CMP R9, #7             ; Is column < 7?
+    CMP R9, #7            ; Is column < 7?
     BGE skip_right         ; Skip if c >= 7 (no right neighbor)
 	LDR R4, =SnakeMap          ; Load base address of the 6-byte grid into R4
     LDRB R5, [R4, R6]

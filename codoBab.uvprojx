@@ -404,6 +404,11 @@
               <FileType>2</FileType>
               <FilePath>.\LongCat.s</FilePath>
             </File>
+            <File>
+              <FileName>MAZE_Functions.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\MAZE_Functions.s</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
