@@ -119,9 +119,9 @@ FINISH_MAP
 ; Inputs : R3 -> StartCell , R4-> EndCell , R7 -> Input Status
 ;------------------------
 Draw_Snake_Movement FUNCTION
-	PUSH {R0-R12, LR}
+	PUSH {R0-R2, R4-R12, LR}
 	
-	
+	MOV R7,R10
 	MOV R10 , R3
 	BL Get_Coordinates
 	CMP R3, R4
@@ -133,7 +133,7 @@ Draw_Snake_Movement FUNCTION
 	MOV R0, #15
 ;DELAY
 	
-	CMP R7 , #4
+	CMP R7 , #1
 	BNE SKIP_Left
 	; status: 1 -> up, 2->down, 4->left, 8->right
 ;-----------
@@ -165,7 +165,7 @@ Left_LOOP
 
 SKIP_Left
 
-	CMP R7 , #8
+	CMP R7 , #2
 	BNE SKIP_Right
 	
 	;-----------
@@ -196,7 +196,7 @@ Right_LOOP
 	
 SKIP_Right
 	
-	CMP R7 , #1
+	CMP R7 , #4
 	BNE SKIP_Up
 	
 ;-----------
@@ -224,7 +224,7 @@ Up_LOOP
 	
 SKIP_Up
 
-	CMP R7 , #2
+	CMP R7 , #8
 	BNE SKIP_Down
 	
 	;-----------
@@ -252,7 +252,7 @@ Down_LOOP
 	
 	
 SKIP_Down
-
+	
 DRAW_HEAD
 
 	ADD R7 , R6 , #50
@@ -261,7 +261,7 @@ DRAW_HEAD
 	BL TFT_Filldraw4INP
 	
 	
-	POP {R0-R12, PC}
+	POP {R0-R2, R4-R12, PC}
 	ENDFUNC
 	
 ;------------------------
@@ -288,24 +288,23 @@ Get_Coordinates FUNCTION
 
 
 ;------------------------
-; Move_Snake Input R7
+; Move_Snake Input R10
 ;------------------------
 Move_Snake FUNCTION
-	POP {R0-R2, R5-R7, PC}
-
-	MOV R1 , R7
+	PUSH {R0-R2, R5-R7, R10, LR}
+	MOV R1 , R10
 	AND R1, #0x000F
 	
-	CMP R1 , #1
+	CMP R1 , #4
 	BEQ MOVE_UPS
 	  
-	CMP R1 , #2
+	CMP R1 , #8
 	BEQ MOVE_DOWNS
 	 
-	CMP R1 , #4
+	CMP R1 , #1
 	BEQ MOVE_LEFTS
 	 
-	CMP R1 , #8
+	CMP R1 , #2
 	BEQ MOVE_RIGHTS
 	
 	B Return
@@ -405,13 +404,12 @@ MOVE_LEFTS
     BEQ Return               ; R4 still = start
 
 LoopLEFT
+	LDR R0, =SnakeMap; load the address
 	; move one colomn "left"
     ADDS R5, #1         ; colomn++
     ; R5 will remain <=7 as long as we branched here
 	MOV R2, #1              ;R2= 0....00000001
     LSL R2, R2, R5          ;R2= 0....00100000
-		
-	LDR R0, =Level1Map
     LDRB R7, [R0, R6]       ; R7 = map[row]
     TST R7, R2              ; test the bit at “col”
     BNE Return           	; if bit==1 ? wall
@@ -448,13 +446,12 @@ MOVE_RIGHTS
     BEQ Return               ; R4 still = start
 
 LoopRGHIT
+	LDR R0, =SnakeMap; load the address
     ; move one colomn "left"
     SUBS R5, #1          ; colomn--
     ; R5 will remain <=0 as long as we branched here
 	MOV R2, #1
     LSL R2, R2, R5
-		
-	LDR R0, =SnakeMap	 ; load the address
     LDRB R7, [R0, R6]    ; R7 = map[row]
     TST R7, R2           ; test the bit at “col”
     BNE Return           ; if bit==1 ? wall
@@ -477,7 +474,7 @@ LoopRGHIT
 
 	 
 Return
-	POP {R0-R2, R5-R7, PC}
+	POP {R0-R2, R5-R7, R10, PC}
 	ENDFUNC
 ;------------------------
 ; check win (R1 = 0xFFFF win - R1 = 0xAAAA lose
@@ -600,14 +597,14 @@ continue_game
 ;------------------------
 MainGame_LongCat FUNCTION
     PUSH {R0-R12, LR}
-	MOV R2, #6          ; number of bytes to copy
-
+	MOV R2, #0          ; number of bytes to copy
 CopyLoop
 	LDR R0, =Level1Map
     LDR R1, =SnakeMap   ; destination base address
-	LDRB R3, [R0], #1 ; load byte from [R0], then R0++
-	STRB R3, [R1], #1 ; store byte to [R1], then R1++
-	SUBS R2, #1 	  ; decrement counter
+	LDRB R3, [R0, R2] ; load byte from [R0], then R0++
+	STRB R3, [R1, R2] ; store byte to [R1], then R1++
+	ADD R2, #1 	  ; increment counter
+	CMP R2, #6
 	BNE CopyLoop
 	
 	BL TFT_DrawMap	
