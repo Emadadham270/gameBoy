@@ -49,7 +49,7 @@ Black		   EQU 0x0000
     EXPORT  GET_state
     EXPORT  delay
 	EXPORT	CONFIGURE_PORTS
-	EXPORT  BCD_TO_SEVEN_SEG
+	EXPORT  Num_to_LCD
 
 ;-----------------------------------------
 ; Initially call in main function
@@ -113,7 +113,6 @@ CONFIGURE_PORTS FUNCTION
 
     POP{R0-R1,PC}
     ENDFUNC	
-	
 	; *************************************************************
 	; TFT Write Command (R0 = command)
 	; *************************************************************
@@ -153,10 +152,10 @@ TFT_WriteCommand FUNCTION
 	POP {R1-R2, PC}
 	BX LR
 	ENDFUNC
-
-	; *************************************************************
-	; TFT Write Data (R0 = data)
-	; *************************************************************
+	
+; *************************************************************
+; TFT Write Data (R0 = data)
+; *************************************************************
 TFT_WriteData FUNCTION
 	PUSH {R1-R2, LR}
 
@@ -192,10 +191,10 @@ TFT_WriteData FUNCTION
 	POP {R1-R2, PC}
 	BX LR
 	ENDFUNC
-
-	; *************************************************************
-	; TFT Initialization
-	; *************************************************************
+	LTORG
+; *************************************************************
+; TFT Initialization
+; *************************************************************
 TFT_Init FUNCTION
 	PUSH {R0-R2, LR}
 
@@ -435,7 +434,118 @@ DelayInner_Loop
     BGT     DelayInner_Loop
     POP     {R0-R12, PC}
 	ENDFUNC
-	
+
+
+
+
+;------------------------------------------
+; Num_to_LCD FUNCTION
+;
+; Inputs:
+;  R0 = binary number to display
+;  R1 = X origin
+;  R2 = Y origin
+;  R3 = segment thickness
+;  R4 = segment length
+;
+; Clobbers: R5,R6,R7,R8,R9
+; Returns R0 = raw 32-bit segment word (optional)
+;------------------------------------------
+Num_to_LCD FUNCTION
+    PUSH    {R5-R9, LR}
+
+    ; compute digit width = length + 2*thickness
+    ADD R5, R4, R3
+    ADD R5, R5, R3    ; R5 = 2*R3 + R4
+
+    ; 1) binary → BCD
+    BL Binary_to_BCD ; R0 = [d3:d2:d1:d0] BCD
+
+    ; 2) BCD → four 7-seg masks in one word
+    BL BCD_TO_SEVEN_SEG ; R0 = {seg(d3),seg(d2),seg(d1),seg(d0)}
+
+    ; save segment-word, base X
+    MOV R7, R0        ; R7 = segment-word
+    MOV R8, R1        ; R8 = base X
+
+    ; init for 4-byte loop
+    MOV R1, R8        ; R1 = current X
+    MOV R6, #24       ; shift amount to extract top byte
+    MOV R9, #0        ; digit index
+
+loop_digits
+    ; extract byte = (R7 >> R6) & 0xFF → R12
+    MOV R12, R7, LSR R6
+    AND R12, R12, #0xFF
+
+    ; 3) draw that digit
+    BL DrawDigit
+
+    ; advance to next digit position
+    ADD R1, R1, R5
+	ADD R1, R3 ; X += digit_width + thickness (as space)
+    ; next byte
+    SUBS R6, R6, #8
+    ADD R9, R9, #1
+    CMP R9, #4
+    BLT loop_digits
+
+    ; return the raw segment-word (optional)
+    ;MOV     R0, R7
+    POP     {R5-R9, PC}
+	ENDFUNC
+
+;INPUT AND OUTPUT IN R0
+Binary_to_BCD FUNCTION
+	PUSH {R1-R5, LR}
+	MOV R1, R0
+	MOV R2, #0 ; R2 = BCD result
+	MOV R3, #16 ; Loop counter for 16 bits
+
+loo00p
+	; Shift BCD left
+	LSL R2, R2, #1
+
+	; Insert MSB of R1 into BCD
+	TST R1, #0x8000
+	ORRNE R2, R2, #1
+
+	; Shift binary input
+	LSL R1, R1, #1
+
+	; Adjust BCD digits
+	MOV R4, R2
+
+	; Digit 0
+	AND R5, R4, #0x000F
+	CMP R5, #5
+	ADDGE R2, R2, #0x0003
+
+	; Digit 1
+	AND R5, R4, #0x00F0
+	LSR R5, R5, #4
+	CMP R5, #5
+	ADDGE R2, R2, #0x0030
+
+	; Digit 2
+	AND R5, R4, #0x0F00
+	LSR R5, R5, #8
+	CMP R5, #5
+	ADDGE R2, R2, #0x0300
+
+	; Digit 3
+	AND R5, R4, #0xF000
+	LSR R5, R5, #12
+	CMP R5, #5
+	ADDGE R2, R2, #0x3000
+
+	; Loop next bit
+	SUBS R3, R3, #1
+	BNE loo00p
+
+	MOV R0, R2        ; Return BCD in R0
+	POP {R1-R5, PC}   ; Restore and return
+	ENDFUNC
 ;------------------------------------------------------------
 ; R0 = [d3:d2:d1:d0] four BCD digits
 ; Returns R0 = {seg(d3), seg(d2), seg(d1), seg(d0)}
@@ -518,114 +628,125 @@ dec_end
 ; R1 = x coordinate (origin)
 ; R2 = y coordinate (origin)
 ; R3 = thickness (e.g., 8)
-; R4 = large span (e.g., 0x60 = 96 decimal)
+; R4 = segment length
 ; R12 = Digit (Only 8 bits, everything else is 0)
 ;EDITTT
 
 DrawDigit FUNCTION
 	PUSH {R5-R9, LR}
 	
-	MOV R5, R4, LSR #1 ;Mid Span
-	
-;----------------------------------------------------------
-; Segment A: test bit0 => if set, draw
-;----------------------------------------------------------
-	TST R12, #0x01 ; test bit 0
-	BEQ skipA ; if zero => skip
-	; -- DRAW SEGMENT A --
-	; Example, top horizontal:
-	SUB R6, R1, R3
-	MOV R7, R1
-	SUB R8, R2, R3
-	ADD R9, R2, R4
-	ADD R9, R9, R3
+;---------------------------
+; SEGMENT A (bit0) – top horizontal
+;   x:  x+R3     … x+R3+R4
+;   y:  y+2(R3+R4) … y+3R3+2R4
+;---------------------------
+	TST R12,#0x01
+	BEQ skipA
+	ADD R8,R2,R3
+	ADD R9,R8,R4
+	ADD R6,R1,R3
+	ADD R6,R6,R3
+	ADD R6,R6,R4
+	ADD R6,R6,R4
+	ADD R7,R6,R3
 	BL TFT_Filldraw4INP
-
 skipA
-;----------------------------------------------------------
-; Segment B: test bit1 => if set, draw
-;----------------------------------------------------------
-	TST R12, #0x02
+
+;---------------------------
+; SEGMENT B (bit1) – upper-left vertical
+;   x:  x      … x+R3
+;   y:  y+R4+2R3 … y+2(R3+R4)
+;---------------------------
+	TST R12,#0x02
 	BEQ skipB
-	; -- DRAW SEGMENT B --
-	SUB R6, R1, R3
-	ADD R7, R1, R4
-	ADD R7, R7, R3
-	SUB R8, R2, R3
-	MOV R9, R2
+	MOV R8,R2
+	ADD R9,R2,R3
+	ADD R6,R1,R4
+	ADD R6,R6,R3
+	ADD R6,R6,R3
+	ADD R7,R1,R3
+	ADD R7,R7,R3
+	ADD R7,R7,R4
+	ADD R7,R7,R4
 	BL TFT_Filldraw4INP
-	
 skipB
-;----------------------------------------------------------
-; Segment C: test bit2 => if set, draw
-;----------------------------------------------------------
-	TST R12, #0x04
+
+;---------------------------
+; SEGMENT C (bit2) – upper-right vertical
+;   x:  x+R3   … x+R3+R4
+;   y:  y+R3   … y+R3+R4
+;---------------------------
+	TST R12,#0x04
 	BEQ skipC
-	; -- DRAW SEGMENT C --
-	SUB R6, R1, R3
-	ADD R7, R1, R4
-	ADD R7, R7, R3
-	ADD R8, R2, R4
-	ADD R9, R2, R4
-	ADD R9, R9, R3
+	ADD R8,R2,R3
+	ADD R9,R8,R4
+	ADD R6,R1,R3
+	ADD R7,R6,R4
 	BL TFT_Filldraw4INP
-
 skipC
-;----------------------------------------------------------
-; Segment D: test bit3 => if set, draw
-;----------------------------------------------------------
-	TST R12, #0x08
+
+;---------------------------
+; SEGMENT D (bit3) – bottom horizontal
+;   x:  x+R3   … x+R3+R4
+;   y:  y      … y+R3
+;---------------------------
+	TST R12,#0x08
 	BEQ skipD
-	; -- DRAW SEGMENT D --
-	ADD R6, R1, R4
-	ADD R7, R1, R4
-	ADD R7, R7, R3
-	SUB R8, R2, R3
-	ADD R9, R2, R4
-	ADD R9, R9, R3
+	ADD R8,R2,R3
+	ADD R9,R8,R4
+	MOV R6,R1
+	ADD R7,R1,R3
 	BL TFT_Filldraw4INP
-
 skipD
-;----------------------------------------------------------
-; Segment E: test bit4 => if set, draw
-;----------------------------------------------------------
-	TST R12, #0x10
+
+;---------------------------
+; SEGMENT E (bit4) – lower-left vertical
+;   x:  x+R3+R4 … x+2R3+R4
+;   y:  y+R3   … y+R3+R4
+;---------------------------
+	TST R12,#0x10
 	BEQ skipE
-	; -- DRAW SEGMENT E --
-	SUB R6, R1, R3
-	MOV R7, R1
-	ADD R8, R2, R5
-	ADD R9, R2, R4
+	ADD R8,R2,R3
+	ADD R8,R8,R4
+	ADD R9,R8,R3
+	ADD R6,R1,R3
+	ADD R7,R6,R4
 	BL TFT_Filldraw4INP
-
 skipE
-;----------------------------------------------------------
-; Segment F: test bit5 => if set, draw
-;----------------------------------------------------------
-	TST R12, #0x20
+
+;---------------------------
+; SEGMENT F (bit5) – lower-right vertical
+;   x:  x+R3+R4 … x+2R3+R4
+;   y:  y+2R3+R4 … y+2(R3+R4)
+;---------------------------
+	TST R12,#0x20
 	BEQ skipF
-	; -- DRAW SEGMENT F --
-	SUB R6, R1, R3
-	MOV R7, R1
-	MOV R8, R2
-	ADD R9, R2, R5
+	ADD R8,R2,R3
+	ADD R8,R8,R4
+	ADD R9,R8,R3
+	ADD R6,R1,R3
+	ADD R6,R6,R3
+	ADD R6,R6,R4
+	ADD R7,R1,R3
+	ADD R7,R7,R3
+	ADD R7,R7,R4
+	ADD R7,R7,R4
 	BL TFT_Filldraw4INP
-
 skipF
-;----------------------------------------------------------
-; Segment G: test bit6 => if set, draw
-;----------------------------------------------------------
-	TST R12, #0x40
-	BEQ skipG
-	; -- DRAW SEGMENT G --
-	SUB R6, R1, R3
-	ADD R7, R1, R4
-	ADD R7, R7, R3
-	ADD R8, R2, R5
-	ADD R9, R2, R5
-	ADD R9, R9, R3
-	BL TFT_Filldraw4INP
 
+;---------------------------
+; SEGMENT G (bit6) – middle horizontal
+;   x:  x+R3   … x+R3+R4
+;   y:  y+R3+R4 … y+2R3+R4
+;---------------------------
+	TST R12,#0x40
+	BEQ skipG
+	ADD R8,R2,R3
+	ADD R9,R8,R4
+	ADD R6,R1,R3
+	ADD R6,R6,R4
+	ADD R7,R6,R3
+	BL TFT_Filldraw4INP
 skipG
 	POP {R5-R9, PC}
 	ENDFUNC

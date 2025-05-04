@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\codoBab.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\codoBab.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6230001: Last Updated: Sun May  4 02:11:26 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6230001: Last Updated: Sun May  4 16:17:11 2025
 <BR><P>
 <H3>Maximum Stack Usage =          0 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -365,16 +365,16 @@ Global Symbols
 </UL>
 <P><STRONG><a name="[44]"></a>__user_initial_stackheap</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, startup_stm32f401xc.o(.text), UNUSED, KEPT)
 
-<P><STRONG><a name="[66]"></a>__use_two_region_memory</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+<P><STRONG><a name="[68]"></a>__use_two_region_memory</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
 
-<P><STRONG><a name="[67]"></a>__rt_heap_escrow$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+<P><STRONG><a name="[69]"></a>__rt_heap_escrow$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
 
-<P><STRONG><a name="[68]"></a>__rt_heap_expand$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+<P><STRONG><a name="[6a]"></a>__rt_heap_expand$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
 
 <P><STRONG><a name="[42]"></a>SystemInit</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, system_stm32f4xx.o(.text.SystemInit))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f401xc.o(.text)
 </UL>
-<P><STRONG><a name="[65]"></a>CONFIGURE_PORTS</STRONG> (Thumb, 78 bytes, Stack size 0 bytes, functions.o(CODEY))
+<P><STRONG><a name="[67]"></a>CONFIGURE_PORTS</STRONG> (Thumb, 78 bytes, Stack size 0 bytes, functions.o(CODEY))
 <BR><BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__main
 </UL>
 
@@ -409,18 +409,18 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drawsquare
 <LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DRAWBlock
-<LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_Snake_Movement
-<LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_win
-<LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMap
-<LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DRAWSQUARE
-<LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_O
-<LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_X
-<LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawTA3ADOL
-<LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawOWINS
-<LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawXWINS
-<LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawBorder
-<LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawGrid
-<LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BCD_TO_SEVEN_SEG
+<LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_Snake_Movement
+<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_win
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMap
+<LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DRAWSQUARE
+<LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_O
+<LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_X
+<LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawTA3ADOL
+<LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawOWINS
+<LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawXWINS
+<LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawBorder
+<LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawGrid
+<LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawDigit
 <LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMazeGrid3
 <LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMazeGrid2
 <LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMazeGrid
@@ -430,44 +430,48 @@ Global Symbols
 <P><STRONG><a name="[51]"></a>GET_state</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, functions.o(CODEY))
 <BR><BR>[Calls]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay
 </UL>
-<BR>[Called By]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_XO
-<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
+<BR>[Called By]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_XO
+<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
 </UL>
 
 <P><STRONG><a name="[4d]"></a>delay</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, functions.o(CODEY))
-<BR><BR>[Called By]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_Snake_Movement
-<LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_XO
+<BR><BR>[Calls]<UL><LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BCD_TO_SEVEN_SEG
+<LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawDigit
+<LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Binary_to_BCD
+</UL>
+<BR>[Called By]<UL><LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_Snake_Movement
+<LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_XO
 <LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Init
-<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
+<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
 <LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GET_state
 </UL>
 
-<P><STRONG><a name="[52]"></a>BCD_TO_SEVEN_SEG</STRONG> (Thumb, 146 bytes, Stack size 0 bytes, functions.o(CODEY), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
+<P><STRONG><a name="[53]"></a>BCD_TO_SEVEN_SEG</STRONG> (Thumb, 146 bytes, Stack size 0 bytes, functions.o(CODEY))
+<BR><BR>[Called By]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay
 </UL>
 
-<P><STRONG><a name="[5d]"></a>Main_Game_XO</STRONG> (Thumb, 130 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_Win
-<LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_XO
-<LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_MoveCursor
-<LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawBorder
-<LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawGrid
+<P><STRONG><a name="[5f]"></a>Main_Game_XO</STRONG> (Thumb, 130 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_Win
+<LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_XO
+<LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_MoveCursor
+<LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawBorder
+<LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawGrid
 <LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GET_state
 </UL>
 
-<P><STRONG><a name="[60]"></a>Draw_Snake_Movement</STRONG> (Thumb, 180 bytes, Stack size 0 bytes, longcat.o(CODEY))
-<BR><BR>[Calls]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_Coordinates
+<P><STRONG><a name="[62]"></a>Draw_Snake_Movement</STRONG> (Thumb, 180 bytes, Stack size 0 bytes, longcat.o(CODEY))
+<BR><BR>[Calls]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_Coordinates
 <LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay
 <LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
 </UL>
-<BR>[Called By]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
+<BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
 </UL>
 
-<P><STRONG><a name="[63]"></a>MainGame_LongCat</STRONG> (Thumb, 84 bytes, Stack size 0 bytes, longcat.o(CODEY))
-<BR><BR>[Calls]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_Snake_Movement
-<LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_win
-<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Move_Snake
-<LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMap
+<P><STRONG><a name="[65]"></a>MainGame_LongCat</STRONG> (Thumb, 84 bytes, Stack size 0 bytes, longcat.o(CODEY))
+<BR><BR>[Calls]<UL><LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_Snake_Movement
+<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_win
+<LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Move_Snake
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMap
 <LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay
 <LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GET_state
 </UL>
@@ -476,110 +480,120 @@ Global Symbols
 
 <P><STRONG><a name="[43]"></a>__main</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, main.o(MYCODE))
 <BR><BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Init
-<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
-<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CONFIGURE_PORTS
+<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
+<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CONFIGURE_PORTS
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f401xc.o(.text)
 </UL><P>
 <H3>
 Local Symbols
 </H3>
-<P><STRONG><a name="[53]"></a>TFT_DrawGrid</STRONG> (Thumb, 154 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
+<P><STRONG><a name="[52]"></a>Binary_to_BCD</STRONG> (Thumb, 96 bytes, Stack size 0 bytes, functions.o(CODEY))
+<BR><BR>[Called By]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay
+</UL>
+
+<P><STRONG><a name="[54]"></a>DrawDigit</STRONG> (Thumb, 218 bytes, Stack size 0 bytes, functions.o(CODEY))
 <BR><BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
 </UL>
-<BR>[Called By]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_XO
+<BR>[Called By]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay
 </UL>
 
-<P><STRONG><a name="[54]"></a>DrawBorder</STRONG> (Thumb, 84 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
+<P><STRONG><a name="[55]"></a>TFT_DrawGrid</STRONG> (Thumb, 154 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
 </UL>
-<BR>[Called By]<UL><LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_XO
-<LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_MoveCursor
-<LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_XO
+<BR>[Called By]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_XO
 </UL>
 
-<P><STRONG><a name="[55]"></a>TFT_MoveCursor</STRONG> (Thumb, 96 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawBorder
+<P><STRONG><a name="[56]"></a>DrawBorder</STRONG> (Thumb, 84 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
 </UL>
-<BR>[Called By]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_XO
+<BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_XO
+<LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_MoveCursor
+<LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_XO
 </UL>
 
-<P><STRONG><a name="[56]"></a>Draw_XO</STRONG> (Thumb, 418 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_O
-<LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_X
-<LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawBorder
+<P><STRONG><a name="[57]"></a>TFT_MoveCursor</STRONG> (Thumb, 96 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawBorder
+</UL>
+<BR>[Called By]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_XO
+</UL>
+
+<P><STRONG><a name="[58]"></a>Draw_XO</STRONG> (Thumb, 418 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_O
+<LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_X
+<LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawBorder
 <LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay
 </UL>
-<BR>[Called By]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_XO
+<BR>[Called By]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_XO
 </UL>
 
-<P><STRONG><a name="[59]"></a>Check_Win</STRONG> (Thumb, 264 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawTA3ADOL
-<LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawOWINS
-<LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawXWINS
+<P><STRONG><a name="[5b]"></a>Check_Win</STRONG> (Thumb, 264 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawTA3ADOL
+<LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawOWINS
+<LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawXWINS
 </UL>
-<BR>[Called By]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_XO
+<BR>[Called By]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_XO
 </UL>
 
-<P><STRONG><a name="[5a]"></a>DrawXWINS</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_X
+<P><STRONG><a name="[5c]"></a>DrawXWINS</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_X
 <LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
 </UL>
-<BR>[Called By]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_Win
+<BR>[Called By]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_Win
 </UL>
 
-<P><STRONG><a name="[5b]"></a>DrawOWINS</STRONG> (Thumb, 52 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_O
+<P><STRONG><a name="[5d]"></a>DrawOWINS</STRONG> (Thumb, 52 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_O
 <LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
 </UL>
-<BR>[Called By]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_Win
+<BR>[Called By]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_Win
 </UL>
 
-<P><STRONG><a name="[5c]"></a>DrawTA3ADOL</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
+<P><STRONG><a name="[5e]"></a>DrawTA3ADOL</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
 </UL>
-<BR>[Called By]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_Win
+<BR>[Called By]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_Win
 </UL>
 
-<P><STRONG><a name="[57]"></a>Draw_X</STRONG> (Thumb, 112 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
+<P><STRONG><a name="[59]"></a>Draw_X</STRONG> (Thumb, 112 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
 </UL>
-<BR>[Called By]<UL><LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawXWINS
-<LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_XO
+<BR>[Called By]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawXWINS
+<LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_XO
 </UL>
 
-<P><STRONG><a name="[58]"></a>Draw_O</STRONG> (Thumb, 108 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
+<P><STRONG><a name="[5a]"></a>Draw_O</STRONG> (Thumb, 108 bytes, Stack size 0 bytes, xo_functions.o(CODEY), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
 </UL>
-<BR>[Called By]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawOWINS
-<LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_XO
+<BR>[Called By]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawOWINS
+<LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_XO
 </UL>
 
-<P><STRONG><a name="[5e]"></a>TFT_DRAWSQUARE</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, longcat.o(CODEY))
+<P><STRONG><a name="[60]"></a>TFT_DRAWSQUARE</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, longcat.o(CODEY))
 <BR><BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
 </UL>
-<BR>[Called By]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMap
+<BR>[Called By]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMap
 </UL>
 
-<P><STRONG><a name="[5f]"></a>TFT_DrawMap</STRONG> (Thumb, 132 bytes, Stack size 0 bytes, longcat.o(CODEY))
-<BR><BR>[Calls]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DRAWSQUARE
+<P><STRONG><a name="[61]"></a>TFT_DrawMap</STRONG> (Thumb, 132 bytes, Stack size 0 bytes, longcat.o(CODEY))
+<BR><BR>[Calls]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DRAWSQUARE
 <LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
 </UL>
-<BR>[Called By]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
+<BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
 </UL>
 
-<P><STRONG><a name="[61]"></a>Get_Coordinates</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, longcat.o(CODEY))
-<BR><BR>[Called By]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_Snake_Movement
+<P><STRONG><a name="[63]"></a>Get_Coordinates</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, longcat.o(CODEY))
+<BR><BR>[Called By]<UL><LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_Snake_Movement
 </UL>
 
-<P><STRONG><a name="[64]"></a>Move_Snake</STRONG> (Thumb, 250 bytes, Stack size 0 bytes, longcat.o(CODEY))
-<BR><BR>[Called By]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
+<P><STRONG><a name="[66]"></a>Move_Snake</STRONG> (Thumb, 250 bytes, Stack size 0 bytes, longcat.o(CODEY))
+<BR><BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
 </UL>
 
-<P><STRONG><a name="[62]"></a>check_win</STRONG> (Thumb, 252 bytes, Stack size 0 bytes, longcat.o(CODEY))
+<P><STRONG><a name="[64]"></a>check_win</STRONG> (Thumb, 252 bytes, Stack size 0 bytes, longcat.o(CODEY))
 <BR><BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
 </UL>
-<BR>[Called By]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
+<BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
 </UL>
 
 <P><STRONG><a name="[47]"></a>TFT_DRAWBlock</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, maze_functions.o(.text), UNUSED)
