@@ -447,7 +447,7 @@ DelayInner_Loop
 ;  R2 = Y origin
 ;  R3 = segment thickness
 ;  R4 = segment length
-;
+;  R11 = color
 ; Clobbers: R5,R6,R7,R8,R9
 ; Returns R0 = raw 32-bit segment word (optional)
 ;------------------------------------------
