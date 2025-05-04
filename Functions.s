@@ -452,47 +452,50 @@ DelayInner_Loop
 ; Returns R0 = raw 32-bit segment word (optional)
 ;------------------------------------------
 Num_to_LCD FUNCTION
-    PUSH    {R0, R5-R9, LR}
+    PUSH {R0, R5-R9, R12, LR}
 
-    ; compute digit width = length + 2*thickness
+    ; compute digit slot width = length + 2*thickness
     ADD R5, R4, R3
-    ADD R5, R5, R3    ; R5 = 2*R3 + R4
+    ADD R5, R5, R3      ; R5 = R4 + 2*R3
 
-    ; 1) binary → BCD
-    BL Binary_to_BCD ; R0 = [d3:d2:d1:d0] BCD
+    BL Binary_to_BCD   ; R0 = BCD[ d3 d2 d1 d0 ]
+    BL BCD_TO_SEVEN_SEG; R0 = {seg(d3),seg(d2),seg(d1),seg(d0)}
 
-    ; 2) BCD → four 7-seg masks in one word
-    BL BCD_TO_SEVEN_SEG ; R0 = {seg(d3),seg(d2),seg(d1),seg(d0)}
+    MOV R7, R0          ; R7 = packed 4×7seg bytes
+    MOV R8, R1          ; R8 = original base X
 
-    ; save segment-word, base X
-    MOV R7, R0        ; R7 = segment-word
-    MOV R8, R1        ; R8 = base X
+    MOV R1, R8          ; R1 = current X cursor
+    MOV R9, #4          ; R9 = how many digits remain
+    MOV R6, #24         ; R6 = shift amount for MS‐byte
 
-    ; init for 4-byte loop
-    MOV R1, R8        ; R1 = current X
-    MOV R6, #24       ; shift amount to extract top byte
-    MOV R9, #0        ; digit index
+skip_leading
+    CMP R9, #1          ; if only one digit left, stop skipping
+    BEQ print_loop
+    MOV R12, R7, LSR R6
+    AND R12, R12, #0xFF ; extract this digit’s 7-seg mask
+    CMP R12, #0         ; is it zero?
+    BNE print_loop      ; no → we found first nonzero
+    ; yes → skip this leading zero
+    ADD R1, R1, R5      ; advance X
+    SUBS R9, R9, #1      ; one fewer digit to print
+    B skip_leading
 
-loop_digits
-    ; extract byte = (R7 >> R6) & 0xFF → R12
+print_loop
     MOV R12, R7, LSR R6
     AND R12, R12, #0xFF
-
-    ; 3) draw that digit
     BL DrawDigit
 
-    ; advance to next digit position
-    ADD R1, R1, R5
-	ADD R1, R3 ; X += digit_width + thickness (as space)
-    ; next byte
-    SUBS R6, R6, #8
-    ADD R9, R9, #1
-    CMP R9, #4
-    BLT loop_digits
+    SUBS R9, R9, #1      ; decrement count
+    BEQ done            ; if zero → we’re finished
 
-    POP     {R0, R5-R9, PC}
-	ENDFUNC
+    ADD R1, R1, R5      ; advance X
+    SUBS R6, R6, #8      ; shift to next byte
+    B print_loop
 
+done
+    POP {R0, R5-R9, R12, PC}
+    ENDFUNC
+	
 ;INPUT AND OUTPUT IN R0
 Binary_to_BCD FUNCTION
 	PUSH {R1-R5, LR}
