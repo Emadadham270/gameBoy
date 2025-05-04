@@ -472,12 +472,11 @@ Num_to_LCD FUNCTION
     MOV R1, R8        ; R1 = current X
     MOV R6, #24       ; shift amount to extract top byte
     MOV R9, #0        ; digit index
-	
-	; extract byte = (R7 >> R6) & 0xFF → R12
-    MOV R12, R7, LSR R6
-    AND R12, R12, #0xFF
 
 loop_digits
+    ; extract byte = (R7 >> R6) & 0xFF → R12
+    MOV R12, R7, LSR R6
+    AND R12, R12, #0xFF
 
     ; 3) draw that digit
     BL DrawDigit
@@ -487,16 +486,10 @@ loop_digits
 	ADD R1, R3 ; X += digit_width + thickness (as space)
     ; next byte
     SUBS R6, R6, #8
-	; extract byte = (R7 >> R6) & 0xFF → R12
-    MOV R12, R7, LSR R6
-    AND R12, R12, #0xFF
-	CMP R12, #0x3F    ;zero seven segments code
-	BEQ exit_bruh
     ADD R9, R9, #1
     CMP R9, #4
     BLT loop_digits
 
-exit_bruh	
     POP     {R0, R5-R9, PC}
 	ENDFUNC
 
