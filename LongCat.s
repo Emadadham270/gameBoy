@@ -586,11 +586,12 @@ EndTheGame
 	ENDFUNC
 ;------------------------
 ; MainGame_LongCat
-; Takes R12 = level number: 1, 2, 3, ...
+; Takes R9 = level number: 1, 2, 3, ...
 ;------------------------
 MainGame_LongCat FUNCTION
     PUSH {R0-R12, LR}
 New_Game_Loop
+	MOV R12, R9
 	SUB R12, #1          ; cuz if level = 1 we will get address + 0, etc..
 	LDR R3, =Leve1StartCell
 	LDRB R3, [R3, R12]   ; Load level start cell
@@ -638,9 +639,8 @@ INPUT12345                ;Wait for input from user
 	BEQ INPUT12345
 	
 	CMP R1, #0x00FF
-	ADDEQ R12, #1     ;Next level if he won
-	CMP R12, #5     ;If next level is valid, jump to it (5 is a placeholder here)
-	;SUBGE R12, #1   ;Else decrement level
+	ADDEQ R9, #1     ;Next level if he won
+	CMP R9, #5     ;If next level is valid, jump to it (5 is a placeholder here)
 	BLE New_Game_Loop
 	POP {R0-R12, PC}
 	ENDFUNC
