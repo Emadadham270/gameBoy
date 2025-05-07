@@ -6,14 +6,25 @@ Level1Map
     DCB 0xCB
 	DCB 0xD9
 	DCB 0xC1
-
-	;DCB 0x81
-	;DCB 0xA5
-	;DCB 0x81
-    ;DCB 0xCB
-	;DCB 0xD9
-	;DCB 0xC1
-Leve1StartCell DCB 36
+Level2Map
+	DCB 0x00
+	DCB 0x08
+	DCB 0x80
+    DCB 0x10
+	DCB 0x54
+	DCB 0x04
+Level3Map
+	DCB 0x8C
+	DCB 0xA0
+	DCB 0x88
+    DCB 0xE0
+	DCB 0x80
+	DCB 0x80
+	
+Leve1StartCell 
+			   DCB 36
+			   DCB 36
+			   DCB 19
 		;--- Colors ---
 Red     	   EQU 0XF800 
 Green   	   EQU 0x07E0
@@ -590,11 +601,13 @@ EndTheGame
 ;------------------------
 MainGame_LongCat FUNCTION
     PUSH {R0-R12, LR}
+	MOV R9, #3
 New_Game_Loop
 	MOV R12, R9
 	SUB R12, #1          ; cuz if level = 1 we will get address + 0, etc..
 	LDR R3, =Leve1StartCell
 	LDRB R3, [R3, R12]   ; Load level start cell
+	MOV R4, R3
 	MOV R2, #6           ; Temp for multiplication
 	MUL R12, R2          ; R12 = 6 * level shift value
 	MOV R2, #0           ; counter for bytes to copy
@@ -609,7 +622,7 @@ CopyLoop
 	BNE CopyLoop
 	
 	BL TFT_DrawMap
-	MOV R4, R3
+	MOV R3, R4
 	;MOV R10,R3
 	;MOV R6,#0X0050
 
@@ -640,7 +653,7 @@ INPUT12345                ;Wait for input from user
 	
 	CMP R1, #0x00FF
 	ADDEQ R9, #1     ;Next level if he won
-	CMP R9, #5     ;If next level is valid, jump to it (5 is a placeholder here)
+	CMP R9, #3     ;If next level is valid, jump to it (5 is a placeholder here)
 	BLE New_Game_Loop
 	POP {R0-R12, PC}
 	ENDFUNC
