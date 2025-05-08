@@ -5,14 +5,15 @@ Component: Arm Compiler for Embedded 6.23 Tool: armlink [5f102400]
 Section Cross References
 
     main.o(MYDATAS) refers (Special) to functions.o(CODEY) for DrawDigit
+    main.o(MYDATAS) refers (Special) to longcat.o(CODEY) for MainGame_LongCat
     main.o(MYDATAS) refers (Special) to maze_functions.o(.text) for TFT_DrawMapM
     main.o(MYCODE) refers (Special) to functions.o(CODEY) for DrawDigit
+    main.o(MYCODE) refers (Special) to longcat.o(CODEY) for MainGame_LongCat
     main.o(MYCODE) refers (Special) to maze_functions.o(.text) for TFT_DrawMapM
-    main.o(MYCODE) refers to longcat.o(CODEY) for MainGame_LongCat
     main.o(MYCODE) refers to xo_functions.o(CODEY) for Main_Game_XO
     xo_functions.o(MYDATA) refers (Special) to functions.o(CODEY) for TFT_DrawImage
     xo_functions.o(CODEY) refers (Special) to functions.o(CODEY) for TFT_DrawImage
-    xo_functions.o(CODEY) refers to xo_functions.o(MYDATA) for XO_array
+    xo_functions.o(CODEY) refers to xo_functions.o(MYDATA) for X_score
     longcat.o(MYDATA) refers (Special) to functions.o(CODEY) for TFT_DrawImage
     longcat.o(USEABLE) refers (Special) to functions.o(CODEY) for TFT_DrawImage
     longcat.o(CODEY) refers (Special) to functions.o(CODEY) for TFT_DrawImage
@@ -83,42 +84,44 @@ Image Symbol Table
     CODEY                                    0x08000a10   Section     1240  functions.o(CODEY)
     BCD_TO_SEVEN_SEG                         0x08000d71   Thumb Code   146  functions.o(CODEY)
     $v0                                      0x08000ee8   Number         0  xo_functions.o(CODEY)
-    TFT_DrawGrid                             0x08000ee9   Thumb Code   154  xo_functions.o(CODEY)
-    CODEY                                    0x08000ee8   Section     1768  xo_functions.o(CODEY)
-    DrawBorder                               0x08000f83   Thumb Code    84  xo_functions.o(CODEY)
-    TFT_MoveCursor                           0x08000fd7   Thumb Code    96  xo_functions.o(CODEY)
-    Draw_XO                                  0x08001037   Thumb Code   418  xo_functions.o(CODEY)
-    Check_Win                                0x080011d9   Thumb Code   264  xo_functions.o(CODEY)
-    DrawXWINS                                0x080012e1   Thumb Code    54  xo_functions.o(CODEY)
-    DrawOWINS                                0x08001317   Thumb Code    52  xo_functions.o(CODEY)
-    DrawTA3ADOL                              0x0800134b   Thumb Code    32  xo_functions.o(CODEY)
-    Draw_X                                   0x080013f1   Thumb Code   112  xo_functions.o(CODEY)
-    Draw_O                                   0x08001461   Thumb Code   108  xo_functions.o(CODEY)
-    $v0                                      0x080015d0   Number         0  longcat.o(CODEY)
-    TFT_DRAWSQUARE                           0x080015d1   Thumb Code    24  longcat.o(CODEY)
-    CODEY                                    0x080015d0   Section     1016  longcat.o(CODEY)
-    TFT_DrawMap                              0x080015e9   Thumb Code   132  longcat.o(CODEY)
-    Get_Coordinates                          0x08001721   Thumb Code    32  longcat.o(CODEY)
-    Move_Snake                               0x08001741   Thumb Code   250  longcat.o(CODEY)
-    check_win                                0x0800183b   Thumb Code   254  longcat.o(CODEY)
-    $v0                                      0x080019c8   Number         0  main.o(MYCODE)
-    MYCODE                                   0x080019c8   Section       16  main.o(MYCODE)
-    Level1Map                                0x080019d8   Data           0  longcat.o(MYDATA)
-    MYDATA                                   0x080019d8   Section       21  longcat.o(MYDATA)
-    Leve1StartCell                           0x080019ea   Data           0  longcat.o(MYDATA)
+    TFT_DrawGrid                             0x08000ee9   Thumb Code   250  xo_functions.o(CODEY)
+    CODEY                                    0x08000ee8   Section     1924  xo_functions.o(CODEY)
+    DrawBorder                               0x08000fe3   Thumb Code    84  xo_functions.o(CODEY)
+    TFT_MoveCursor                           0x08001037   Thumb Code    96  xo_functions.o(CODEY)
+    Draw_XO                                  0x08001097   Thumb Code   426  xo_functions.o(CODEY)
+    Check_Win                                0x08001241   Thumb Code   292  xo_functions.o(CODEY)
+    DrawXWINS                                0x08001365   Thumb Code    54  xo_functions.o(CODEY)
+    DrawOWINS                                0x0800139b   Thumb Code    52  xo_functions.o(CODEY)
+    DrawTA3ADOL                              0x080013cf   Thumb Code    32  xo_functions.o(CODEY)
+    Draw_X                                   0x08001485   Thumb Code   112  xo_functions.o(CODEY)
+    Draw_O                                   0x080014f5   Thumb Code   108  xo_functions.o(CODEY)
+    $v0                                      0x0800166c   Number         0  longcat.o(CODEY)
+    TFT_DRAWSQUARE                           0x0800166d   Thumb Code    24  longcat.o(CODEY)
+    CODEY                                    0x0800166c   Section     1016  longcat.o(CODEY)
+    TFT_DrawMap                              0x08001685   Thumb Code   132  longcat.o(CODEY)
+    Get_Coordinates                          0x080017bd   Thumb Code    32  longcat.o(CODEY)
+    Move_Snake                               0x080017dd   Thumb Code   250  longcat.o(CODEY)
+    check_win                                0x080018d7   Thumb Code   254  longcat.o(CODEY)
+    $v0                                      0x08001a64   Number         0  main.o(MYCODE)
+    MYCODE                                   0x08001a64   Section       12  main.o(MYCODE)
+    Level1Map                                0x08001a70   Data           0  longcat.o(MYDATA)
+    MYDATA                                   0x08001a70   Section       21  longcat.o(MYDATA)
+    Leve1StartCell                           0x08001a82   Data           0  longcat.o(MYDATA)
     XO_array                                 0x20000000   Data           4  xo_functions.o(MYDATA)
-    MYDATA                                   0x20000000   Section       12  xo_functions.o(MYDATA)
+    MYDATA                                   0x20000000   Section       20  xo_functions.o(MYDATA)
     XO_Turn                                  0x20000004   Data           4  xo_functions.o(MYDATA)
     XO_counter                               0x20000008   Data           4  xo_functions.o(MYDATA)
-    MazeData                                 0x2000000c   Section      160  maze_functions.o(MazeData)
-    ROW2                                     0x2000005c   Data           4  maze_functions.o(MazeData)
-    SnakeMap                                 0x200000ac   Data           0  longcat.o(USEABLE)
-    USEABLE                                  0x200000ac   Section        6  longcat.o(USEABLE)
-    Heap_Mem                                 0x200000b8   Data         512  startup_stm32f401xc.o(HEAP)
-    HEAP                                     0x200000b8   Section      512  startup_stm32f401xc.o(HEAP)
-    Stack_Mem                                0x200002b8   Data        1024  startup_stm32f401xc.o(STACK)
-    STACK                                    0x200002b8   Section     1024  startup_stm32f401xc.o(STACK)
-    __initial_sp                             0x200006b8   Data           0  startup_stm32f401xc.o(STACK)
+    X_score                                  0x2000000c   Data           4  xo_functions.o(MYDATA)
+    O_score                                  0x20000010   Data           4  xo_functions.o(MYDATA)
+    MazeData                                 0x20000014   Section      160  maze_functions.o(MazeData)
+    ROW2                                     0x20000064   Data           4  maze_functions.o(MazeData)
+    SnakeMap                                 0x200000b4   Data           0  longcat.o(USEABLE)
+    USEABLE                                  0x200000b4   Section        6  longcat.o(USEABLE)
+    Heap_Mem                                 0x200000c0   Data         512  startup_stm32f401xc.o(HEAP)
+    HEAP                                     0x200000c0   Section      512  startup_stm32f401xc.o(HEAP)
+    Stack_Mem                                0x200002c0   Data        1024  startup_stm32f401xc.o(STACK)
+    STACK                                    0x200002c0   Section     1024  startup_stm32f401xc.o(STACK)
+    __initial_sp                             0x200006c0   Data           0  startup_stm32f401xc.o(STACK)
 
     Global Symbols
 
@@ -213,10 +216,10 @@ Image Symbol Table
     delay                                    0x08000cb7   Thumb Code    16  functions.o(CODEY)
     Num_to_LCD                               0x08000cc7   Thumb Code   170  functions.o(CODEY)
     DrawDigit                                0x08000e03   Thumb Code   216  functions.o(CODEY)
-    Main_Game_XO                             0x0800136f   Thumb Code   130  xo_functions.o(CODEY)
-    Draw_Snake_Movement                      0x0800166d   Thumb Code   180  longcat.o(CODEY)
-    MainGame_LongCat                         0x08001939   Thumb Code   130  longcat.o(CODEY)
-    __main                                   0x080019c9   Thumb Code    16  main.o(MYCODE)
+    Main_Game_XO                             0x080013f3   Thumb Code   146  xo_functions.o(CODEY)
+    Draw_Snake_Movement                      0x08001709   Thumb Code   180  longcat.o(CODEY)
+    MainGame_LongCat                         0x080019d5   Thumb Code   130  longcat.o(CODEY)
+    __main                                   0x08001a65   Thumb Code    12  main.o(MYCODE)
 
 
 
@@ -226,9 +229,9 @@ Memory Map of the image
 
   Image Entry point : 0x080009b5
 
-  Load Region LR_1 (Base: 0x08000000, Size: 0x00001aa4, Max: 0xffffffff, ABSOLUTE)
+  Load Region LR_1 (Base: 0x08000000, Size: 0x00001b44, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region ER_RO (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x000019f0, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RO (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00001a88, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -240,27 +243,27 @@ Memory Map of the image
     0x080009fc   0x080009fc   0x00000012   Code   RO           37    .text.SystemInit    system_stm32f4xx.o
     0x08000a0e   0x08000a0e   0x00000002   PAD
     0x08000a10   0x08000a10   0x000004d8   Code   RO            9    CODEY               functions.o
-    0x08000ee8   0x08000ee8   0x000006e8   Code   RO           14    CODEY               xo_functions.o
-    0x080015d0   0x080015d0   0x000003f8   Code   RO           20    CODEY               longcat.o
-    0x080019c8   0x080019c8   0x00000010   Code   RO            2    MYCODE              main.o
-    0x080019d8   0x080019d8   0x00000015   Data   RO           18    MYDATA              longcat.o
+    0x08000ee8   0x08000ee8   0x00000784   Code   RO           14    CODEY               xo_functions.o
+    0x0800166c   0x0800166c   0x000003f8   Code   RO           20    CODEY               longcat.o
+    0x08001a64   0x08001a64   0x0000000c   Code   RO            2    MYCODE              main.o
+    0x08001a70   0x08001a70   0x00000015   Data   RO           18    MYDATA              longcat.o
 
 
-    Execution Region ER_RW (Exec base: 0x20000000, Load base: 0x080019f0, Size: 0x000000b4, Max: 0xffffffff, ABSOLUTE)
-
-    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
-
-    0x20000000   0x080019f0   0x0000000c   Data   RW           13    MYDATA              xo_functions.o
-    0x2000000c   0x080019fc   0x000000a0   Data   RW           24    MazeData            maze_functions.o
-    0x200000ac   0x08001a9c   0x00000006   Data   RW           19    USEABLE             longcat.o
-
-
-    Execution Region ER_ZI (Exec base: 0x200000b8, Load base: 0x08001aa4, Size: 0x00000600, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RW (Exec base: 0x20000000, Load base: 0x08001a88, Size: 0x000000bc, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x200000b8        -       0x00000200   Zero   RW           30    HEAP                startup_stm32f401xc.o
-    0x200002b8        -       0x00000400   Zero   RW           29    STACK               startup_stm32f401xc.o
+    0x20000000   0x08001a88   0x00000014   Data   RW           13    MYDATA              xo_functions.o
+    0x20000014   0x08001a9c   0x000000a0   Data   RW           24    MazeData            maze_functions.o
+    0x200000b4   0x08001b3c   0x00000006   Data   RW           19    USEABLE             longcat.o
+
+
+    Execution Region ER_ZI (Exec base: 0x200000c0, Load base: 0x08001b44, Size: 0x00000600, Max: 0xffffffff, ABSOLUTE)
+
+    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x200000c0        -       0x00000200   Zero   RW           30    HEAP                startup_stm32f401xc.o
+    0x200002c0        -       0x00000400   Zero   RW           29    STACK               startup_stm32f401xc.o
 
 
 ==============================================================================
@@ -272,14 +275,14 @@ Image component sizes
 
       1240         56          0          0          0       1136   functions.o
       1016         14         21          6          0        924   longcat.o
-        16          0          0          0          0        348   main.o
+        12          0          0          0          0        344   main.o
       2080          6          0        160          0       1140   maze_functions.o
         64         26        404          0       1536        836   startup_stm32f401xc.o
         18          0          0          0          0       2795   system_stm32f4xx.o
-      1768         54          0         12          0       1280   xo_functions.o
+      1924         70          0         20          0       1324   xo_functions.o
 
     ----------------------------------------------------------------------
-      6204        156        428        180       1536       8459   Object Totals
+      6356        172        428        188       1536       8499   Object Totals
          0          0          0          0          0          0   (incl. Generated)
          2          0          3          2          0          0   (incl. Padding)
 
@@ -309,15 +312,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      6212        156        428        180       1536       8111   Grand Totals
-      6212        156        428        180       1536       8111   ELF Image Totals
-      6212        156        428        180          0          0   ROM Totals
+      6364        172        428        188       1536       8151   Grand Totals
+      6364        172        428        188       1536       8151   ELF Image Totals
+      6364        172        428        188          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                 6640 (   6.48kB)
-    Total RW  Size (RW Data + ZI Data)              1716 (   1.68kB)
-    Total ROM Size (Code + RO Data + RW Data)       6820 (   6.66kB)
+    Total RO  Size (Code + RO Data)                 6792 (   6.63kB)
+    Total RW  Size (RW Data + ZI Data)              1724 (   1.68kB)
+    Total ROM Size (Code + RO Data + RW Data)       6980 (   6.82kB)
 
 ==============================================================================
 
