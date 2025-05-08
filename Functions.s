@@ -607,7 +607,7 @@ digit_eight
 	B dec_end
 digit_nine
 	MOV R5, #0x6F ; 9 ? 0b1101111
-
+ 
 dec_end
 	MOV R6, R5, LSL R1     ;insert byte at offset R1
 	ORR R2, R2, R6        
