@@ -36,7 +36,7 @@ __main FUNCTION
     ; Initialize TFT
     BL TFT_Init
 	;BL TFT_DrawMapM
-	BL MainGame_LongCat
+	;BL MainGame_LongCat
 	BL Main_Game_XO
 
     ENDFUNC
