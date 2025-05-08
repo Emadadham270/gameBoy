@@ -27,16 +27,20 @@ Project File Date:  05/04/2025
 <h2>Output:</h2>
 *** Using Compiler 'V6.23', folder: 'C:\Users\mathi\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'Target_1'
-armclang: warning: Your license for feature Keil will expire in 20 days [-Wlicense-management]
-"LongCat.s", line 661: Warning: A1581W: Added 2 bytes of padding at address 0x3ea
-  661 000003ec  END
-0 Errors, 1 Warning
-armclang: warning: Your license for feature Keil will expire in 20 days [-Wlicense-management]
-assembling LongCat.s...
+armclang: warning: Your license for feature Keil will expire in 18 days [-Wlicense-management]
+"Functions.s", line 549: Warning: A1488W: PROC/FUNC at line 455 in 'Functions.s' without matching ENDP/ENDFUNC
+  549 00000360 BCD_TO_SEVEN_SEG FUNCTION
+"Functions.s", line 195: Warning: A1581W: Added 2 bytes of padding at address 0xc6
+  195 000000c8  LTORG
+"Functions.s", line 750: Warning: A1581W: Added 2 bytes of padding at address 0x4ca
+  750 000004cc  END
+0 Errors, 3 Warnings
+armclang: warning: Your license for feature Keil will expire in 18 days [-Wlicense-management]
+assembling Functions.s...
 linking...
 Program Size: Code=6212 RO-data=428 RW-data=180 ZI-data=1536  
 FromELF: creating hex file...
-.\Objects\codoBab.hex: Warning: Q9931W: Your license for feature Keil will expire in 20 days
+.\Objects\codoBab.hex: Warning: Q9931W: Your license for feature Keil will expire in 18 days
 Finished: 0 information, 1 warning and 0 error messages.
 ".\Objects\codoBab.axf" - 0 Error(s), 2 Warning(s).
 
@@ -64,12 +68,12 @@ Package Vendor: Keil
    * Component: ARM::CMSIS:CORE@6.1.0
 
    * Component: Keil::Device:Startup@2.6.3
-      Source file:   MDK/Device/Source/ARM/STM32F4xx_OTP.s
-      Source file:   MDK/Device/Source/ARM/STM32F401xx_OPT.s
       Include file:  Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
+      Source file:   MDK/Device/Source/ARM/STM32F4xx_OTP.s
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f401xc.s
+      Source file:   MDK/Device/Source/ARM/STM32F401xx_OPT.s
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>
