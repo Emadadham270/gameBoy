@@ -97,7 +97,7 @@ Orange         EQU 0xFD20
 	IMPORT  Init_RandomSeed
 ; R3 = Position of player		
 ADD_BULLET_PLAYER FUNCTION 
-	PUSH {R0-R12,LR}
+	PUSH {R0-R3,LR}
 	LDR   R0, =Player_Bullets      ; R0 = base address of Bullets
     MOV   R1, R3             ; R1 = index
     LSL   R1, R1, #1          ; R1 = R1 * 2 (convert to byte offset)
@@ -105,20 +105,20 @@ ADD_BULLET_PLAYER FUNCTION
     LDRH  R2,[R0]            ; R2 = contents of Alien_Map[R3]
 	ORR   R2, R2, #1
 	STRH  R2,[R0]
-	POP {R0-R12,PC}
+	POP {R0-R3,PC}
 	ENDFUNC
 
-; R3 = Position of Enemy
+; R4 = Position of Enemy
 ADD_BULLET_ALIEN FUNCTION
-	PUSH {R0-R12,LR}
+	PUSH {R0-R4,LR}
 	LDR   R0, =Enemy_Bullets      ; R0 = base address of Bullets
-    MOV   R1, R3             ; R1 = index
+    MOV   R1, R4             ; R1 = index
     LSL   R1, R1, #1          ; R1 = R1 * 2 (convert to byte offset)
     ADD   R0, R0, R1          ; R0 = address of Alien_Map[R3]
     LDRH  R2,[R0]            ; R2 = contents of Alien_Map[R3]
 	ORR   R2, R2, #0x8000
 	STRH  R2,[R0]
-	POP {R0-R12,PC}
+	POP {R0-R4,PC}
 ENDFUNC
 	
 ;------------------------------
