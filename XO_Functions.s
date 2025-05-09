@@ -5,7 +5,8 @@ XO_array       DCD     0x00000000
 
 XO_Turn     DCD     0x00
 XO_counter  DCD     0x00
-	
+X_score     DCD     0x00	
+O_score     DCD     0x00	
 ;--- Colors ---
 Red     	   EQU 0Xf800 
 Green   	   EQU 0xF0FF
@@ -21,6 +22,7 @@ Black		   EQU 0x0000
 	IMPORT  TFT_Filldraw4INP
     IMPORT  delay
 	IMPORT  GET_state
+	IMPORT  Num_to_LCD
 	EXPORT  Main_Game_XO
 	
 
@@ -72,6 +74,58 @@ TFT_DrawGrid    FUNCTION
     ; Fill screen with color (line)
     MOV R11, #Black
     BL TFT_Filldraw4INP
+	
+;-----------------------------------------------------
+; Inputs on entry: 
+;   R1 = X0,   R2 = Y0,   R3 = LEN, 
+;   R10 = THICK,  R11 = colour
+; Clobbers: R0,R4–R9,R12
+;-----------------------------------------------------	
+	;Draw X Score
+	;-----------------------------------------------------
+	; Inputs on entry: 
+	;   R1 = X0,   R2 = Y0,   R3 = LEN, 
+	;   R10 = THICK,  R11 = colour
+	; Clobbers: R0,R4–R9,R12
+	;-----------------------------------------------------
+	MOV R2 , #0x17C
+	MOV R1 , #80
+	MOV R3 , #50
+	MOV R11 , #Red 	
+	BL Draw_X
+	;THE value of score
+	LDR R0 , =X_score
+	LDR R0 , [R0]
+	MOV R2 , #0x17B
+	MOV R1 , #30
+	MOV R3 , #2
+	MOV R4 , #16
+	MOV R5, #2
+	BL Num_to_LCD
+	
+	;Draw O Score
+	;-----------------------------------------------------
+	; Inputs on entry: 
+	;   R1 = X0,   R2 = Y0,   R3 = LEN, 
+	;   R10 = THICK,  R11 = colour
+	; Clobbers: R0,R4–R9,R12
+	;-----------------------------------------------------
+	MOV R2 , #0x17C
+	MOV R1 , #0xFA
+	MOV R3 , #50
+	MOV R11 , #Red 	
+	BL Draw_O
+	;THE value of score
+	LDR R0 , =O_score
+	LDR R0 , [R0]
+	MOV R2 , #0x17B
+	MOV R1 , #200
+	MOV R3 , #2
+	MOV R4 , #16
+	MOV R5, #2
+	BL Num_to_LCD
+	
+	
 	POP {R0-R10, LR}
     BX LR
 	ENDFUNC
@@ -449,11 +503,19 @@ Check_Win FUNCTION
 	B wala7aga
 win_x
 	BL DrawXWINS
+	LDR R1, =X_score  ; from this to 456 for score
+	LDR R12,[R1]
+	ADD R12,R12,#1
+	STR R12,[R1]
 	MOV R1, #0xFFFFFFFF
 	STR R1, [R0]
 	B wala7aga
 win_o	
 	BL DrawOWINS
+	LDR R1, =O_score ; from this to 465 for score
+	LDR R12,[R1]
+	ADD R12,R12,#1
+	STR R12,[R1]
 	MOV R1, #0xFFFFFFFF
 	STR R1, [R0]
 	B wala7aga
@@ -531,6 +593,18 @@ Main_Game_XO FUNCTION
 	LDR R12, =XO_Turn  ;Store 0 in XO_Turn
 	MOV R11, #0x0010
 	STR R11, [R12]
+	
+	;initialize X and O scores with value 0
+	;for X
+	LDR R0 , =X_score
+	MOV R1 , #0
+	STR R1 , [R0]
+	
+	;for O
+	LDR R0 , =O_score
+	MOV R1 , #0
+	STR R1 , [R0]
+	
 Restart	
 	BL TFT_DrawGrid
 	LDR R12, =XO_array  ;Store 0 in XO_array
@@ -645,7 +719,7 @@ TFT_XLoop
 ;    R1 = X0       ? top-left corner X
 ;    R2 = Y0       ? top-left corner Y
 ;    R3 = LEN      ? outer diameter in pixels
-;    R10= THICK    ? border thickness
+;    //R10= THICK    ? border thickness
 ;    R11= colour   ? pen colour
 ;
 ;------------------------------------------------------------------------------

@@ -36,7 +36,7 @@ Yellow  	   EQU 0xFfe0
 White   	   EQU 0xffff
 Black		   EQU 0x0000
 	
-
+RNG_State DCD 1 ; 32-bit seed (must be non-zero)
 
 
 
@@ -50,6 +50,9 @@ Black		   EQU 0x0000
     EXPORT  delay
 	EXPORT	CONFIGURE_PORTS
 	EXPORT  Num_to_LCD
+	EXPORT  DrawDigit
+	EXPORT  Init_RandomSeed
+	EXPORT  Get_Random
 
 ;-----------------------------------------
 ; Initially call in main function
@@ -436,6 +439,28 @@ DelayInner_Loop
 	ENDFUNC
 
 
+Get_Random FUNCTION  ;gets a random number in R0
+	PUSH {R1,LR} ; save caller-saved R1 just in case
+    LDR     R1, =RNG_State   ; R1 → state
+    LDR     R0, [R1]         ; R0 = current state
+    CMP     R0, #0           ; avoid the all-zero lock-up
+    MOVEQ   R0, #1
+    EOR     R0, R0, R0, LSL #13   ; xorshift32
+    EOR     R0, R0, R0, LSR #17
+    EOR     R0, R0, R0, LSL #5
+    STR     R0, [R1]         ; save new state
+    POP     {R1,PC}          ; return with random value in R0
+    ENDFUNC
+
+Init_RandomSeed FUNCTION
+	LDR R0, =0xE000E018 ; STCURRENT register address
+	LDR R0, [R0] ; read whatever value is ticking
+	CMP R0, #0 ; keep seed non-zero
+	MOVEQ R0, #1
+	LDR R1, =RNG_State
+	STR R0, [R1]
+	BX LR
+	ENDFUNC
 
 
 ;------------------------------------------
@@ -447,106 +472,93 @@ DelayInner_Loop
 ;  R2 = Y origin
 ;  R3 = segment thickness
 ;  R4 = segment length
-;  R11 = color
+;  R5 = digit count
+;  R11 = Color
 ; Clobbers: R5,R6,R7,R8,R9
 ; Returns R0 = raw 32-bit segment word (optional)
 ;------------------------------------------
 Num_to_LCD FUNCTION
-    PUSH {R0, R5-R9, R12, LR}
+	PUSH {R5-R9, LR}
 
-    ; compute digit slot width = length + 2*thickness
-    ADD R5, R4, R3
-    ADD R5, R5, R3      ; R5 = R4 + 2*R3
+	; Save R5 (number of digits to display) to a preserved register
+	MOV R9, R5        ; R9 = digit count from user
 
-    BL Binary_to_BCD   ; R0 = BCD[ d3 d2 d1 d0 ]
-    BL BCD_TO_SEVEN_SEG; R0 = {seg(d3),seg(d2),seg(d1),seg(d0)}
+	; compute digit width = length + 3*thickness
+	ADD R5, R4, R3
+	ADD R5, R3, LSL #2    ; R5 = 2*R3 + R3 + R4
 
-    MOV R7, R0          ; R7 = packed 4×7seg bytes
-    MOV R8, R1          ; R8 = original base X
+	; 1) binary → BCD
+	BL Binary_to_BCD ; R0 = [d3:d2:d1:d0] BCD
 
-    MOV R1, R8          ; R1 = current X cursor
-    MOV R9, #4          ; R9 = how many digits remain
-    MOV R6, #24         ; R6 = shift amount for MS‐byte
+	; 2) BCD → four 7-seg masks in one word
+	BL BCD_TO_SEVEN_SEG ; R0 = {seg(d3),seg(d2),seg(d1),seg(d0)}
 
-skip_leading
-    CMP R9, #1          ; if only one digit left, stop skipping
-    BEQ print_loop
-    MOV R12, R7, LSR R6
-    AND R12, R12, #0xFF ; extract this digit’s 7-seg mask
-    CMP R12, #0         ; is it zero?
-    BNE print_loop      ; no → we found first nonzero
-    ; yes → skip this leading zero
-    ADD R1, R1, R5      ; advance X
-    SUBS R9, R9, #1      ; one fewer digit to print
-    B skip_leading
+	; save segment-word, base X
+	MOV R7, R0        ; R7 = segment-word
+	MOV R6, #0        ; Start with least significant bit (LSB)
 
-print_loop
-    MOV R12, R7, LSR R6
-    AND R12, R12, #0xFF
-    BL DrawDigit
+loop_digits
+	; extract byte = (R7 >> R6) & 0xFF → R12
+	MOV R12, R7, LSR R6
+	AND R12, R12, #0xFF
 
-    SUBS R9, R9, #1      ; decrement count
-    BEQ done            ; if zero → we’re finished
+	; 3) draw that digit
+	BL DrawDigit
 
-    ADD R1, R1, R5      ; advance X
-    SUBS R6, R6, #8      ; shift to next byte
-    B print_loop
+	; advance to next digit position
+	ADD R2, R2, R5    ; X += digit_width
 
-done
-    POP {R0, R5-R9, R12, PC}
-    ENDFUNC
+	; next byte
+	ADD R6, R6, #8    ; Move to next significant byte
+	SUBS R9, R9, #1   ; Decrement digit counter
+	BNE loop_digits   ; Continue until we've drawn requested digits
+
+	POP {R5-R9, PC}
+ENDFUNC
 	
 ;INPUT AND OUTPUT IN R0
-Binary_to_BCD FUNCTION
-	PUSH {R1-R5, LR}
-	MOV R1, R0
-	MOV R2, #0 ; R2 = BCD result
-	MOV R3, #16 ; Loop counter for 16 bits
+; Binary_to_BCD
+;  R0 = 16-bit binary in
+;  R0 = [d3:d2:d1:d0] BCD out
+Binary_to_BCD
+    PUSH   {R1-R5, LR}
+    MOV    R1, R0        ; working copy of binary
+    MOV    R2, #0        ; BCD accumulator
+    MOV    R3, #16       ; bits to process
 
-loo00p
-	; Shift BCD left
-	LSL R2, R2, #1
+b2b_loop
+    ; --- add 3 to any nibble ≥ 5 ---
+    MOV    R4, R2
+    AND    R5, R4, #0x000F
+    CMP    R5, #5
+    ADDCS  R2, R2, #0x0003
 
-	; Insert MSB of R1 into BCD
-	TST R1, #0x8000
-	ORRNE R2, R2, #1
+    AND    R5, R4, #0x00F0
+    LSR    R5, R5, #4
+    CMP    R5, #5
+    ADDCS  R2, R2, #0x0030
 
-	; Shift binary input
-	LSL R1, R1, #1
+    AND    R5, R4, #0x0F00
+    LSR    R5, R5, #8
+    CMP    R5, #5
+    ADDCS  R2, R2, #0x0300
 
-	; Adjust BCD digits
-	MOV R4, R2
+    AND    R5, R4, #0xF000
+    LSR    R5, R5, #12
+    CMP    R5, #5
+    ADDCS  R2, R2, #0x3000
 
-	; Digit 0
-	AND R5, R4, #0x000F
-	CMP R5, #5
-	ADDGE R2, R2, #0x0003
+    ; --- now shift left and bring in next bit ---
+    LSL    R2, R2, #1
+    TST    R1, #0x8000
+    ORRNE  R2, R2, #1
+    LSL    R1, R1, #1
 
-	; Digit 1
-	AND R5, R4, #0x00F0
-	LSR R5, R5, #4
-	CMP R5, #5
-	ADDGE R2, R2, #0x0030
+    SUBS   R3, R3, #1
+    BNE    b2b_loop
 
-	; Digit 2
-	AND R5, R4, #0x0F00
-	LSR R5, R5, #8
-	CMP R5, #5
-	ADDGE R2, R2, #0x0300
-
-	; Digit 3
-	AND R5, R4, #0xF000
-	LSR R5, R5, #12
-	CMP R5, #5
-	ADDGE R2, R2, #0x3000
-
-	; Loop next bit
-	SUBS R3, R3, #1
-	BNE loo00p
-
-	MOV R0, R2        ; Return BCD in R0
-	POP {R1-R5, PC}   ; Restore and return
-	ENDFUNC
+    MOV    R0, R2        ; return BCD
+    POP    {R1-R5, PC}
 ;------------------------------------------------------------
 ; R0 = [d3:d2:d1:d0] four BCD digits
 ; Returns R0 = {seg(d3), seg(d2), seg(d1), seg(d0)}
@@ -612,7 +624,7 @@ digit_eight
 	B dec_end
 digit_nine
 	MOV R5, #0x6F ; 9 ? 0b1101111
-
+ 
 dec_end
 	MOV R6, R5, LSL R1     ;insert byte at offset R1
 	ORR R2, R2, R6        
@@ -631,7 +643,6 @@ dec_end
 ; R3 = thickness (e.g., 8)
 ; R4 = segment length
 ; R12 = Digit (Only 8 bits, everything else is 0)
-;EDITTT
 
 DrawDigit FUNCTION
 	PUSH {R5-R9, LR}
@@ -674,13 +685,13 @@ skipB
 
 ;---------------------------
 ; SEGMENT C (bit2) – upper-right vertical
-;   x:  x+R3   … x+R3+R4
+;   x:  x   … x+R3
 ;   y:  y+R3   … y+R3+R4
 ;---------------------------
 	TST R12,#0x04
 	BEQ skipC
-	ADD R8,R2,R3
-	ADD R9,R8,R4
+	MOV R8,R2
+	ADD R9,R8,R3
 	ADD R6,R1,R3
 	ADD R7,R6,R4
 	BL TFT_Filldraw4INP
@@ -716,7 +727,7 @@ skipD
 skipE
 
 ;---------------------------
-; SEGMENT F (bit5) – lower-right vertical
+; SEGMENT F (bit5) – upper-left vertical
 ;   x:  x+R3+R4 … x+2R3+R4
 ;   y:  y+2R3+R4 … y+2(R3+R4)
 ;---------------------------

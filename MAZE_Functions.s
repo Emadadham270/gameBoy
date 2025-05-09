@@ -39,7 +39,6 @@ Orange	EQU 0xFC00
 		IMPORT  TFT_Filldraw4INP
 		IMPORT  delay
 		IMPORT  GET_state
-		EXPORT  TFT_DrawMazeGrid
 		EXPORT  TFT_DrawMazeGrid2
 		EXPORT  TFT_DrawMazeGrid3
 		EXPORT  TFT_DrawMapM
@@ -246,531 +245,52 @@ Drawsquare FUNCTION;take parameters at r1 and r2
 
 
 Redraw_player	FUNCTION; Take X-R1; Y-R2 : Input in R10
-	 PUSH{R11-R12,LR}
-	 MOV R11, #Black
-	 BL Drawsquare
+	PUSH{R11-R12,LR}
+	MOV R11, #Black
+	BL Drawsquare
 	 
-	 MOV R12 , R10
-	 AND R12, #0x000F
-	 CMP R12 , #1
-	 BEQ MOVE_UPBM
+	MOV R12 , R10
+	AND R12, #0x000F
+	CMP R12 , #1
+	BEQ MOVE_UPBM
 	  
-	 CMP R12 , #2
-	 BEQ MOVE_DOWNBM
+	CMP R12 , #2
+	BEQ MOVE_DOWNBM
 	 
-	 CMP R12 , #4
-	 BEQ MOVE_LEFTBM
+	CMP R12 , #4
+	BEQ MOVE_LEFTBM
 	 
-	 CMP R12 , #8
-	 BEQ MOVE_RIGHTBM
+	CMP R12 , #8
+	BEQ MOVE_RIGHTBM
 	 
-	 B DEFAULTBM
+	B DEFAULTBM
 MOVE_UPBM
-	 CMP R2 , #0X01D0 ; checking the start
-	 BEQ DEFAULTBM
-	 ADD R2 , R2 , #0x0010
-	 B DEFAULTBM
+	CMP R2 , #0X01D0 ; checking the start
+	BEQ DEFAULTBM
+	ADD R2 , R2 , #0x0010
+	B DEFAULTBM
 	 
 MOVE_DOWNBM
-	 CMP R2 , #0X0000
-	 BEQ DEFAULTBM
-	 SUB R2 , R2 , #0x0010
-	 B DEFAULTBM
+	CMP R2 , #0X0000
+	BEQ DEFAULTBM
+	SUB R2 , R2 , #0x0010
+	B DEFAULTBM
 	 
 MOVE_RIGHTBM
-	 CMP R1 , #0X0140
-	 BEQ DEFAULTBM
-	 SUB R1 , R1 , #0x0010
-	 B DEFAULTBM
+	CMP R1 , #0X0140
+	BEQ DEFAULTBM
+	SUB R1 , R1 , #0x0010
+	B DEFAULTBM
 	 
 MOVE_LEFTBM
-	 CMP R1 , #0X010
-	 BEQ DEFAULTBM
-	 ADD R1 , R1 , #0x0010
-	 B DEFAULTBM
+	CMP R1 , #0X010
+	BEQ DEFAULTBM
+	ADD R1 , R1 , #0x0010
+	B DEFAULTBM
 	 
 DEFAULTBM
-	 MOV R11,#Green
-	 BL Drawsquare
-	 pop{R11-R12,PC}
-	 ENDFUNC
+	MOV R11,#Green
+	BL Drawsquare
 	 
-	 
-TFT_DrawMazeGrid FUNCTION
-    PUSH {R0-R10, LR}
-    
-    ; 1. Fill full screen Black
-    MOV R6, #0x0000
-    MOV R7, #0x0140
-    MOV R8, #0x0000
-    MOV R9, #0x01E0
-    MOV R11, #Red
-    BL TFT_Filldraw4INP
-
-    ; 2. Draw Outer Borders Red
-    ; Bottom border
-    MOV R6, #0x0000
-    MOV R7, #0x0010
-    MOV R8, #0x01C0
-    MOV R9, #0x01D0
-    MOV R11, #Green
-    BL TFT_Filldraw4INP
-
-    ; Top border
-    MOV R6, #0x0130
-    MOV R7, #0x0140
-    MOV R8, #0x0010
-    MOV R9, #0x0020
-    MOV R11, #Blue
-    BL TFT_Filldraw4INP
-
-    ; 3. Draw internal walls (maze structure)
-	; Vertical Path (top row, first cell)
-	MOV R6, #0x0010   ; X start
-	MOV R7, #0x00B0   ; X end (20 pixels)
-	MOV R8, #0x01C0   ; Y start
-	MOV R9, #0x01D0   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	
-	MOV R6, #0x0040   ; X start
-	MOV R7, #0x0060   ; X end (20 pixels)
-	MOV R8, #0x00E0   ; Y start
-	MOV R9, #0x00F0   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x0050   ; X start
-	MOV R7, #0x00B0   ; X end (20 pixels)
-	MOV R8, #0x00D0   ; Y start
-	MOV R9, #0x00E0   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x0010   ; X start
-	MOV R7, #0x0060   ; X end (20 pixels)
-	MOV R8, #0x0040   ; Y start
-	MOV R9, #0x0050   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x0040   ; X start
-	MOV R7, #0x0080   ; X end (20 pixels)
-	MOV R8, #0x0020   ; Y start
-	MOV R9, #0x0030   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x0050   ; X start
-	MOV R7, #0x0060   ; X end (20 pixels)
-	MOV R8, #0x01B0   ; Y start
-	MOV R9, #0x01C0   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-
-	
-	MOV R6, #0x00A0   ; X start
-	MOV R7, #0x0120   ; X end (20 pixels)
-	MOV R8, #0x01B0   ; Y start
-	MOV R9, #0x01C0   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-
-
-	MOV R6, #0x0020   ; X start
-	MOV R7, #0x00B0   ; X end (20 pixels)
-	MOV R8, #0x01A0   ; Y start
-	MOV R9, #0x01B0   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-
-
-	MOV R6, #0x0010   ; X start
-	MOV R7, #0x0070   ; X end (20 pixels)
-	MOV R8, #0x0150   ; Y start
-	MOV R9, #0x0160   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x00E0   ; X start
-	MOV R7, #0x0130   ; X end (20 pixels)
-	MOV R8, #0x0180   ; Y start
-	MOV R9, #0x0190   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-
-
-	MOV R6, #0x00C0   ; X start
-	MOV R7, #0x00F0   ; X end (20 pixels)
-	MOV R8, #0x0190   ; Y start
-	MOV R9, #0x01A0   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	
-	MOV R6, #0x00C0   ; X start
-	MOV R7, #0x0110   ; X end (20 pixels)
-	MOV R8, #0x0160   ; Y start
-	MOV R9, #0x0170   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x0040   ; X start
-	MOV R7, #0x0060   ; X end (20 pixels)
-	MOV R8, #0x0180   ; Y start
-	MOV R9, #0x0190   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	
-	MOV R6, #0x0030   ; X start
-	MOV R7, #0x0050   ; X end (20 pixels)
-	MOV R8, #0x0170   ; Y start
-	MOV R9, #0x0180   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x0010   ; X start
-	MOV R7, #0x0050   ; X end (20 pixels)
-	MOV R8, #0x0130   ; Y start
-	MOV R9, #0x0140   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	
-	MOV R6, #0x00A0   ; X start
-	MOV R7, #0x0110   ; X end (20 pixels)
-	MOV R8, #0x0140   ; Y start
-	MOV R9, #0x0150   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x00F0   ; X start
-	MOV R7, #0x0130   ; X end (20 pixels)
-	MOV R8, #0x00F0   ; Y start
-	MOV R9, #0x0100   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x0010   ; X start
-	MOV R7, #0x00E0   ; X end (20 pixels)
-	MOV R8, #0x0100   ; Y start
-	MOV R9, #0x0110   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x00A0   ; X start
-	MOV R7, #0x00E0   ; X end (20 pixels)
-	MOV R8, #0x0120   ; Y start
-	MOV R9, #0x0130   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x00A0   ; X start
-	MOV R7, #0x00E0
-	MOV R8, #0x00A0   ; Y start
-	MOV R9, #0x00B0   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP	
-	
-	MOV R6, #0x0070   ; X start
-	MOV R7, #0x00B0
-	MOV R8, #0x00B0   ; Y start
-	MOV R9, #0x00C0   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP		
-	
-	MOV R6, #0x0070   ; X start
-	MOV R7, #0x00A0
-	MOV R8, #0x0090   ; Y start
-	MOV R9, #0x00A0   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP		
-	
-	MOV R6, #0x0070   ; X start
-	MOV R7, #0x0080
-	MOV R8, #0x00A0   ; Y start
-	MOV R9, #0x0B0   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP		
-
-	MOV R6, #0x0030   ; X start
-	MOV R7, #0x0070
-	MOV R8, #0x0080   ; Y start
-	MOV R9, #0x0090   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP	
-
-	MOV R6, #0x0100   ; X start
-	MOV R7, #0x0130
-	MOV R8, #0x0010   ; Y start
-	MOV R9, #0x0020   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP	
-	MOV R6, #0x0100   ; X start
-	MOV R7, #0x0130
-	MOV R8, #0x0030   ; Y start
-	MOV R9, #0x0040   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP	
-	MOV R6, #0x00E0   ; X start
-	MOV R7, #0x0130
-	MOV R8, #0x0050   ; Y start
-	MOV R9, #0x0060   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP	
-	MOV R6, #0x00C0   ; X start
-	MOV R7, #0x00F0
-	MOV R8, #0x0080   ; Y start
-	MOV R9, #0x0090   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP	
-	MOV R6, #0x0060   ; X start
-	MOV R7, #0x00B0
-	MOV R8, #0x0070   ; Y start
-	MOV R9, #0x0080   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP	
-	MOV R6, #0x00A0   ; X start
-	MOV R7, #0x00D0
-	MOV R8, #0x0060   ; Y start
-	MOV R9, #0x0070   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP	
-	MOV R6, #0x00A0   ; X start
-	MOV R7, #0x00E0
-	MOV R8, #0x0030   ; Y start
-	MOV R9, #0x0040   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP	
-	MOV R6, #0x00A0   ; X start
-	MOV R7, #0x00E0
-	MOV R8, #0x0010   ; Y start
-	MOV R9, #0x0020   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP	
-
-
-
-	
-	
-	; Horizontal Path
-	MOV R6, #0x00A0   ; X start
-	MOV R7, #0x00B0
-	MOV R8, #0x0030   ; Y start
-	MOV R9, #0x0070   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	MOV R6, #0x00C0   ; X start
-	MOV R7, #0x00D0
-	MOV R8, #0x0070   ; Y start
-	MOV R9, #0x0080   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	MOV R6, #0x00E0   ; X start
-	MOV R7, #0x00F0
-	MOV R8, #0x0060   ; Y start
-	MOV R9, #0x0080   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x0110   ; X start
-	MOV R7, #0x0120
-	MOV R8, #0x0190   ; Y start
-	MOV R9, #0x01b0   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x00A0   ; X start
-	MOV R7, #0x00B0
-	MOV R8, #0x00A0   ; Y start
-	MOV R9, #0x00E0   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x0030   ; X start
-	MOV R7, #0x0040
-	MOV R8, #0x0080   ; Y start
-	MOV R9, #0x00F0   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x0040   ; X start
-	MOV R7, #0x0050
-	MOV R8, #0x0020   ; Y start
-	MOV R9, #0x0050   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x0050   ; X start
-	MOV R7, #0x0060
-	MOV R8, #0x0040   ; Y start
-	MOV R9, #0x0070   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-
-	MOV R6, #0x00D0   ; X start
-	MOV R7, #0x00E0
-	MOV R8, #0x00A0   ; Y start
-	MOV R9, #0x0130   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-
-
-	MOV R6, #0x0090   ; X start
-	MOV R7, #0x00a0
-	MOV R8, #0x0170   ; Y start
-	MOV R9, #0x01a0   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-
-	MOV R6, #0x0080   ; X start
-	MOV R7, #0x0090
-	MOV R8, #0x0130   ; Y start
-	MOV R9, #0x0180   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x0010   ; X start
-	MOV R7, #0x0020
-	MOV R8, #0x0150   ; Y start
-	MOV R9, #0x01a0   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-
-
-	MOV R6, #0x0060   ; X start
-	MOV R7, #0x0070
-	MOV R8, #0x0150   ; Y start
-	MOV R9, #0x0190   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-
-
-	MOV R6, #0x0120   ; X start
-	MOV R7, #0x0130
-	MOV R8, #0x00F0   ; Y start
-	MOV R9, #0x0190   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x00C0   ; X start
-	MOV R7, #0x00D0
-	MOV R8, #0x0160   ; Y start
-	MOV R9, #0x01A0   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	
-	MOV R6, #0x0060   ; X start
-	MOV R7, #0x0070
-	MOV R8, #0x0100   ; Y start
-	MOV R9, #0x0140   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	MOV R6, #0x0040   ; X start
-	MOV R7, #0x0050
-	MOV R8, #0x0100   ; Y start
-	MOV R9, #0x0130   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-
-	MOV R6, #0x00F0   ; X start
-	MOV R7, #0x0100
-	MOV R8, #0x00A0   ; Y start
-	MOV R9, #0x0100   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-
-	MOV R6, #0x00A0   ; X start
-	MOV R7, #0x00B0
-	MOV R8, #0x0100   ; Y start
-	MOV R9, #0x0150   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-
-	MOV R6, #0x0110   ; X start
-	MOV R7, #0x0120
-	MOV R8, #0x0070   ; Y start
-	MOV R9, #0x00E0   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-
-	MOV R6, #0x0010   ; X start
-	MOV R7, #0x0020
-	MOV R8, #0x0010   ; Y start
-	MOV R9, #0x0110   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-
-	MOV R6, #0x0110   ; X start
-	MOV R7, #0x0120   ; X end (20 pixels)
-	MOV R8, #0x0070   ; Y start
-	MOV R9, #0x00E0   ; Y end (8 pixels thick)
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-
-
-	; square Path
-	MOV R6, #0x0020   ; X start
-	MOV R7, #0x0030
-	MOV R8, #0x0190   ; Y start
-	MOV R9, #0x01a0   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	
-	MOV R6, #0x0070   ; X start
-	MOV R7, #0x0080
-	MOV R8, #0x0130   ; Y start
-	MOV R9, #0x0140   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x0010   ; X start
-	MOV R7, #0x0020
-	MOV R8, #0x0120   ; Y start
-	MOV R9, #0x0130   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x0100   ; X start
-	MOV R7, #0x0110
-	MOV R8, #0x0150   ; Y start
-	MOV R9, #0x0160   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	
-	MOV R6, #0x0100   ; X start
-	MOV R7, #0x0110
-	MOV R8, #0x00A0   ; Y start
-	MOV R9, #0x00B0   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	MOV R6, #0x00D0   ; X start
-	MOV R7, #0x00E0
-	MOV R8, #0x0020   ; Y start
-	MOV R9, #0x0030   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	MOV R6, #0x0100   ; X start
-	MOV R7, #0x0110
-	MOV R8, #0x0020   ; Y start
-	MOV R9, #0x0030   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	MOV R6, #0x0120   ; X start
-	MOV R7, #0x0130
-	MOV R8, #0x0040   ; Y start
-	MOV R9, #0x0050   ; Y end
-	MOV R11, #Black
-	BL TFT_Filldraw4INP
-	; (and so on...)
-
-
-    ; More walls to create real maze... (you can continue adding many walls!)
-
-    POP {R0-R10, LR}
-    BX LR
+	POP {R11-R12,PC}
 	ENDFUNC

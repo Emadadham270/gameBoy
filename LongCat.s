@@ -1,19 +1,30 @@
 	AREA    MYDATA, DATA, READONLY
 Level1Map
-	DCB 0x04
-	DCB 0x54
-	DCB 0x10
-    DCB 0x80
-	DCB 0x08
+	DCB 0x81
+	DCB 0xA5
+	DCB 0x81
+    DCB 0xCB
+	DCB 0xD9
+	DCB 0xC1
+Level2Map
 	DCB 0x00
-
-	;DCB 0x81
-	;DCB 0xA5
-	;DCB 0x81
-    ;DCB 0xCB
-	;DCB 0xD9
-	;DCB 0xC1
-Leve1StartCell DCB 12
+	DCB 0x08
+	DCB 0x80
+    DCB 0x10
+	DCB 0x54
+	DCB 0x04
+Level3Map
+	DCB 0x8C
+	DCB 0xA0
+	DCB 0x88
+    DCB 0xE0
+	DCB 0x80
+	DCB 0x80
+	
+Leve1StartCell 
+			   DCB 36
+			   DCB 36
+			   DCB 19
 		;--- Colors ---
 Red     	   EQU 0XF800 
 Green   	   EQU 0x07E0
@@ -21,7 +32,13 @@ Blue    	   EQU 0x001F
 Yellow  	   EQU 0xFFE0
 White   	   EQU 0xFFFF
 Black		   EQU 0x0000	
-
+Pink 		   EQU 0xF81F  
+LightPink      EQU 0xFC9E  ; Lighter pink
+DeepPink       EQU 0xF8B2  ; Deeper pink with a bit more blue
+Brown      	   EQU 0x8200  ; Brown
+Cyan           EQU 0x07FF  ; Cyan (full green + full blue)
+LightBlue      EQU 0x841F
+Orange         EQU 0xFD20  
 	AREA USEABLE, DATA, READWRITE
 
 SnakeMap
@@ -64,7 +81,7 @@ TFT_DrawMap    FUNCTION
 	MOV R8,#0X0000
 	MOV R9,#0X01E0
     ; Fill screen with color BLUE
-    MOV R11, #Blue
+    MOV R11, #DeepPink
 	BL TFT_Filldraw4INP
 	
 	MOV R6,#10
@@ -72,12 +89,12 @@ TFT_DrawMap    FUNCTION
 	MOV R8,#40
 	MOV R9,#440 
     ; Fill screen with playing area
-    MOV R11, #White
+    MOV R11, #Cyan	
 	BL TFT_Filldraw4INP
 	
 	;Now all screen in blue, which is the background
 
-    MOV R11,#Green 	 	 ; square color
+    MOV R11,#Orange 	 	 ; square color
 	
 	MOV R1,#10		;START X
 	MOV R3,#0		;START row
@@ -86,7 +103,7 @@ ROW_LOOP
     CMP R3, #6			; Check if all 6 rows processed
     BEQ FINISH_MAP
 	
-	LDR R0, =Level1Map   ; Load address of Level Map into R0
+	LDR R0, =SnakeMap       ; Load address of Level Map into R0
     LDRB R9, [R0, R3]		; R9 HAS THE CELLS OF THIS ROW 
 
     MOV R4, #0          ;START COL
@@ -101,7 +118,7 @@ COL_LOOP
 
     TST R9, R10         ; Test if bit is 1
     BEQ SkipDraw        ; If 0, skip
-	MOV R11,#Green
+	MOV R11,#Orange
     ; If bit is 1, draw a wall block which is square
     BL TFT_DRAWSQUARE 	
 SkipDraw
@@ -468,7 +485,7 @@ Return
 ; check win (R1 = 0xFFFF win - R1 = 0xAAAA lose
 ;------------------------
 check_win FUNCTION
-	PUSH{R0, R2-R12,LR}
+	PUSH{R0, R2-R12, LR}
 	
     ; Compute row and column from cell number in R3 (0 to 47)
     LSR R6, R3, #3         ; R6 = k = R3 / 8 (row index from bottom, 0 to 5)
@@ -560,58 +577,60 @@ Check_griD
 	
 WINNER
 	;PUT HERE THE LOGIC OF WINNING
-	MOV R1, #0xFFFF             ; Return FFFF for win
+	MOV R1, #0x00FF             ; Return 00FF for win
 	MOV R6,#0X0000
 	MOV R7,#0X0140
 	MOV R8,#0X0000
 	MOV R9,#0X01E0
     MOV R11, #Green
 	BL TFT_Filldraw4INP
-	B continue_game
+	B EndTheGame
 	
 LOOSEER
-	MOV R1, #0xAAAA
+	MOV R1, #0x0AAA
 	MOV R6,#0X0000
 	MOV R7,#0X0140
 	MOV R8,#0X0000
 	MOV R9,#0X01E0
     MOV R11, #Red
 	BL TFT_Filldraw4INP
+	B EndTheGame
 
 continue_game
     MOV R1, #0             ; Game continues
-    POP{R0, R2-R12,PC}
+EndTheGame
+    POP{R0, R2-R12, PC}
 	ENDFUNC
 ;------------------------
 ; MainGame_LongCat
+; Takes R9 = level number: 1, 2, 3, ...
 ;------------------------
 MainGame_LongCat FUNCTION
     PUSH {R0-R12, LR}
-	MOV R2, #0          ; number of bytes to copy
+	MOV R9, #3
+New_Game_Loop
+	MOV R12, R9
+	SUB R12, #1          ; cuz if level = 1 we will get address + 0, etc..
+	LDR R3, =Leve1StartCell
+	LDRB R3, [R3, R12]   ; Load level start cell
+	MOV R4, R3
+	MOV R2, #6           ; Temp for multiplication
+	MUL R12, R2          ; R12 = 6 * level shift value
+	MOV R2, #0           ; counter for bytes to copy
 CopyLoop
 	LDR R0, =Level1Map
+	ADD R0, R12         ; for level
     LDR R1, =SnakeMap   ; destination base address
-	LDRB R3, [R0, R2] ; load byte from [R0], then R0++
-	STRB R3, [R1, R2] ; store byte to [R1], then R1++
+	LDRB R3, [R0, R2]
+	STRB R3, [R1, R2]
 	ADD R2, #1 	  ; increment counter
 	CMP R2, #6
 	BNE CopyLoop
 	
-	BL TFT_DrawMap	
-	LDR R3, =Leve1StartCell
-	LDRB R3, [R3]
-	MOV R4, R3
-	MOV R10,R3
-	MOV R6,#0X0050
-	; TO BE DELETED
-	;MOV R8,#240
-	;ADD R7 , R6 , #50
-	;ADD R9 , R8 , #50
-	;MOV R11 , #Black
-	;BL TFT_Filldraw4INP
-	;ADD R7,R6,#50
-	;MOV R9,290
-	;BL DRAW_HEAD
+	BL TFT_DrawMap
+	MOV R3, R4
+	;MOV R10,R3
+	;MOV R6,#0X0050
 
 MaiN__LooP
 	BL Draw_Snake_Movement
@@ -631,6 +650,17 @@ INPUT1234                ;Wait for input from user
 end_geme
 	MOV R0, #1
 	BL delay
+	
+INPUT12345                ;Wait for input from user
+	BL GET_state
+	AND R10, #0x001F
+	CMP R10, #00
+	BEQ INPUT12345
+	
+	CMP R1, #0x00FF
+	ADDEQ R9, #1     ;Next level if he won
+	CMP R9, #3     ;If next level is valid, jump to it (5 is a placeholder here)
+	BLE New_Game_Loop
 	POP {R0-R12, PC}
 	ENDFUNC
 	
