@@ -28,14 +28,20 @@ TFT_WR         EQU     (1 << 11)
 TFT_DC         EQU     (1 << 12)
 TFT_CS         EQU     (1 << 15)
 
-;--- Colors ---
-Red     	   EQU 0Xf800 
-Green   	   EQU 0xF0FF
-Blue    	   EQU 0x02ff 
-Yellow  	   EQU 0xFfe0
-White   	   EQU 0xffff
-Black		   EQU 0x0000
-	
+		;--- Colors ---
+Red     	   EQU 0XF800 
+Green   	   EQU 0x07E0
+Blue    	   EQU 0x001F 
+Yellow  	   EQU 0xFFE0
+White   	   EQU 0xFFFF
+Black		   EQU 0x0000	
+Pink 		   EQU 0xF81F  
+LightPink      EQU 0xFC9E  ; Lighter pink
+DeepPink       EQU 0xF8B2  ; Deeper pink with a bit more blue
+Brown      	   EQU 0x8200  ; Brown
+Cyan           EQU 0x07FF  ; Cyan (full green + full blue)
+LightBlue      EQU 0x841F
+Orange         EQU 0xFD20  	
 RNG_State DCD 1 ; 32-bit seed (must be non-zero)
 
 
@@ -787,7 +793,7 @@ START
 	
 DrawFrame
 
-	MOV R11, #Red
+	MOV R11, #Cyan
 
 	;DownfRAME
 	MOV R6, #0
@@ -819,7 +825,7 @@ DrawFrame
 	
 	;number of game icons
 DrawFourSquares
-	MOV R11, #Red
+	MOV R11, #Cyan
 	
 	;down right square
 	MOV R6,#35
@@ -828,6 +834,14 @@ DrawFourSquares
 	MOV R9,#215
 	BL TFT_Filldraw4INP
 	
+	MOV R11, #Black
+	MOV R1, R6
+	MOV R2, R8
+	MOV R3, #10
+	MOV R4, #100
+	BL DrawOutline
+	
+	MOV R11, #Cyan
 	;up right square
 	MOV R6,#185
 	MOV R7,#285
@@ -835,6 +849,14 @@ DrawFourSquares
 	MOV R9,#215
 	BL TFT_Filldraw4INP
 	
+	MOV R11, #Black
+	MOV R1, R6
+	MOV R2, R8
+	MOV R3, #10
+	MOV R4, #100
+	BL DrawOutline
+	
+	MOV R11, #Cyan
 	;down left square
 	MOV R6,#35
 	MOV R7,#135
@@ -842,12 +864,27 @@ DrawFourSquares
 	MOV R9,#365
 	BL TFT_Filldraw4INP
 	
+	MOV R11, #Black
+	MOV R1, R6
+	MOV R2, R8
+	MOV R3, #10
+	MOV R4, #100
+	BL DrawOutline
+	
+	MOV R11, #Cyan
 	;up left square
 	MOV R6,#185
 	MOV R7,#285
 	MOV R8,#265
 	MOV R9,#365
 	BL TFT_Filldraw4INP
+	
+	MOV R11, #Black
+	MOV R1, R6
+	MOV R2, R8
+	MOV R3, #10
+	MOV R4, #100
+	BL DrawOutline
 
 Initialize_Outline
 	MOV R1,#185
@@ -925,42 +962,42 @@ movecursor FUNCTION ; Take X-R1; Y-R2 : Input in R10
 	 
 	 MOV R12 , R10
 	 AND R12, #0x000F
-	 CMP R12 , #1
+	 CMP R12 , #4
 	 BEQ MOVE_UPB
 	  
-	 CMP R12 , #2
+	 CMP R12 , #8
 	 BEQ MOVE_DOWNB
 	 
-	 CMP R12 , #4
+	 CMP R12 , #1
 	 BEQ MOVE_LEFTB
 	 
-	 CMP R12 , #8
+	 CMP R12 , #2
 	 BEQ MOVE_RIGHTB
 	 
 	 B DEFAULTB
 MOVE_UPB
-	 CMP R2 , #185 ; checking the start
+	 CMP R1 , #185 ; checking the start
 	 BEQ DEFAULTB
-	 ADD R2 , R2 , #150
+	 ADD R1 , R1 , #150
 	 B DEFAULTB
 	 
 MOVE_DOWNB
-	 CMP R2 , #35
-	 BEQ DEFAULTB
-	 SUB R2 , R2 , #150
-	 B DEFAULTB
-	 
-MOVE_RIGHTB
-	 CMP R1 , #115
+	 CMP R1 , #35
 	 BEQ DEFAULTB
 	 SUB R1 , R1 , #150
 	 B DEFAULTB
 	 
-MOVE_LEFTB
-	 MOV R12,#365 ; To compare values greater than #255
-	 CMP R1 , R12
+MOVE_RIGHTB
+	 CMP R2 , #115
 	 BEQ DEFAULTB
-	 ADD R1 , R1 , #150
+	 SUB R2 , R2 , #150
+	 B DEFAULTB
+	 
+MOVE_LEFTB
+	 MOV R12,#265 ; To compare values greater than #255
+	 CMP R2 , R12
+	 BEQ DEFAULTB
+	 ADD R2 , R2 , #150
 	 B DEFAULTB
 	 
 DEFAULTB
