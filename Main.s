@@ -22,6 +22,7 @@ Orange         EQU 0xFD20
 	IMPORT TFT_WriteCommand
 	IMPORT TFT_WriteData
 	IMPORT TFT_Init
+		
 	IMPORT TFT_DrawImage
 	IMPORT TFT_Filldraw4INP
 	IMPORT GET_state

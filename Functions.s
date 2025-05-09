@@ -63,6 +63,10 @@ RNG_State DCD 1 ; 32-bit seed (must be non-zero)
 	IMPORT Main_Game_XO
 	IMPORT MainGame_LongCat
 	IMPORT MAIN_MAZE
+	IMPORT	MAZELOGO
+	IMPORT XO
+	IMPORT LONGCAT
+	IMPORT AEROSPACE
 
 ;-----------------------------------------
 ; Initially call in main function
@@ -849,7 +853,10 @@ DrawFourSquares
 	MOV R8,#115
 	MOV R9,#215
 	BL TFT_Filldraw4INP
-	
+	MOV R1,R6
+	MOV R2,R8
+	LDR R3,=LONGCAT
+	BL TFT_DrawImage
 	MOV R11, #Black
 	MOV R1, R6
 	MOV R2, R8
@@ -864,7 +871,10 @@ DrawFourSquares
 	MOV R8,#265
 	MOV R9,#365
 	BL TFT_Filldraw4INP
-	
+	MOV R1,R6
+	MOV R2,R8
+	LDR R3,=MAZELOGO
+	BL TFT_DrawImage
 	MOV R11, #Black
 	MOV R1, R6
 	MOV R2, R8
@@ -879,7 +889,10 @@ DrawFourSquares
 	MOV R8,#265
 	MOV R9,#365
 	BL TFT_Filldraw4INP
-	
+	MOV R1,R6
+	MOV R2,R8
+	LDR R3,=XO
+	BL TFT_DrawImage
 	MOV R11, #Black
 	MOV R1, R6
 	MOV R2, R8
