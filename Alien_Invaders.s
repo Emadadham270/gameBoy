@@ -95,6 +95,11 @@ Orange         EQU 0xFD20
 	IMPORT  Num_to_LCD
 	IMPORT  Get_Random
 	IMPORT  Init_RandomSeed
+	EXPORT	Intialize_Grid
+	EXPORT  Score_Draw
+	EXPORT	Heart_Draw
+	EXPORT Increment_Score_And_Draw
+	EXPORT Decrement_Heart_And_Draw
 ; R3 = Position of player		
 ADD_BULLET_PLAYER FUNCTION 
 	PUSH {R0-R3,LR}
@@ -403,7 +408,7 @@ redraw
     SUB R6,R0,#0x10
     ADD R7,R0,#0x20
     MOV R11, #Blue
-    B TFT_Filldraw4INP            ;// Call the existing draw function
+    BL TFT_Filldraw4INP            ;// Call the existing draw function
 
 end_
     POP {R4-R7, PC}
@@ -419,12 +424,12 @@ Score_Draw
 
     LDR   R0, =Score    ; Address of Score
     LDRH  R0, [R0]      ; R0 = value of Score
-    MOV   R1, #312      ; X
-    MOV   R2, #464      ; Y
+    MOV   R1, #300      ; X
+    MOV   R2, #450      ; Y
     MOV   R3, #1        ; segment thickness
-    MOV   R4, #7        ; segment length
+    MOV   R4, #6        ; segment length
     MOV   R5, #3        ; digits to draw
-    MOV   R11, #Black   ; desired color
+    MOV   R11, #Pink    ; desired color ;;pink 34an barbieeeeee
 
     BL    Num_to_LCD
 
@@ -437,10 +442,15 @@ Score_Draw
 ;-----------------------------------------
 Increment_Score_And_Draw
     PUSH {R0-R11, LR}
-
+	MOV   R6, #300      ; X
+    MOV   R7, #320      ; Y
+	MOV   R8, #450      ; X
+    MOV   R9, #480      ; Y
+	MOV	  R11,#Black
+	BL TFT_Filldraw4INP 
     LDR   R0, =Score
     LDRH  R1, [R0]
-    ADD   R1, R1, R12
+    ADD   R1, R1,#1
     STRH  R1, [R0]
 
     BL Score_Draw
@@ -454,13 +464,12 @@ Heart_Draw
 
     LDR   R0, =Hearts
     LDRH  R0, [R0]
-
-    MOV   R1, #297      ; X
-    MOV   R2, #464      ; Y
+    MOV   R1, #270      ; X
+    MOV   R2, #450      ; Y
     MOV   R3, #1        ; segment thickness
     MOV   R4, #7        ; segment length
     MOV   R5, #1        ; digits to draw
-    MOV   R11, #Black   ; desired color
+    MOV   R11, #Orange  ; desired color
 
     BL    Num_to_LCD
 
@@ -469,10 +478,15 @@ Heart_Draw
 
 Decrement_Heart_And_Draw
     PUSH {R0-R12, LR}
-
+	MOV   R6, #270      ; X
+    MOV   R7, #299      ; Y
+	MOV   R8, #450      ; X
+    MOV   R9, #480      ; Y
+	MOV	  R11,#Black
+	BL TFT_Filldraw4INP 
     LDR   R0, =Hearts
     LDRH  R1, [R0]
-    SUB   R1, R1, R12
+    SUB   R1, R1, #1
     STRH  R1, [R0]
 
     CMP R0 , #0
@@ -599,6 +613,22 @@ DrawWa74 FUNCTION;take parameters at r1 and r2
 	MOV R8,	R2
 	ADD R9, R2 ,#0X0030
 	BL TFT_Filldraw4INP
+	MOV R11,#Black
+	ADD R6, R1 ,#0X0020  ; X start
+	ADD R7,	R1 ,#0X0028
+	ADD R8,	R2 ,#0X000C
+	ADD R9, R2 ,#0X0014
+	BL TFT_Filldraw4INP
+	ADD R6, R1 ,#0X0020  ; X start
+	ADD R7,	R1 ,#0X0028
+	ADD R8,	R2 ,#0X001C
+	ADD R9, R2 ,#0X0024
+	BL TFT_Filldraw4INP
+	ADD R6, R1 ,#0X0010  ; X start
+	ADD R7,	R1 ,#0X0018
+	ADD R8,	R2 ,#0X000C
+	ADD R9, R2 ,#0X0024
+	BL TFT_Filldraw4INP
 	POP {R6-R11, PC}
 	ENDFUNC
 	
@@ -612,8 +642,15 @@ Intialize_Grid FUNCTION
     ; Fill screen with color (area)
     MOV R11, #Black
 	BL TFT_Filldraw4INP
+	MOV R6,#3
+	LDR R0, =Hearts  ; Load address of Level Map into R0
+	STRH R6, [R0]
+	MOV R6,#0
+	LDR R0, =Score  ; Load address of Level Map into R0
+	STRH R6, [R0]
 	MOV R6,#0
 	MOV R3,#0
+	
 MAKE_ZERO
     CMP R3, #30			; Check if all 6 rows processed
     BEQ FINISH_MAKE_ZERO
@@ -622,6 +659,7 @@ MAKE_ZERO
 	STRH R6, [R0, R3, LSL #1]
 	LDR R0, =Enemy_Bullets
 	STRH R6, [R0, R3, LSL #1]
+	
 	ADD R3,R3,#1
 	B MAKE_ZERO
 FINISH_MAKE_ZERO
