@@ -36,7 +36,7 @@ Yellow  	   EQU 0xFfe0
 White   	   EQU 0xffff
 Black		   EQU 0x0000
 	
-
+RNG_State DCD 1 ; 32-bit seed (must be non-zero)
 
 
 
@@ -51,6 +51,8 @@ Black		   EQU 0x0000
 	EXPORT	CONFIGURE_PORTS
 	EXPORT  Num_to_LCD
 	EXPORT  DrawDigit
+	EXPORT  Init_RandomSeed
+	EXPORT  Get_Random
 
 ;-----------------------------------------
 ; Initially call in main function
@@ -437,6 +439,28 @@ DelayInner_Loop
 	ENDFUNC
 
 
+Get_Random FUNCTION  ;gets a random number in R0
+	PUSH {R1,LR} ; save caller-saved R1 just in case
+    LDR     R1, =RNG_State   ; R1 → state
+    LDR     R0, [R1]         ; R0 = current state
+    CMP     R0, #0           ; avoid the all-zero lock-up
+    MOVEQ   R0, #1
+    EOR     R0, R0, R0, LSL #13   ; xorshift32
+    EOR     R0, R0, R0, LSR #17
+    EOR     R0, R0, R0, LSL #5
+    STR     R0, [R1]         ; save new state
+    POP     {R1,PC}          ; return with random value in R0
+    ENDFUNC
+
+Init_RandomSeed FUNCTION
+	LDR R0, =0xE000E018 ; STCURRENT register address
+	LDR R0, [R0] ; read whatever value is ticking
+	CMP R0, #0 ; keep seed non-zero
+	MOVEQ R0, #1
+	LDR R1, =RNG_State
+	STR R0, [R1]
+	BX LR
+	ENDFUNC
 
 
 ;------------------------------------------
@@ -449,6 +473,7 @@ DelayInner_Loop
 ;  R3 = segment thickness
 ;  R4 = segment length
 ;  R5 = digit count
+;  R11 = Color
 ; Clobbers: R5,R6,R7,R8,R9
 ; Returns R0 = raw 32-bit segment word (optional)
 ;------------------------------------------

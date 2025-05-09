@@ -39,7 +39,6 @@ Orange	EQU 0xFC00
 		IMPORT  TFT_Filldraw4INP
 		IMPORT  delay
 		IMPORT  GET_state
-		EXPORT  TFT_DrawMazeGrid
 		EXPORT  TFT_DrawMazeGrid2
 		EXPORT  TFT_DrawMazeGrid3
 		EXPORT  TFT_DrawMapM
