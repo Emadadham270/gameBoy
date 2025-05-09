@@ -47,23 +47,23 @@ RNG_State DCD 1 ; 32-bit seed (must be non-zero)
 
 
     AREA    CODEY, CODE, READONLY
-    EXPORT  TFT_WriteCommand
-    EXPORT  TFT_WriteData
-    EXPORT  TFT_Init
-    EXPORT  TFT_DrawImage
-    EXPORT  TFT_Filldraw4INP
-    EXPORT  GET_state
-    EXPORT  delay
-	EXPORT	CONFIGURE_PORTS
-	EXPORT  Num_to_LCD
-	EXPORT  DrawDigit
-	EXPORT  Init_RandomSeed
-	EXPORT  Get_Random
+    EXPORT TFT_WriteCommand
+    EXPORT TFT_WriteData
+    EXPORT TFT_Init
+    EXPORT TFT_DrawImage
+    EXPORT TFT_Filldraw4INP
+    EXPORT GET_state
+    EXPORT delay
+	EXPORT CONFIGURE_PORTS
+	EXPORT Num_to_LCD
+	EXPORT DrawDigit
+	EXPORT Init_RandomSeed
+	EXPORT Get_Random
 	EXPORT UI	
 	IMPORT Main_Game_XO
 	IMPORT MainGame_LongCat
 	IMPORT MAIN_MAZE
-	IMPORT	MAZELOGO
+	IMPORT MAZELOGO
 	IMPORT XO
 	IMPORT LONGCAT
 	IMPORT AEROSPACE

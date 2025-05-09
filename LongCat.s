@@ -158,7 +158,7 @@ Draw_Snake_Movement FUNCTION
 ; Input -> UP 
 ;-----------
 	
-	; Filldraw4Input: R6,R7-column start/end   R8,R9-page start/end
+; Filldraw4Input: R6,R7-column start/end   R8,R9-page start/end
 ;------------------------
 
 	 
