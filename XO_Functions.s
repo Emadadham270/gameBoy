@@ -9,7 +9,7 @@ X_score     DCD     0x00
 O_score     DCD     0x00	
 ;--- Colors ---
 Red     	   EQU 0Xf800 
-Green   	   EQU 0xF0FF
+Green   	   EQU 0x07e0
 Blue    	   EQU 0x02ff 
 Yellow  	   EQU 0xFfe0
 White   	   EQU 0xffff
@@ -74,7 +74,18 @@ TFT_DrawGrid    FUNCTION
     ; Fill screen with color (line)
     MOV R11, #Black
     BL TFT_Filldraw4INP
-	
+
+
+    ; Fill screen with color (line)
+    MOV R11, #Black
+    BL TFT_Filldraw4INP
+	MOV R6,#0X0098
+	MOV R7,#0X00a8
+	MOV R8,#0X0148
+	MOV R9,#0X01d0
+    ; Fill screen with color (line)
+    MOV R11, #Green
+    BL TFT_Filldraw4INP
 ;-----------------------------------------------------
 ; Inputs on entry: 
 ;   R1 = X0,   R2 = Y0,   R3 = LEN, 
@@ -91,12 +102,12 @@ TFT_DrawGrid    FUNCTION
 	MOV R2 , #0x17C
 	MOV R1 , #80
 	MOV R3 , #50
-	MOV R11 , #Red 	
+	MOV R11 , #Green 	
 	BL Draw_X
 	;THE value of score
 	LDR R0 , =X_score
 	LDR R0 , [R0]
-	MOV R2 , #0x17B
+	MOV R2 , #0x17c
 	MOV R1 , #30
 	MOV R3 , #2
 	MOV R4 , #16
@@ -113,12 +124,12 @@ TFT_DrawGrid    FUNCTION
 	MOV R2 , #0x17C
 	MOV R1 , #0xFA
 	MOV R3 , #50
-	MOV R11 , #Red 	
+	MOV R11 , #Green 
 	BL Draw_O
 	;THE value of score
 	LDR R0 , =O_score
 	LDR R0 , [R0]
-	MOV R2 , #0x17B
+	MOV R2 , #0x17c
 	MOV R1 , #200
 	MOV R3 , #2
 	MOV R4 , #16

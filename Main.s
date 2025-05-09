@@ -1,12 +1,18 @@
 	AREA MYDATAS, DATA, READONLY
-;--- Colors ---
-Red     EQU 0Xf800 
-Green   EQU 0xF0FF
-Blue    EQU 0x02ff 
-Yellow  EQU 0xFfe0
-White   EQU 0xffff
-Black	EQU 0x0000
-	
+		;--- Colors ---
+Red     	   EQU 0XF800 
+Green   	   EQU 0x07E0
+Blue    	   EQU 0x001F 
+Yellow  	   EQU 0xFFE0
+White   	   EQU 0xFFFF
+Black		   EQU 0x0000	
+Pink 		   EQU 0xF81F  
+LightPink      EQU 0xFC9E  ; Lighter pink
+DeepPink       EQU 0xF8B2  ; Deeper pink with a bit more blue
+Brown      	   EQU 0x8200  ; Brown
+Cyan           EQU 0x07FF  ; Cyan (full green + full blue)
+LightBlue      EQU 0x841F
+Orange         EQU 0xFD20  
 	
 
 	AREA MYCODE, CODE, READONLY
@@ -34,17 +40,9 @@ __main FUNCTION
 	BL CONFIGURE_PORTS
     ; Initialize TFT
     BL TFT_Init
-	BL Get_Random
-    MOV R1, #50
-	MOV R2, #50
-	MOV R3, #2
-	MOV R4, #16
-	MOV R5, #4
-	MOV R11, #Blue
-	BL Num_to_LCD
 	;BL TFT_DrawMapM
 	;BL MainGame_LongCat
-	;BL Main_Game_XO
+	BL Main_Game_XO
     ENDFUNC
 	
 	END

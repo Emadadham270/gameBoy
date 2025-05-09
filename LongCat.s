@@ -32,13 +32,7 @@ Blue    	   EQU 0x001F
 Yellow  	   EQU 0xFFE0
 White   	   EQU 0xFFFF
 Black		   EQU 0x0000	
-Pink 		   EQU 0xF81F  
-LightPink      EQU 0xFC9E  ; Lighter pink
-DeepPink       EQU 0xF8B2  ; Deeper pink with a bit more blue
-Brown      	   EQU 0x8200  ; Brown
-Cyan           EQU 0x07FF  ; Cyan (full green + full blue)
-LightBlue      EQU 0x841F
-Orange         EQU 0xFD20  
+
 	AREA USEABLE, DATA, READWRITE
 
 SnakeMap
@@ -56,6 +50,7 @@ SnakeMap
 	IMPORT  TFT_Filldraw4INP
     IMPORT  delay
 	IMPORT  GET_state
+	IMPORT CatFace
 	EXPORT MainGame_LongCat	
 	EXPORT Draw_Snake_Movement
 
@@ -81,7 +76,7 @@ TFT_DrawMap    FUNCTION
 	MOV R8,#0X0000
 	MOV R9,#0X01E0
     ; Fill screen with color BLUE
-    MOV R11, #DeepPink
+    MOV R11, #Blue
 	BL TFT_Filldraw4INP
 	
 	MOV R6,#10
@@ -89,12 +84,12 @@ TFT_DrawMap    FUNCTION
 	MOV R8,#40
 	MOV R9,#440 
     ; Fill screen with playing area
-    MOV R11, #Cyan	
+    MOV R11, #White
 	BL TFT_Filldraw4INP
 	
 	;Now all screen in blue, which is the background
 
-    MOV R11,#Orange 	 	 ; square color
+    MOV R11,#Green 	 	 ; square color
 	
 	MOV R1,#10		;START X
 	MOV R3,#0		;START row
@@ -118,7 +113,7 @@ COL_LOOP
 
     TST R9, R10         ; Test if bit is 1
     BEQ SkipDraw        ; If 0, skip
-	MOV R11,#Orange
+	MOV R11,#Green
     ; If bit is 1, draw a wall block which is square
     BL TFT_DRAWSQUARE 	
 SkipDraw
@@ -259,12 +254,12 @@ Down_LOOP
 SKIP_Down
 	
 DRAW_HEAD
-
-	ADD R7 , R6 , #50
-	ADD R9 , R8 , #50
-	MOV R11 , #Black
-	BL TFT_Filldraw4INP
-	
+	PUSH{R1,R2,R3}
+	MOV R1,R6
+	MOV R2,R8	
+	LDR R3,=CatFace
+	BL TFT_DrawImage
+	POP{R1,R2,R3}
 	
 	POP {R0-R2, R4-R12, PC}
 	ENDFUNC

@@ -409,6 +409,11 @@
               <FileType>2</FileType>
               <FilePath>.\MAZE_Functions.s</FilePath>
             </File>
+            <File>
+              <FileName>dataCatFace.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\dataCatFace.s</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

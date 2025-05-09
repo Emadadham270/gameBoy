@@ -6,22 +6,23 @@ Section Cross References
 
     main.o(MYDATAS) refers (Special) to functions.o(CODEY) for DrawDigit
     main.o(MYDATAS) refers (Special) to longcat.o(CODEY) for MainGame_LongCat
-    main.o(MYDATAS) refers (Special) to xo_functions.o(CODEY) for Main_Game_XO
     main.o(MYDATAS) refers (Special) to maze_functions.o(.text) for TFT_DrawMapM
     main.o(MYCODE) refers (Special) to functions.o(CODEY) for DrawDigit
     main.o(MYCODE) refers (Special) to longcat.o(CODEY) for MainGame_LongCat
-    main.o(MYCODE) refers (Special) to xo_functions.o(CODEY) for Main_Game_XO
     main.o(MYCODE) refers (Special) to maze_functions.o(.text) for TFT_DrawMapM
+    main.o(MYCODE) refers to xo_functions.o(CODEY) for Main_Game_XO
     functions.o(CODEY) refers to functions.o(MYDATA) for RNG_State
     xo_functions.o(MYDATA) refers (Special) to functions.o(CODEY) for TFT_DrawImage
     xo_functions.o(CODEY) refers (Special) to functions.o(CODEY) for TFT_DrawImage
     xo_functions.o(CODEY) refers to xo_functions.o(MYDATA) for X_score
-    longcat.o(MYDATA) refers (Special) to functions.o(CODEY) for TFT_DrawImage
-    longcat.o(USEABLE) refers (Special) to functions.o(CODEY) for TFT_DrawImage
-    longcat.o(CODEY) refers (Special) to functions.o(CODEY) for TFT_DrawImage
+    longcat.o(MYDATA) refers (Special) to functions.o(CODEY) for TFT_WriteCommand
+    longcat.o(USEABLE) refers (Special) to functions.o(CODEY) for TFT_WriteCommand
+    longcat.o(CODEY) refers (Special) to functions.o(CODEY) for TFT_WriteCommand
     longcat.o(CODEY) refers to longcat.o(USEABLE) for SnakeMap
+    longcat.o(CODEY) refers to datacatface.o(MYIMAGE) for CatFace
     longcat.o(CODEY) refers to longcat.o(MYDATA) for Leve1StartCell
     maze_functions.o(MazeData) refers (Special) to functions.o(CODEY) for GET_state
+    maze_functions.o(MazeData2) refers (Special) to functions.o(CODEY) for GET_state
     maze_functions.o(.text) refers (Special) to functions.o(CODEY) for GET_state
     maze_functions.o(.text) refers to maze_functions.o(MazeData) for ROW2
     startup_stm32f401xc.o(STACK) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
@@ -45,6 +46,7 @@ Section Cross References
 Removing Unused input sections from the image.
 
     Removing main.o(MYDATAS), (0 bytes).
+    Removing maze_functions.o(MazeData2), (0 bytes).
     Removing system_stm32f4xx.o(.text), (0 bytes).
     Removing system_stm32f4xx.o(.ARM.exidx.text.SystemInit), (8 bytes).
     Removing system_stm32f4xx.o(.text.SystemCoreClockUpdate), (302 bytes).
@@ -53,7 +55,7 @@ Removing Unused input sections from the image.
     Removing system_stm32f4xx.o(.rodata.AHBPrescTable), (16 bytes).
     Removing system_stm32f4xx.o(.rodata.APBPrescTable), (8 bytes).
 
-8 unused section(s) (total 346 bytes) removed from the image.
+9 unused section(s) (total 346 bytes) removed from the image.
 
 ==============================================================================
 
@@ -70,44 +72,47 @@ Image Symbol Table
     Main.s                                   0x00000000   Number         0  main.o ABSOLUTE
     RTE/Device/STM32F401RCTx/startup_stm32f401xc.s 0x00000000   Number         0  startup_stm32f401xc.o ABSOLUTE
     XO_Functions.s                           0x00000000   Number         0  xo_functions.o ABSOLUTE
+    dataCatFace.s                            0x00000000   Number         0  datacatface.o ABSOLUTE
     dc.s                                     0x00000000   Number         0  dc.o ABSOLUTE
     system_stm32f4xx.c                       0x00000000   Number         0  system_stm32f4xx.o ABSOLUTE
     RESET                                    0x08000000   Section      404  startup_stm32f401xc.o(RESET)
     $v0                                      0x08000194   Number         0  maze_functions.o(.text)
-    .text                                    0x08000194   Section      510  maze_functions.o(.text)
-    TFT_DRAWBlock                            0x08000201   Thumb Code    24  maze_functions.o(.text)
-    Drawsquare                               0x08000315   Thumb Code    26  maze_functions.o(.text)
-    $v0                                      0x08000394   Number         0  startup_stm32f401xc.o(.text)
-    .text                                    0x08000394   Section       64  startup_stm32f401xc.o(.text)
-    .text                                    0x080003d4   Section        0  heapauxi.o(.text)
-    [Anonymous Symbol]                       0x080003dc   Section        0  system_stm32f4xx.o(.text.SystemInit)
-    $v0                                      0x080003f0   Number         0  functions.o(CODEY)
-    CODEY                                    0x080003f0   Section     1272  functions.o(CODEY)
-    BCD_TO_SEVEN_SEG                         0x0800076b   Thumb Code   146  functions.o(CODEY)
-    $v0                                      0x080008e8   Number         0  xo_functions.o(CODEY)
-    TFT_DrawGrid                             0x080008e9   Thumb Code   250  xo_functions.o(CODEY)
-    CODEY                                    0x080008e8   Section     1924  xo_functions.o(CODEY)
-    DrawBorder                               0x080009e3   Thumb Code    84  xo_functions.o(CODEY)
-    TFT_MoveCursor                           0x08000a37   Thumb Code    96  xo_functions.o(CODEY)
-    Draw_XO                                  0x08000a97   Thumb Code   426  xo_functions.o(CODEY)
-    Check_Win                                0x08000c41   Thumb Code   292  xo_functions.o(CODEY)
-    DrawXWINS                                0x08000d65   Thumb Code    54  xo_functions.o(CODEY)
-    DrawOWINS                                0x08000d9b   Thumb Code    52  xo_functions.o(CODEY)
-    DrawTA3ADOL                              0x08000dcf   Thumb Code    32  xo_functions.o(CODEY)
-    Draw_X                                   0x08000e85   Thumb Code   112  xo_functions.o(CODEY)
-    Draw_O                                   0x08000ef5   Thumb Code   108  xo_functions.o(CODEY)
-    $v0                                      0x0800106c   Number         0  longcat.o(CODEY)
-    TFT_DRAWSQUARE                           0x0800106d   Thumb Code    24  longcat.o(CODEY)
-    CODEY                                    0x0800106c   Section     1016  longcat.o(CODEY)
-    TFT_DrawMap                              0x08001085   Thumb Code   132  longcat.o(CODEY)
-    Get_Coordinates                          0x080011bd   Thumb Code    32  longcat.o(CODEY)
-    Move_Snake                               0x080011dd   Thumb Code   250  longcat.o(CODEY)
-    check_win                                0x080012d7   Thumb Code   254  longcat.o(CODEY)
-    $v0                                      0x08001464   Number         0  main.o(MYCODE)
-    MYCODE                                   0x08001464   Section       44  main.o(MYCODE)
-    Level1Map                                0x08001490   Data           0  longcat.o(MYDATA)
-    MYDATA                                   0x08001490   Section       21  longcat.o(MYDATA)
-    Leve1StartCell                           0x080014a2   Data           0  longcat.o(MYDATA)
+    .text                                    0x08000194   Section      280  maze_functions.o(.text)
+    Drawsquare                               0x0800022d   Thumb Code    24  maze_functions.o(.text)
+    $v0                                      0x080002ac   Number         0  startup_stm32f401xc.o(.text)
+    .text                                    0x080002ac   Section       64  startup_stm32f401xc.o(.text)
+    .text                                    0x080002ec   Section        0  heapauxi.o(.text)
+    [Anonymous Symbol]                       0x080002f4   Section        0  system_stm32f4xx.o(.text.SystemInit)
+    $v0                                      0x08000308   Number         0  functions.o(CODEY)
+    CODEY                                    0x08000308   Section     1272  functions.o(CODEY)
+    BCD_TO_SEVEN_SEG                         0x08000683   Thumb Code   146  functions.o(CODEY)
+    $v0                                      0x08000800   Number         0  xo_functions.o(CODEY)
+    TFT_DrawGrid                             0x08000801   Thumb Code   282  xo_functions.o(CODEY)
+    CODEY                                    0x08000800   Section     1956  xo_functions.o(CODEY)
+    DrawBorder                               0x0800091b   Thumb Code    84  xo_functions.o(CODEY)
+    TFT_MoveCursor                           0x0800096f   Thumb Code    96  xo_functions.o(CODEY)
+    Draw_XO                                  0x080009cf   Thumb Code   426  xo_functions.o(CODEY)
+    Check_Win                                0x08000b79   Thumb Code   292  xo_functions.o(CODEY)
+    DrawXWINS                                0x08000c9d   Thumb Code    54  xo_functions.o(CODEY)
+    DrawOWINS                                0x08000cd3   Thumb Code    52  xo_functions.o(CODEY)
+    DrawTA3ADOL                              0x08000d07   Thumb Code    32  xo_functions.o(CODEY)
+    Draw_X                                   0x08000dbd   Thumb Code   112  xo_functions.o(CODEY)
+    Draw_O                                   0x08000e2d   Thumb Code   108  xo_functions.o(CODEY)
+    $v0                                      0x08000fa4   Number         0  longcat.o(CODEY)
+    TFT_DRAWSQUARE                           0x08000fa5   Thumb Code    24  longcat.o(CODEY)
+    CODEY                                    0x08000fa4   Section     1016  longcat.o(CODEY)
+    TFT_DrawMap                              0x08000fbd   Thumb Code   132  longcat.o(CODEY)
+    Get_Coordinates                          0x080010f3   Thumb Code    32  longcat.o(CODEY)
+    Move_Snake                               0x08001113   Thumb Code   250  longcat.o(CODEY)
+    check_win                                0x0800120d   Thumb Code   254  longcat.o(CODEY)
+    $v0                                      0x0800139c   Number         0  main.o(MYCODE)
+    MYCODE                                   0x0800139c   Section       16  main.o(MYCODE)
+    Level1Map                                0x080013ac   Data           0  longcat.o(MYDATA)
+    MYDATA                                   0x080013ac   Section       21  longcat.o(MYDATA)
+    Leve1StartCell                           0x080013be   Data           0  longcat.o(MYDATA)
+    MYIMAGE                                  0x080013c4   Section     5008  datacatface.o(MYIMAGE)
+    MazeData                                 0x08002754   Section      160  maze_functions.o(MazeData)
+    ROW2                                     0x080027a4   Data           0  maze_functions.o(MazeData)
     RNG_State                                0x20000000   Data           4  functions.o(MYDATA)
     MYDATA                                   0x20000000   Section        4  functions.o(MYDATA)
     XO_array                                 0x20000004   Data           4  xo_functions.o(MYDATA)
@@ -116,15 +121,13 @@ Image Symbol Table
     XO_counter                               0x2000000c   Data           4  xo_functions.o(MYDATA)
     X_score                                  0x20000010   Data           4  xo_functions.o(MYDATA)
     O_score                                  0x20000014   Data           4  xo_functions.o(MYDATA)
-    MazeData                                 0x20000018   Section      160  maze_functions.o(MazeData)
-    ROW2                                     0x20000068   Data           4  maze_functions.o(MazeData)
-    SnakeMap                                 0x200000b8   Data           0  longcat.o(USEABLE)
-    USEABLE                                  0x200000b8   Section        6  longcat.o(USEABLE)
-    Heap_Mem                                 0x200000c0   Data         512  startup_stm32f401xc.o(HEAP)
-    HEAP                                     0x200000c0   Section      512  startup_stm32f401xc.o(HEAP)
-    Stack_Mem                                0x200002c0   Data        1024  startup_stm32f401xc.o(STACK)
-    STACK                                    0x200002c0   Section     1024  startup_stm32f401xc.o(STACK)
-    __initial_sp                             0x200006c0   Data           0  startup_stm32f401xc.o(STACK)
+    SnakeMap                                 0x20000018   Data           0  longcat.o(USEABLE)
+    USEABLE                                  0x20000018   Section        6  longcat.o(USEABLE)
+    Heap_Mem                                 0x20000020   Data         512  startup_stm32f401xc.o(HEAP)
+    HEAP                                     0x20000020   Section      512  startup_stm32f401xc.o(HEAP)
+    Stack_Mem                                0x20000220   Data        1024  startup_stm32f401xc.o(STACK)
+    STACK                                    0x20000220   Section     1024  startup_stm32f401xc.o(STACK)
+    __initial_sp                             0x20000620   Data           0  startup_stm32f401xc.o(STACK)
 
     Global Symbols
 
@@ -133,97 +136,96 @@ Image Symbol Table
     BuildAttributes$$THM_ISAv4$E$P$D$K$B$S$7EM$VFPi3$EXTD16$VFPS$VFMA$PE$A:L22UL41UL21$X:L11$S22US41US21$IEEE1$IW$~IW$USESV6$~STKCKD$USESV7$~SHL$OSPACE$ROPI$EBA8$STANDARDLIB$REQ8$EABIv2 0x00000000   Number         0  anon$$obj.o ABSOLUTE
     __Vectors_Size                           0x00000194   Number         0  startup_stm32f401xc.o ABSOLUTE
     __Vectors                                0x08000000   Data           4  startup_stm32f401xc.o(RESET)
-    TFT_DrawMapM                             0x08000195   Thumb Code   108  maze_functions.o(.text)
+    TFT_DrawMapM                             0x08000195   Thumb Code   152  maze_functions.o(.text)
     __Vectors_End                            0x08000194   Data           0  startup_stm32f401xc.o(RESET)
-    TFT_DrawMazeGrid3                        0x08000219   Thumb Code   104  maze_functions.o(.text)
-    TFT_DrawMazeGrid2                        0x08000281   Thumb Code   148  maze_functions.o(.text)
-    Reset_Handler                            0x08000395   Thumb Code     8  startup_stm32f401xc.o(.text)
-    NMI_Handler                              0x0800039d   Thumb Code     2  startup_stm32f401xc.o(.text)
-    HardFault_Handler                        0x0800039f   Thumb Code     2  startup_stm32f401xc.o(.text)
-    MemManage_Handler                        0x080003a1   Thumb Code     2  startup_stm32f401xc.o(.text)
-    BusFault_Handler                         0x080003a3   Thumb Code     2  startup_stm32f401xc.o(.text)
-    UsageFault_Handler                       0x080003a5   Thumb Code     2  startup_stm32f401xc.o(.text)
-    SVC_Handler                              0x080003a7   Thumb Code     2  startup_stm32f401xc.o(.text)
-    DebugMon_Handler                         0x080003a9   Thumb Code     2  startup_stm32f401xc.o(.text)
-    PendSV_Handler                           0x080003ab   Thumb Code     2  startup_stm32f401xc.o(.text)
-    SysTick_Handler                          0x080003ad   Thumb Code     2  startup_stm32f401xc.o(.text)
-    ADC_IRQHandler                           0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    DMA1_Stream0_IRQHandler                  0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    DMA1_Stream1_IRQHandler                  0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    DMA1_Stream2_IRQHandler                  0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    DMA1_Stream3_IRQHandler                  0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    DMA1_Stream4_IRQHandler                  0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    DMA1_Stream5_IRQHandler                  0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    DMA1_Stream6_IRQHandler                  0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    DMA1_Stream7_IRQHandler                  0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    DMA2_Stream0_IRQHandler                  0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    DMA2_Stream1_IRQHandler                  0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    DMA2_Stream2_IRQHandler                  0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    DMA2_Stream3_IRQHandler                  0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    DMA2_Stream4_IRQHandler                  0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    DMA2_Stream5_IRQHandler                  0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    DMA2_Stream6_IRQHandler                  0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    DMA2_Stream7_IRQHandler                  0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    EXTI0_IRQHandler                         0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    EXTI15_10_IRQHandler                     0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    EXTI1_IRQHandler                         0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    EXTI2_IRQHandler                         0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    EXTI3_IRQHandler                         0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    EXTI4_IRQHandler                         0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    EXTI9_5_IRQHandler                       0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    FLASH_IRQHandler                         0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    FPU_IRQHandler                           0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    I2C1_ER_IRQHandler                       0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    I2C1_EV_IRQHandler                       0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    I2C2_ER_IRQHandler                       0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    I2C2_EV_IRQHandler                       0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    I2C3_ER_IRQHandler                       0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    I2C3_EV_IRQHandler                       0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    OTG_FS_IRQHandler                        0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    OTG_FS_WKUP_IRQHandler                   0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    PVD_IRQHandler                           0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    RCC_IRQHandler                           0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    RTC_Alarm_IRQHandler                     0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    RTC_WKUP_IRQHandler                      0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    SDIO_IRQHandler                          0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    SPI1_IRQHandler                          0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    SPI2_IRQHandler                          0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    SPI3_IRQHandler                          0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    SPI4_IRQHandler                          0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    TAMP_STAMP_IRQHandler                    0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    TIM1_BRK_TIM9_IRQHandler                 0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    TIM1_CC_IRQHandler                       0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    TIM1_TRG_COM_TIM11_IRQHandler            0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    TIM1_UP_TIM10_IRQHandler                 0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    TIM2_IRQHandler                          0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    TIM3_IRQHandler                          0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    TIM4_IRQHandler                          0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    TIM5_IRQHandler                          0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    USART1_IRQHandler                        0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    USART2_IRQHandler                        0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    USART6_IRQHandler                        0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    WWDG_IRQHandler                          0x080003af   Thumb Code     0  startup_stm32f401xc.o(.text)
-    __user_initial_stackheap                 0x080003b1   Thumb Code     0  startup_stm32f401xc.o(.text)
-    __use_two_region_memory                  0x080003d5   Thumb Code     2  heapauxi.o(.text)
-    __rt_heap_escrow$2region                 0x080003d7   Thumb Code     2  heapauxi.o(.text)
-    __rt_heap_expand$2region                 0x080003d9   Thumb Code     2  heapauxi.o(.text)
-    SystemInit                               0x080003dd   Thumb Code    18  system_stm32f4xx.o(.text.SystemInit)
-    CONFIGURE_PORTS                          0x080003f1   Thumb Code    78  functions.o(CODEY)
-    TFT_WriteCommand                         0x0800043f   Thumb Code    60  functions.o(CODEY)
-    TFT_WriteData                            0x0800047b   Thumb Code    60  functions.o(CODEY)
-    TFT_Init                                 0x080004e1   Thumb Code   106  functions.o(CODEY)
-    TFT_DrawImage                            0x0800054b   Thumb Code   158  functions.o(CODEY)
-    TFT_Filldraw4INP                         0x080005e9   Thumb Code   152  functions.o(CODEY)
-    GET_state                                0x08000681   Thumb Code    22  functions.o(CODEY)
-    delay                                    0x08000697   Thumb Code    16  functions.o(CODEY)
-    Get_Random                               0x080006a7   Thumb Code    28  functions.o(CODEY)
-    Init_RandomSeed                          0x080006c3   Thumb Code    16  functions.o(CODEY)
-    Num_to_LCD                               0x080006d3   Thumb Code   152  functions.o(CODEY)
-    DrawDigit                                0x080007fd   Thumb Code   216  functions.o(CODEY)
-    Main_Game_XO                             0x08000df3   Thumb Code   146  xo_functions.o(CODEY)
-    Draw_Snake_Movement                      0x08001109   Thumb Code   180  longcat.o(CODEY)
-    MainGame_LongCat                         0x080013d5   Thumb Code   130  longcat.o(CODEY)
-    __main                                   0x08001465   Thumb Code    44  main.o(MYCODE)
+    Reset_Handler                            0x080002ad   Thumb Code     8  startup_stm32f401xc.o(.text)
+    NMI_Handler                              0x080002b5   Thumb Code     2  startup_stm32f401xc.o(.text)
+    HardFault_Handler                        0x080002b7   Thumb Code     2  startup_stm32f401xc.o(.text)
+    MemManage_Handler                        0x080002b9   Thumb Code     2  startup_stm32f401xc.o(.text)
+    BusFault_Handler                         0x080002bb   Thumb Code     2  startup_stm32f401xc.o(.text)
+    UsageFault_Handler                       0x080002bd   Thumb Code     2  startup_stm32f401xc.o(.text)
+    SVC_Handler                              0x080002bf   Thumb Code     2  startup_stm32f401xc.o(.text)
+    DebugMon_Handler                         0x080002c1   Thumb Code     2  startup_stm32f401xc.o(.text)
+    PendSV_Handler                           0x080002c3   Thumb Code     2  startup_stm32f401xc.o(.text)
+    SysTick_Handler                          0x080002c5   Thumb Code     2  startup_stm32f401xc.o(.text)
+    ADC_IRQHandler                           0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    DMA1_Stream0_IRQHandler                  0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    DMA1_Stream1_IRQHandler                  0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    DMA1_Stream2_IRQHandler                  0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    DMA1_Stream3_IRQHandler                  0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    DMA1_Stream4_IRQHandler                  0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    DMA1_Stream5_IRQHandler                  0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    DMA1_Stream6_IRQHandler                  0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    DMA1_Stream7_IRQHandler                  0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    DMA2_Stream0_IRQHandler                  0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    DMA2_Stream1_IRQHandler                  0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    DMA2_Stream2_IRQHandler                  0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    DMA2_Stream3_IRQHandler                  0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    DMA2_Stream4_IRQHandler                  0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    DMA2_Stream5_IRQHandler                  0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    DMA2_Stream6_IRQHandler                  0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    DMA2_Stream7_IRQHandler                  0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    EXTI0_IRQHandler                         0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    EXTI15_10_IRQHandler                     0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    EXTI1_IRQHandler                         0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    EXTI2_IRQHandler                         0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    EXTI3_IRQHandler                         0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    EXTI4_IRQHandler                         0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    EXTI9_5_IRQHandler                       0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    FLASH_IRQHandler                         0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    FPU_IRQHandler                           0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    I2C1_ER_IRQHandler                       0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    I2C1_EV_IRQHandler                       0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    I2C2_ER_IRQHandler                       0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    I2C2_EV_IRQHandler                       0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    I2C3_ER_IRQHandler                       0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    I2C3_EV_IRQHandler                       0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    OTG_FS_IRQHandler                        0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    OTG_FS_WKUP_IRQHandler                   0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    PVD_IRQHandler                           0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    RCC_IRQHandler                           0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    RTC_Alarm_IRQHandler                     0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    RTC_WKUP_IRQHandler                      0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    SDIO_IRQHandler                          0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    SPI1_IRQHandler                          0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    SPI2_IRQHandler                          0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    SPI3_IRQHandler                          0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    SPI4_IRQHandler                          0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    TAMP_STAMP_IRQHandler                    0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    TIM1_BRK_TIM9_IRQHandler                 0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    TIM1_CC_IRQHandler                       0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    TIM1_TRG_COM_TIM11_IRQHandler            0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    TIM1_UP_TIM10_IRQHandler                 0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    TIM2_IRQHandler                          0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    TIM3_IRQHandler                          0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    TIM4_IRQHandler                          0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    TIM5_IRQHandler                          0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    USART1_IRQHandler                        0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    USART2_IRQHandler                        0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    USART6_IRQHandler                        0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    WWDG_IRQHandler                          0x080002c7   Thumb Code     0  startup_stm32f401xc.o(.text)
+    __user_initial_stackheap                 0x080002c9   Thumb Code     0  startup_stm32f401xc.o(.text)
+    __use_two_region_memory                  0x080002ed   Thumb Code     2  heapauxi.o(.text)
+    __rt_heap_escrow$2region                 0x080002ef   Thumb Code     2  heapauxi.o(.text)
+    __rt_heap_expand$2region                 0x080002f1   Thumb Code     2  heapauxi.o(.text)
+    SystemInit                               0x080002f5   Thumb Code    18  system_stm32f4xx.o(.text.SystemInit)
+    CONFIGURE_PORTS                          0x08000309   Thumb Code    78  functions.o(CODEY)
+    TFT_WriteCommand                         0x08000357   Thumb Code    60  functions.o(CODEY)
+    TFT_WriteData                            0x08000393   Thumb Code    60  functions.o(CODEY)
+    TFT_Init                                 0x080003f9   Thumb Code   106  functions.o(CODEY)
+    TFT_DrawImage                            0x08000463   Thumb Code   158  functions.o(CODEY)
+    TFT_Filldraw4INP                         0x08000501   Thumb Code   152  functions.o(CODEY)
+    GET_state                                0x08000599   Thumb Code    22  functions.o(CODEY)
+    delay                                    0x080005af   Thumb Code    16  functions.o(CODEY)
+    Get_Random                               0x080005bf   Thumb Code    28  functions.o(CODEY)
+    Init_RandomSeed                          0x080005db   Thumb Code    16  functions.o(CODEY)
+    Num_to_LCD                               0x080005eb   Thumb Code   152  functions.o(CODEY)
+    DrawDigit                                0x08000715   Thumb Code   216  functions.o(CODEY)
+    Main_Game_XO                             0x08000d2b   Thumb Code   146  xo_functions.o(CODEY)
+    Draw_Snake_Movement                      0x08001041   Thumb Code   178  longcat.o(CODEY)
+    MainGame_LongCat                         0x0800130b   Thumb Code   130  longcat.o(CODEY)
+    __main                                   0x0800139d   Thumb Code    16  main.o(MYCODE)
+    CatFace                                  0x080013c4   Data           0  datacatface.o(MYIMAGE)
 
 
 
@@ -231,45 +233,46 @@ Image Symbol Table
 
 Memory Map of the image
 
-  Image Entry point : 0x08000395
+  Image Entry point : 0x080002ad
 
-  Load Region LR_1 (Base: 0x08000000, Size: 0x00001568, Max: 0xffffffff, ABSOLUTE)
+  Load Region LR_1 (Base: 0x08000000, Size: 0x00002814, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region ER_RO (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x000014a8, Max: 0xffffffff, ABSOLUTE)
-
-    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
-
-    0x08000000   0x08000000   0x00000194   Data   RO           31    RESET               startup_stm32f401xc.o
-    0x08000194   0x08000194   0x000001fe   Code   RO           25    .text               maze_functions.o
-    0x08000392   0x08000392   0x00000002   PAD
-    0x08000394   0x08000394   0x00000040   Code   RO           32  * .text               startup_stm32f401xc.o
-    0x080003d4   0x080003d4   0x00000006   Code   RO           52    .text               c_w.l(heapauxi.o)
-    0x080003da   0x080003da   0x00000002   PAD
-    0x080003dc   0x080003dc   0x00000012   Code   RO           37    .text.SystemInit    system_stm32f4xx.o
-    0x080003ee   0x080003ee   0x00000002   PAD
-    0x080003f0   0x080003f0   0x000004f8   Code   RO            9    CODEY               functions.o
-    0x080008e8   0x080008e8   0x00000784   Code   RO           14    CODEY               xo_functions.o
-    0x0800106c   0x0800106c   0x000003f8   Code   RO           20    CODEY               longcat.o
-    0x08001464   0x08001464   0x0000002c   Code   RO            2    MYCODE              main.o
-    0x08001490   0x08001490   0x00000015   Data   RO           18    MYDATA              longcat.o
-
-
-    Execution Region ER_RW (Exec base: 0x20000000, Load base: 0x080014a8, Size: 0x000000c0, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RO (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x000027f4, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000000   0x080014a8   0x00000004   Data   RW            8    MYDATA              functions.o
-    0x20000004   0x080014ac   0x00000014   Data   RW           13    MYDATA              xo_functions.o
-    0x20000018   0x080014c0   0x000000a0   Data   RW           24    MazeData            maze_functions.o
-    0x200000b8   0x08001560   0x00000006   Data   RW           19    USEABLE             longcat.o
+    0x08000000   0x08000000   0x00000194   Data   RO           33    RESET               startup_stm32f401xc.o
+    0x08000194   0x08000194   0x00000118   Code   RO           26    .text               maze_functions.o
+    0x080002ac   0x080002ac   0x00000040   Code   RO           34  * .text               startup_stm32f401xc.o
+    0x080002ec   0x080002ec   0x00000006   Code   RO           54    .text               c_w.l(heapauxi.o)
+    0x080002f2   0x080002f2   0x00000002   PAD
+    0x080002f4   0x080002f4   0x00000012   Code   RO           39    .text.SystemInit    system_stm32f4xx.o
+    0x08000306   0x08000306   0x00000002   PAD
+    0x08000308   0x08000308   0x000004f8   Code   RO            9    CODEY               functions.o
+    0x08000800   0x08000800   0x000007a4   Code   RO           14    CODEY               xo_functions.o
+    0x08000fa4   0x08000fa4   0x000003f8   Code   RO           20    CODEY               longcat.o
+    0x0800139c   0x0800139c   0x00000010   Code   RO            2    MYCODE              main.o
+    0x080013ac   0x080013ac   0x00000015   Data   RO           18    MYDATA              longcat.o
+    0x080013c1   0x080013c1   0x00000003   PAD
+    0x080013c4   0x080013c4   0x00001390   Data   RO           30    MYIMAGE             datacatface.o
+    0x08002754   0x08002754   0x000000a0   Data   RO           24    MazeData            maze_functions.o
 
 
-    Execution Region ER_ZI (Exec base: 0x200000c0, Load base: 0x08001568, Size: 0x00000600, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RW (Exec base: 0x20000000, Load base: 0x080027f4, Size: 0x00000020, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x200000c0        -       0x00000200   Zero   RW           30    HEAP                startup_stm32f401xc.o
-    0x200002c0        -       0x00000400   Zero   RW           29    STACK               startup_stm32f401xc.o
+    0x20000000   0x080027f4   0x00000004   Data   RW            8    MYDATA              functions.o
+    0x20000004   0x080027f8   0x00000014   Data   RW           13    MYDATA              xo_functions.o
+    0x20000018   0x0800280c   0x00000006   Data   RW           19    USEABLE             longcat.o
+
+
+    Execution Region ER_ZI (Exec base: 0x20000020, Load base: 0x08002814, Size: 0x00000600, Max: 0xffffffff, ABSOLUTE)
+
+    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x20000020        -       0x00000200   Zero   RW           32    HEAP                startup_stm32f401xc.o
+    0x20000220        -       0x00000400   Zero   RW           31    STACK               startup_stm32f401xc.o
 
 
 ==============================================================================
@@ -279,18 +282,19 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
+         0          0       5008          0          0          0   datacatface.o
       1272         62          0          4          0       1224   functions.o
-      1016         14         21          6          0        920   longcat.o
-        44          0          0          0          0        352   main.o
-       510          6          0        160          0        704   maze_functions.o
+      1016         16         21          6          0        920   longcat.o
+        16          0          0          0          0        348   main.o
+       280          4        160          0          0        496   maze_functions.o
         64         26        404          0       1536        836   startup_stm32f401xc.o
         18          0          0          0          0       2791   system_stm32f4xx.o
-      1924         70          0         20          0       1324   xo_functions.o
+      1956         70          0         20          0       1332   xo_functions.o
 
     ----------------------------------------------------------------------
-      4852        178        428        192       1536       8151   Object Totals
+      4624        178       5596         32       1536       7947   Object Totals
          0          0          0          0          0          0   (incl. Generated)
-         4          0          3          2          0          0   (incl. Padding)
+         2          0          3          2          0          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -318,15 +322,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      4860        178        428        192       1536       7803   Grand Totals
-      4860        178        428        192       1536       7803   ELF Image Totals
-      4860        178        428        192          0          0   ROM Totals
+      4632        178       5596         32       1536       7599   Grand Totals
+      4632        178       5596         32       1536       7599   ELF Image Totals
+      4632        178       5596         32          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                 5288 (   5.16kB)
-    Total RW  Size (RW Data + ZI Data)              1728 (   1.69kB)
-    Total ROM Size (Code + RO Data + RW Data)       5480 (   5.35kB)
+    Total RO  Size (Code + RO Data)                10228 (   9.99kB)
+    Total RW  Size (RW Data + ZI Data)              1568 (   1.53kB)
+    Total ROM Size (Code + RO Data + RW Data)      10260 (  10.02kB)
 
 ==============================================================================
 
