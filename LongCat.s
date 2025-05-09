@@ -1,11 +1,11 @@
 	AREA    MYDATA, DATA, READONLY
 Level1Map
-	DCB 0x81
-	DCB 0xA5
-	DCB 0x81
-    DCB 0xCB
-	DCB 0xD9
-	DCB 0xC1
+	DCB 0x04
+	DCB 0x54
+	DCB 0x10
+    DCB 0x80
+	DCB 0x08
+	DCB 0x00
 
 	;DCB 0x81
 	;DCB 0xA5
@@ -13,7 +13,7 @@ Level1Map
     ;DCB 0xCB
 	;DCB 0xD9
 	;DCB 0xC1
-Leve1StartCell DCB 36
+Leve1StartCell DCB 12
 		;--- Colors ---
 Red     	   EQU 0XF800 
 Green   	   EQU 0x07E0

@@ -5,12 +5,12 @@ Component: Arm Compiler for Embedded 6.23 Tool: armlink [5f102400]
 Section Cross References
 
     main.o(MYDATAS) refers (Special) to functions.o(CODEY) for GET_state
-    main.o(MYDATAS) refers (Special) to xo_functions.o(CODEY) for Main_Game_XO
+    main.o(MYDATAS) refers (Special) to longcat.o(CODEY) for MainGame_LongCat
     main.o(MYDATAS) refers (Special) to maze_functions.o(.text) for TFT_DrawMapM
     main.o(MYCODE) refers (Special) to functions.o(CODEY) for GET_state
-    main.o(MYCODE) refers (Special) to xo_functions.o(CODEY) for Main_Game_XO
+    main.o(MYCODE) refers (Special) to longcat.o(CODEY) for MainGame_LongCat
     main.o(MYCODE) refers (Special) to maze_functions.o(.text) for TFT_DrawMapM
-    main.o(MYCODE) refers to longcat.o(CODEY) for MainGame_LongCat
+    main.o(MYCODE) refers to xo_functions.o(CODEY) for Main_Game_XO
     xo_functions.o(MYDATA) refers (Special) to functions.o(CODEY) for TFT_DrawImage
     xo_functions.o(CODEY) refers (Special) to functions.o(CODEY) for TFT_DrawImage
     xo_functions.o(CODEY) refers to xo_functions.o(MYDATA) for XO_array
@@ -274,10 +274,10 @@ Image component sizes
 
       1256         56          0          0          0       1180   functions.o
        968         14          7          6          0        904   longcat.o
-        12          0          0          0          0        344   main.o
+        12          0          0          0          0        348   main.o
       2080          6          0        160          0       1140   maze_functions.o
         64         26        404          0       1536        836   startup_stm32f401xc.o
-        18          0          0          0          0       2795   system_stm32f4xx.o
+        18          0          0          0          0       2791   system_stm32f4xx.o
       1768         54          0         12          0       1280   xo_functions.o
 
     ----------------------------------------------------------------------

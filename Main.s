@@ -26,6 +26,7 @@ Black	EQU 0x0000
 	IMPORT Main_Game_XO
 	IMPORT MainGame_LongCat
 	IMPORT  TFT_DrawMapM
+	IMPORT  Num_to_LCD
 __main FUNCTION
 
 
@@ -33,9 +34,17 @@ __main FUNCTION
 	BL CONFIGURE_PORTS
     ; Initialize TFT
     BL TFT_Init
+	
 	;BL TFT_DrawMapM
-	BL MainGame_LongCat
-
+	;MOV R0,4
+	;MOV R1,50
+	;MOV R2,50
+	;MOV R3,5
+	;MOV R4,40
+	;MOV R11,#Red
+	;BL Num_to_LCD
+	;BL MainGame_LongCat
+	BL Main_Game_XO
     ENDFUNC
 	
 	END
