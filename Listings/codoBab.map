@@ -5,13 +5,9 @@ Component: Arm Compiler for Embedded 6.23 Tool: armlink [5f102400]
 Section Cross References
 
     main.o(MYDATAS) refers (Special) to functions.o(CODEY) for DrawDigit
-    main.o(MYDATAS) refers (Special) to maze_functions.o(.text) for MAIN_MAZE
-    main.o(MYDATAS) refers (Special) to longcat.o(CODEY) for MainGame_LongCat
-    main.o(MYDATAS) refers (Special) to xo_functions.o(CODEY) for Main_Game_XO
+    main.o(MYDATAS) refers (Special) to maze_functions.o(.text) for TFT_DrawMapM
     main.o(MYCODE) refers (Special) to functions.o(CODEY) for DrawDigit
-    main.o(MYCODE) refers (Special) to maze_functions.o(.text) for MAIN_MAZE
-    main.o(MYCODE) refers (Special) to longcat.o(CODEY) for MainGame_LongCat
-    main.o(MYCODE) refers (Special) to xo_functions.o(CODEY) for Main_Game_XO
+    main.o(MYCODE) refers (Special) to maze_functions.o(.text) for TFT_DrawMapM
     functions.o(CODEY) refers to functions.o(MYDATA) for RNG_State
     functions.o(CODEY) refers to xo_functions.o(CODEY) for Main_Game_XO
     functions.o(CODEY) refers to longcat.o(CODEY) for MainGame_LongCat
@@ -28,6 +24,9 @@ Section Cross References
     maze_functions.o(MazeData) refers (Special) to functions.o(CODEY) for TFT_DrawImage
     maze_functions.o(.text) refers (Special) to functions.o(CODEY) for TFT_DrawImage
     maze_functions.o(.text) refers to maze_functions.o(MazeData) for ROW2
+    alien_invaders.o(USEABLE) refers (Special) to functions.o(CODEY) for GET_state
+    alien_invaders.o(CODEY) refers (Special) to functions.o(CODEY) for GET_state
+    alien_invaders.o(CODEY) refers to alien_invaders.o(USEABLE) for Alien_Map
     startup_stm32f401xc.o(STACK) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_stm32f401xc.o(HEAP) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_stm32f401xc.o(RESET) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
@@ -49,6 +48,8 @@ Section Cross References
 Removing Unused input sections from the image.
 
     Removing main.o(MYDATAS), (0 bytes).
+    Removing alien_invaders.o(USEABLE), (60 bytes).
+    Removing alien_invaders.o(CODEY), (32 bytes).
     Removing system_stm32f4xx.o(.text), (0 bytes).
     Removing system_stm32f4xx.o(.ARM.exidx.text.SystemInit), (8 bytes).
     Removing system_stm32f4xx.o(.text.SystemCoreClockUpdate), (302 bytes).
@@ -57,7 +58,7 @@ Removing Unused input sections from the image.
     Removing system_stm32f4xx.o(.rodata.AHBPrescTable), (16 bytes).
     Removing system_stm32f4xx.o(.rodata.APBPrescTable), (8 bytes).
 
-8 unused section(s) (total 346 bytes) removed from the image.
+10 unused section(s) (total 438 bytes) removed from the image.
 
 ==============================================================================
 
@@ -68,6 +69,7 @@ Image Symbol Table
     Symbol Name                              Value     Ov Type        Size  Object(Section)
 
     ../clib/heapaux.c                        0x00000000   Number         0  heapauxi.o ABSOLUTE
+    Alien_Invaders.s                         0x00000000   Number         0  alien_invaders.o ABSOLUTE
     Functions.s                              0x00000000   Number         0  functions.o ABSOLUTE
     LongCat.s                                0x00000000   Number         0  longcat.o ABSOLUTE
     MAZE_Functions.s                         0x00000000   Number         0  maze_functions.o ABSOLUTE
@@ -250,12 +252,12 @@ Memory Map of the image
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x08000000   0x08000000   0x00000194   Data   RO           32    RESET               startup_stm32f401xc.o
+    0x08000000   0x08000000   0x00000194   Data   RO           37    RESET               startup_stm32f401xc.o
     0x08000194   0x08000194   0x000001c8   Code   RO           25    .text               maze_functions.o
-    0x0800035c   0x0800035c   0x00000040   Code   RO           33  * .text               startup_stm32f401xc.o
-    0x0800039c   0x0800039c   0x00000006   Code   RO           53    .text               c_w.l(heapauxi.o)
+    0x0800035c   0x0800035c   0x00000040   Code   RO           38  * .text               startup_stm32f401xc.o
+    0x0800039c   0x0800039c   0x00000006   Code   RO           58    .text               c_w.l(heapauxi.o)
     0x080003a2   0x080003a2   0x00000002   PAD
-    0x080003a4   0x080003a4   0x00000012   Code   RO           38    .text.SystemInit    system_stm32f4xx.o
+    0x080003a4   0x080003a4   0x00000012   Code   RO           43    .text.SystemInit    system_stm32f4xx.o
     0x080003b6   0x080003b6   0x00000002   PAD
     0x080003b8   0x080003b8   0x0000074c   Code   RO            9    CODEY               functions.o
     0x08000b04   0x08000b04   0x000007b0   Code   RO           14    CODEY               xo_functions.o
@@ -280,8 +282,8 @@ Memory Map of the image
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000020        -       0x00000200   Zero   RW           31    HEAP                startup_stm32f401xc.o
-    0x20000220        -       0x00000400   Zero   RW           30    STACK               startup_stm32f401xc.o
+    0x20000020        -       0x00000200   Zero   RW           36    HEAP                startup_stm32f401xc.o
+    0x20000220        -       0x00000400   Zero   RW           35    STACK               startup_stm32f401xc.o
 
 
 ==============================================================================

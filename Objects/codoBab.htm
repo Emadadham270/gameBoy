@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\codoBab.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\codoBab.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6230001: Last Updated: Fri May  9 19:18:19 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6230001: Last Updated: Fri May  9 19:24:34 2025
 <BR><P>
 <H3>Maximum Stack Usage =          0 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -419,27 +419,27 @@ Global Symbols
 <LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawXWINS
 <LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawBorder
 <LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawGrid
+<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MAIN_MAZE
 <LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawOutline
 <LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI
 <LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMapM
-<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MAIN_MAZE
 <LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawDigit
 </UL>
 
 <P><STRONG><a name="[4a]"></a>GET_state</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, functions.o(CODEY))
 <BR><BR>[Calls]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay
 </UL>
-<BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI
-<LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_XO
+<BR>[Called By]<UL><LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_XO
 <LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
 <LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MAIN_MAZE
+<LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI
 </UL>
 
 <P><STRONG><a name="[4d]"></a>delay</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, functions.o(CODEY))
 <BR><BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_Snake_Movement
 <LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_XO
-<LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Init
 <LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
+<LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Init
 <LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GET_state
 </UL>
 
@@ -463,12 +463,12 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[54]"></a>UI</STRONG> (Thumb, 390 bytes, Stack size 0 bytes, functions.o(CODEY))
-<BR><BR>[Calls]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawOutline
-<LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;movecursor
-<LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
-<LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_XO
+<BR><BR>[Calls]<UL><LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_XO
 <LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
 <LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MAIN_MAZE
+<LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawOutline
+<LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;movecursor
+<LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
 <LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GET_state
 </UL>
 <BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__main

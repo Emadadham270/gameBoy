@@ -414,6 +414,11 @@
               <FileType>2</FileType>
               <FilePath>.\dataCatFace.s</FilePath>
             </File>
+            <File>
+              <FileName>Alien_Invaders.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\Alien_Invaders.s</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
