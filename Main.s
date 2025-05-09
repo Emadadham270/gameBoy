@@ -34,7 +34,7 @@ Orange         EQU 0xFD20
 	IMPORT Init_RandomSeed
 	IMPORT Get_Random
 	IMPORT UI	
-	
+	IMPORT MAIN_MAZE
 __main FUNCTION
 
 	BL Init_RandomSeed
@@ -44,6 +44,7 @@ __main FUNCTION
 	;BL TFT_DrawMapM
 	;BL MainGame_LongCat
 	;BL Main_Game_XO
+	;BL MAIN_MAZE
 	BL UI
     ENDFUNC
 	
