@@ -134,11 +134,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>-1</DriverSelection>
+            <DriverSelection>4096</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -418,6 +418,26 @@
               <FileName>Alien_Invaders.s</FileName>
               <FileType>2</FileType>
               <FilePath>.\Alien_Invaders.s</FilePath>
+            </File>
+            <File>
+              <FileName>dataAEROSPACE.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\dataAEROSPACE.s</FilePath>
+            </File>
+            <File>
+              <FileName>dataLONGCAT.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\dataLONGCAT.s</FilePath>
+            </File>
+            <File>
+              <FileName>dataXO.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\dataXO.s</FilePath>
+            </File>
+            <File>
+              <FileName>MAZELOGO.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\MAZELOGO.s</FilePath>
             </File>
           </Files>
         </Group>
