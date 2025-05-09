@@ -448,55 +448,47 @@ DelayInner_Loop
 ;  R2 = Y origin
 ;  R3 = segment thickness
 ;  R4 = segment length
-;
+;  R5 = digit count
 ; Clobbers: R5,R6,R7,R8,R9
 ; Returns R0 = raw 32-bit segment word (optional)
 ;------------------------------------------
 Num_to_LCD FUNCTION
-    PUSH    {R5-R9, LR}
-	
-    ; compute digit width = length + 2*thickness
-    ADD     R5, R4, R3
-    ADD     R5, R3, LSL #2    ; R5 = 2*R3 + R4
-	
-	ADD R2, R5
-	ADD R2, R5
-	ADD R2, R5
-    ; 1) binary → BCD
-    BL      Binary_to_BCD ; R0 = [d3:d2:d1:d0] BCD
+	PUSH {R5-R9, LR}
 
-    ; 2) BCD → four 7-seg masks in one word
-    BL      BCD_TO_SEVEN_SEG ; R0 = {seg(d3),seg(d2),seg(d1),seg(d0)}
+	; Save R5 (number of digits to display) to a preserved register
+	MOV R9, R5        ; R9 = digit count from user
 
-    ; save segment-word, base X
-    MOV     R7, R0        ; R7 = segment-word
-    MOV     R8, R1        ; R8 = base X
+	; compute digit width = length + 3*thickness
+	ADD R5, R4, R3
+	ADD R5, R3, LSL #2    ; R5 = 2*R3 + R3 + R4
 
-    ; init for 4-byte loop
-    MOV     R1, R8        ; R1 = current X
-    MOV     R6, #24       ; shift amount to extract top byte
-    MOV     R9, #0        ; digit index
+	; 1) binary → BCD
+	BL Binary_to_BCD ; R0 = [d3:d2:d1:d0] BCD
+
+	; 2) BCD → four 7-seg masks in one word
+	BL BCD_TO_SEVEN_SEG ; R0 = {seg(d3),seg(d2),seg(d1),seg(d0)}
+
+	; save segment-word, base X
+	MOV R7, R0        ; R7 = segment-word
+	MOV R6, #0        ; Start with least significant bit (LSB)
 
 loop_digits
-    ; extract byte = (R7 >> R6) & 0xFF → R12
-    MOV     R12, R7, LSR R6
-    AND     R12, R12, #0xFF
+	; extract byte = (R7 >> R6) & 0xFF → R12
+	MOV R12, R7, LSR R6
+	AND R12, R12, #0xFF
 
-    ; 3) draw that digit
-    BL      DrawDigit
+	; 3) draw that digit
+	BL DrawDigit
 
-    ; advance to next digit position
-    SUB     R2, R2, R5    ; X += digit_width
-    ; next byte
-    SUBS    R6, R6, #8
-    ADD     R9, R9, #1
-    CMP     R9, #4
-    BLT     loop_digits
+	; advance to next digit position
+	ADD R2, R2, R5    ; X += digit_width
 
-    ; return the raw segment-word (optional)
-    MOV     R0, R7
+	; next byte
+	ADD R6, R6, #8    ; Move to next significant byte
+	SUBS R9, R9, #1   ; Decrement digit counter
+	BNE loop_digits   ; Continue until we've drawn requested digits
 
-    POP     {R5-R9, PC}
+	POP {R5-R9, PC}
 ENDFUNC
 	
 ;INPUT AND OUTPUT IN R0
@@ -626,7 +618,6 @@ dec_end
 ; R3 = thickness (e.g., 8)
 ; R4 = segment length
 ; R12 = Digit (Only 8 bits, everything else is 0)
-;EDITTT
 
 DrawDigit FUNCTION
 	PUSH {R5-R9, LR}
