@@ -62,6 +62,7 @@ RNG_State DCD 1 ; 32-bit seed (must be non-zero)
 	EXPORT UI	
 	IMPORT Main_Game_XO
 	IMPORT MainGame_LongCat
+	IMPORT MAIN_MAZE
 
 ;-----------------------------------------
 ; Initially call in main function
@@ -412,7 +413,7 @@ FillLoopdraw4INP
     SUBS R3, R3, #1
     BNE FillLoopdraw4INP
 
-    POP {R1-R5,R10,R11,R12, LR}
+    POP {R1-R5,R10,R11,R12, PC}
     BX LR
 	ENDFUNC
 
@@ -940,7 +941,7 @@ SECOND_GAME
 	BL MainGame_LongCat
 	B START
 THIRD_GAME
-	;BL Main_Game_XO (3rd Game Here)
+	BL MAIN_MAZE
 	B START
 	
 FOURTH_GAME

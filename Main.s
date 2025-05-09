@@ -26,24 +26,18 @@ Orange         EQU 0xFD20
 	IMPORT TFT_Filldraw4INP
 	IMPORT GET_state
 	IMPORT delay			
-	IMPORT Main_Game_XO
-	IMPORT MainGame_LongCat
 	IMPORT  TFT_DrawMapM
 	IMPORT Num_to_LCD
 	IMPORT DrawDigit
 	IMPORT Init_RandomSeed
 	IMPORT Get_Random
 	IMPORT UI	
-	
 __main FUNCTION
 
 	BL Init_RandomSeed
 	BL CONFIGURE_PORTS
     ; Initialize TFT
     BL TFT_Init
-	;BL TFT_DrawMapM
-	;BL MainGame_LongCat
-	;BL Main_Game_XO
 	BL UI
     ENDFUNC
 	
