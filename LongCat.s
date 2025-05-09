@@ -635,7 +635,9 @@ MaiN__LooP
 	
 INPUT1234                ;Wait for input from user
 	BL GET_state
-	AND R10,R10, #0x000F
+	AND R10,R10, #0x002F
+	CMP R10, #32      ;eXIT
+	BEQ EXIT_LC
 	CMP R10, #00      ;Keep looping while input = 0 or ENTER
 	BEQ INPUT1234
 	BL Move_Snake
@@ -656,6 +658,7 @@ INPUT12345                ;Wait for input from user
 	ADDEQ R9, #1     ;Next level if he won
 	CMP R9, #3     ;If next level is valid, jump to it (5 is a placeholder here)
 	BLE New_Game_Loop
+EXIT_LC	
 	POP {R0-R12, PC}
 	ENDFUNC
 	

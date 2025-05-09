@@ -1,4 +1,4 @@
-    AREA    MYDATA, DATA, READWRITE
+      AREA    MYDATA, DATA, READWRITE
 
 
 RCC_BASE       EQU     0x40023800
@@ -53,6 +53,9 @@ RNG_State DCD 1 ; 32-bit seed (must be non-zero)
 	EXPORT  DrawDigit
 	EXPORT  Init_RandomSeed
 	EXPORT  Get_Random
+	EXPORT UI	
+	IMPORT Main_Game_XO
+	IMPORT MainGame_LongCat
 
 ;-----------------------------------------
 ; Initially call in main function
@@ -458,6 +461,9 @@ Init_RandomSeed FUNCTION
 	CMP R0, #0 ; keep seed non-zero
 	MOVEQ R0, #1
 	LDR R1, =RNG_State
+	B sk
+	LTORG
+sk	
 	STR R0, [R1]
 	BX LR
 	ENDFUNC
@@ -763,4 +769,231 @@ skipG
 	POP {R5-R9, PC}
 	ENDFUNC
 	
+	
+	
+	
+	
+	
+	
+UI FUNCTION ;color-R11  R6,R7-column start/end   R8,R9-page start/end  INITIALIZE R1->X,R2->Y
+	PUSH{R0-R12,LR}
+START	
+	MOV R6, #0
+	MOV R7,#320
+	MOV R8, #0
+	MOV R9, #480
+	MOV R11, #White
+	BL TFT_Filldraw4INP
+	
+DrawFrame
+
+	MOV R11, #Red
+
+	;DownfRAME
+	MOV R6, #0
+	MOV R7,#10
+	MOV R8, #0
+	MOV R9, #480
+	BL TFT_Filldraw4INP
+	
+	;upframe
+	MOV R6, #310
+	MOV R7,#320
+	MOV R8, #0
+	MOV R9, #480
+	BL TFT_Filldraw4INP
+	
+	;rightframe
+	MOV R6, #0
+	MOV R7,#320
+	MOV R8, #0 
+	MOV R9, #10
+	BL TFT_Filldraw4INP
+	
+	;leftFrame
+	MOV R6, #0
+	MOV R7,#320
+	MOV R8, #470
+	MOV R9, #480
+	BL TFT_Filldraw4INP
+	
+	;number of game icons
+DrawFourSquares
+	MOV R11, #Red
+	
+	;down right square
+	MOV R6,#35
+	MOV R7,#135
+	MOV R8,#115
+	MOV R9,#215
+	BL TFT_Filldraw4INP
+	
+	;up right square
+	MOV R6,#185
+	MOV R7,#285
+	MOV R8,#115
+	MOV R9,#215
+	BL TFT_Filldraw4INP
+	
+	;down left square
+	MOV R6,#35
+	MOV R7,#135
+	MOV R8,#265
+	MOV R9,#365
+	BL TFT_Filldraw4INP
+	
+	;up left square
+	MOV R6,#185
+	MOV R7,#285
+	MOV R8,#265
+	MOV R9,#365
+	BL TFT_Filldraw4INP
+
+Initialize_Outline
+	MOV R1,#185
+	MOV R2,#265
+	MOV R3,#10
+	MOV R4,#100
+	MOV R11,#Yellow
+	BL DrawOutline
+	
+MAINLOOP              ;Wait for input from user
+	BL GET_state
+	AND R10,R10, #0x001F
+	CMP R10, #00      ;Keep looping while input = 0
+	BEQ MAINLOOP
+	;If input == ENTER
+	CMP R10, #0x0010
+	BEQ EnterHuh
+	
+	BL movecursor
+	B MAINLOOP 
+EnterHuh
+	
+	;R1 -> x , R2 -> y , to be edited if not working
+	
+	CMP R1,#185
+	BEQ CMP_Y_1
+	
+	CMP R1,#35
+	BEQ CMP_Y_2
+	
+	
+CMP_Y_1
+	MOV R12,#265
+	CMP R2, R12; To compare values greater than #255
+	BEQ FIRST_GAME
+	
+	CMP R2,#115
+	BEQ SECOND_GAME
+
+CMP_Y_2
+	MOV R12,#265
+	CMP R2,R12; To compare values greater than #255
+	BEQ THIRD_GAME
+	
+	CMP R2,#115
+	BEQ FOURTH_GAME	
+	
+FIRST_GAME
+	BL Main_Game_XO
+	B START
+
+SECOND_GAME
+	BL MainGame_LongCat
+	B START
+THIRD_GAME
+	;BL Main_Game_XO (3rd Game Here)
+	B START
+	
+FOURTH_GAME
+	;BL Main_Game_XO (4th Game Here)
+	B START
+	ENDFUNC
+
+
+
+	
+movecursor FUNCTION ; Take X-R1; Y-R2 : Input in R10
+	 PUSH{R3-R4, R11-R12,LR}
+	 
+	 MOV R11, #Black
+	 MOV R4, #100
+	 MOV R3, #10
+	 
+	 BL DrawOutline
+	 
+	 MOV R12 , R10
+	 AND R12, #0x000F
+	 CMP R12 , #1
+	 BEQ MOVE_UPB
+	  
+	 CMP R12 , #2
+	 BEQ MOVE_DOWNB
+	 
+	 CMP R12 , #4
+	 BEQ MOVE_LEFTB
+	 
+	 CMP R12 , #8
+	 BEQ MOVE_RIGHTB
+	 
+	 B DEFAULTB
+MOVE_UPB
+	 CMP R2 , #185 ; checking the start
+	 BEQ DEFAULTB
+	 ADD R2 , R2 , #150
+	 B DEFAULTB
+	 
+MOVE_DOWNB
+	 CMP R2 , #35
+	 BEQ DEFAULTB
+	 SUB R2 , R2 , #150
+	 B DEFAULTB
+	 
+MOVE_RIGHTB
+	 CMP R1 , #115
+	 BEQ DEFAULTB
+	 SUB R1 , R1 , #150
+	 B DEFAULTB
+	 
+MOVE_LEFTB
+	 MOV R12,#365 ; To compare values greater than #255
+	 CMP R1 , R12
+	 BEQ DEFAULTB
+	 ADD R1 , R1 , #150
+	 B DEFAULTB
+	 
+DEFAULTB
+	 MOV R11,#Yellow
+	 MOV R3, #10
+	 MOV R4, #100
+	 BL DrawOutline
+	 pop{R3-R4, R11-R12,PC}
+	 ENDFUNC
+	 
+DrawOutline FUNCTION;take r1,x r2,y , dimension of square in R4, dimension of outline in R3. (R1,R2) are (x,y) of upper left corner
+	PUSH{R0-R12,LR}
+	SUB R10, R4, R3 ; R10 = dimension of square - dimension of outline
+	SUB R6,R1,R3
+	MOV R7,R1
+	SUB R8,R2,R3
+	ADD R9,R2,R4
+	BL TFT_Filldraw4INP  ; draw left vertical outline
+	SUB R6,R1,R3
+	ADD R7,R1,R4
+	SUB R8,R2,R3
+	MOV R9,R2
+	BL TFT_Filldraw4INP ; draw upper horizontal outline
+	SUB R6,R1,R3
+	ADD R7,R1,R4
+	ADD R8,R2,R10
+	ADD R9,R2,R4
+	BL TFT_Filldraw4INP ; draw lower horizontal outline
+	ADD R6,R1,R10
+	ADD R7,R1,R4
+	SUB R8,R2,R3
+	ADD R9,R2,R4
+	BL TFT_Filldraw4INP ; draw right vertical outline
+	pop{R0-R12,PC}
+	ENDFUNC	
 	END

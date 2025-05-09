@@ -410,6 +410,9 @@ Check_Win FUNCTION
 	PUSH{R0-R12, LR}
 	MOV	R1,#0
 	LDR R0,=XO_array
+	B SKK
+	LTORG
+SKK	
 	; Pre-load all needed constants into registers
     LDR R2, =0x4104		 ; 0000 0100 0001 0000 0100
     LDR R3, =0x1041		 ; 0000 0001 0000 0100 0001
@@ -586,14 +589,7 @@ DrawTA3ADOL	FUNCTION
 	BL TFT_Filldraw4INP
 	POP {R0-R12, PC}
 	ENDFUNC
-;------------------------
-; Update_Left_Sidebar  (todo)
-;------------------------
-Update_Left_Sidebar    FUNCTION
-    PUSH    {LR}
-    ;TODO
-    POP     {PC}
-	ENDFUNC
+
 
 
 
@@ -632,7 +628,9 @@ MAINLOOP
 
 INPUT1233                ;Wait for input from user
 	BL GET_state
-	AND R10,R10, #0x001F
+	AND R10,R10, #0x003F
+	CMP R10, #32      ;eXIT
+	BEQ EXIT_XO
 	CMP R10, #00      ;Keep looping while input = 0
 	BEQ INPUT1233
 	
@@ -663,7 +661,8 @@ INPUT123                ;Wait for input from user
 	BEQ INPUT123
 	B Restart
 
-
+EXIT_XO
+	POP{R0-R12,PC}
 	ENDFUNC
 
 ;-----------------------------------------------------

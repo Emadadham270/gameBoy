@@ -33,6 +33,7 @@ Orange         EQU 0xFD20
 	IMPORT DrawDigit
 	IMPORT Init_RandomSeed
 	IMPORT Get_Random
+	IMPORT UI	
 	
 __main FUNCTION
 
@@ -42,7 +43,8 @@ __main FUNCTION
     BL TFT_Init
 	;BL TFT_DrawMapM
 	;BL MainGame_LongCat
-	BL Main_Game_XO
+	;BL Main_Game_XO
+	BL UI
     ENDFUNC
 	
 	END
