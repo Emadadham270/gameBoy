@@ -26,7 +26,7 @@ Section Cross References
     maze_functions.o(.text) refers to maze_functions.o(MazeData) for ROW2
     alien_invaders.o(USEABLE) refers (Special) to functions.o(CODEY) for GET_state
     alien_invaders.o(CODEY) refers (Special) to functions.o(CODEY) for GET_state
-    alien_invaders.o(CODEY) refers to alien_invaders.o(USEABLE) for Alien_Map
+    alien_invaders.o(CODEY) refers to alien_invaders.o(USEABLE) for Player_Bullets
     startup_stm32f401xc.o(STACK) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_stm32f401xc.o(HEAP) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_stm32f401xc.o(RESET) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
@@ -48,8 +48,8 @@ Section Cross References
 Removing Unused input sections from the image.
 
     Removing main.o(MYDATAS), (0 bytes).
-    Removing alien_invaders.o(USEABLE), (60 bytes).
-    Removing alien_invaders.o(CODEY), (32 bytes).
+    Removing alien_invaders.o(USEABLE), (120 bytes).
+    Removing alien_invaders.o(CODEY), (516 bytes).
     Removing system_stm32f4xx.o(.text), (0 bytes).
     Removing system_stm32f4xx.o(.ARM.exidx.text.SystemInit), (8 bytes).
     Removing system_stm32f4xx.o(.text.SystemCoreClockUpdate), (302 bytes).
@@ -58,7 +58,7 @@ Removing Unused input sections from the image.
     Removing system_stm32f4xx.o(.rodata.AHBPrescTable), (16 bytes).
     Removing system_stm32f4xx.o(.rodata.APBPrescTable), (8 bytes).
 
-10 unused section(s) (total 438 bytes) removed from the image.
+10 unused section(s) (total 982 bytes) removed from the image.
 
 ==============================================================================
 
@@ -299,19 +299,11 @@ Image component sizes
         16          0          0          0          0        348   main.o
        456          8        161          0          0        616   maze_functions.o
         64         26        404          0       1536        836   startup_stm32f401xc.o
-<<<<<<< HEAD
         18          0          0          0          0       2795   system_stm32f4xx.o
       1968         74          0         20          0       1300   xo_functions.o
 
     ----------------------------------------------------------------------
-      5468        186       5436        192       1536       8419   Object Totals
-=======
-        18          0          0          0          0       2791   system_stm32f4xx.o
-      1968         74          0         20          0       1300   xo_functions.o
-
-    ----------------------------------------------------------------------
-      5416        188       5600         32       1536       8327   Object Totals
->>>>>>> 4d8b2de3763edd2696c1f9512c93a2f6a11ff640
+      5416        188       5600         32       1536       8331   Object Totals
          0          0          0          0          0          0   (incl. Generated)
          2          0          6          2          0          0   (incl. Padding)
 
@@ -341,15 +333,9 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-<<<<<<< HEAD
-      5476        186       5436        192       1536       8071   Grand Totals
-      5476        186       5436        192       1536       8071   ELF Image Totals
-      5476        186       5436        192          0          0   ROM Totals
-=======
-      5424        188       5600         32       1536       7979   Grand Totals
-      5424        188       5600         32       1536       7979   ELF Image Totals
+      5424        188       5600         32       1536       7983   Grand Totals
+      5424        188       5600         32       1536       7983   ELF Image Totals
       5424        188       5600         32          0          0   ROM Totals
->>>>>>> 4d8b2de3763edd2696c1f9512c93a2f6a11ff640
 
 ==============================================================================
 
