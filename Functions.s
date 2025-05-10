@@ -67,6 +67,7 @@ RNG_State DCD 1 ; 32-bit seed (must be non-zero)
 	IMPORT XO
 	IMPORT LONGCAT
 	IMPORT AEROSPACE
+	IMPORT Main_Game_Alien
 
 ;-----------------------------------------
 ; Initially call in main function
@@ -846,9 +847,12 @@ DrawFourSquares
 	MOV R1, R6
 	MOV R2, R8
 	MOV R3, #10
-	MOV R4, #100
+	MOV R4, #110
 	BL DrawOutline
-	
+	MOV R1,R6
+	MOV R2,R8
+	LDR R3,=AEROSPACE
+	BL TFT_DrawImage
 	MOV R11, #Cyan
 	;up right square
 	MOV R6,#185
@@ -864,7 +868,7 @@ DrawFourSquares
 	MOV R1, R6
 	MOV R2, R8
 	MOV R3, #10
-	MOV R4, #100
+	MOV R4, #110
 	BL DrawOutline
 	
 	MOV R11, #Cyan
@@ -882,7 +886,7 @@ DrawFourSquares
 	MOV R1, R6
 	MOV R2, R8
 	MOV R3, #10
-	MOV R4, #100
+	MOV R4, #110
 	BL DrawOutline
 	
 	MOV R11, #Cyan
@@ -900,14 +904,14 @@ DrawFourSquares
 	MOV R1, R6
 	MOV R2, R8
 	MOV R3, #10
-	MOV R4, #100
+	MOV R4, #110
 	BL DrawOutline
 
 Initialize_Outline
 	MOV R1,#185
 	MOV R2,#265
 	MOV R3,#10
-	MOV R4,#100
+	MOV R4,#110
 	MOV R11,#Yellow
 	BL DrawOutline
 	
@@ -961,7 +965,7 @@ THIRD_GAME
 	B START
 	
 FOURTH_GAME
-	;BL Main_Game_XO (4th Game Here)
+	BL Main_Game_Alien
 	B START
 	ENDFUNC
 
@@ -972,7 +976,7 @@ movecursor FUNCTION ; Take X-R1; Y-R2 : Input in R10
 	 PUSH{R3-R4, R11-R12,LR}
 	 
 	 MOV R11, #Black
-	 MOV R4, #100
+	 MOV R4, #110
 	 MOV R3, #10
 	 
 	 BL DrawOutline
@@ -1020,7 +1024,7 @@ MOVE_LEFTB
 DEFAULTB
 	 MOV R11,#Yellow
 	 MOV R3, #10
-	 MOV R4, #100
+	 MOV R4, #110
 	 BL DrawOutline
 	 pop{R3-R4, R11-R12,PC}
 	 ENDFUNC
