@@ -144,6 +144,9 @@ ENDFUNC
 ;------------------------------
 ; DrawBullet Function for Player
 ;------------------------------
+;------------------------------
+; DrawBullet Function for Player
+;------------------------------
 DrawBullet_Player FUNCTION
     PUSH {R0-R12,LR}
 
@@ -155,14 +158,14 @@ DrawBullet_Outer_Loop_P
     ADD R0 , R0, R1        ; R0 = address of Player_Bullet[R5]
     LDRH R2 , [R0]         ; R2 = contents of Player_Bullet[R5]
 
-    MOV R6 , #32              ; Init the R6 = X_Start (CELL) of any column
-    MOV R7 , #48              ; Init the R7 = X_END (CELL) of any column
+    MOV R6 , #64              ; Init the R6 = X_Start (CELL) of any column
+    MOV R7 , #80              ; Init the R7 = X_END (CELL) of any column
 
     LSL R8 , R5 , #4         ; Y_START = R5 * 16
     LSL R9 , R5 , #4                
     ADD R9 , R9 , #16        ; Y_END = R5 * 16 + 16  
 
-    MOV R4 , #1             ; Bit 0
+    MOV R4 , #2             ; Bit 0
 DrawBullet_Inner_Loop_P
     MOV R1 , #1              ; Bit mask
     LSL R1 , R1 , R4         ; SHIFT THE 1 BIT IN R1 TO THE INDEX OF THE ARRAY[R5]   
@@ -195,14 +198,14 @@ Continue_Ok_P
     ADD  R7 , R7 , #16       ; ADD X_END = X_END + 16
 
     ADD R4 , R4 ,#1          ; ADD R4 = R4 + 1 --> ARRAY[R5][R4] 
-    CMP R4 , #16
+    CMP R4 , #15
     BLT DrawBullet_Inner_Loop_P    ;If less than == BLT
 	SUB R6, #0x10
 	SUB R7, #0x10
 	MOV R11 , #Black         ; Background Color
     BL TFT_Filldraw4INP
     ADD R5 , R5 , #1
-    CMP R5 , #30 
+    CMP R5 , #30
     BLT DrawBullet_Outer_Loop_P
 
     POP {R0-R12,PC}
@@ -216,7 +219,7 @@ DrawBullet_Enemy FUNCTION
 
     MOV R5 , #0            ; R5 = INDEX OF THE ARRAYS
 DrawBullet_Outer_Loop_E
- CMP R5, #29              ; Check if this is the player's row
+	CMP R5, #29              ; Check if this is the player's row
     BEQ Skip_Row_E            ; Skip drawing bullets in player's row
     LDR R0 , =Enemy_Bullets
     MOV R1 , R5            ; R1 = index of the column
@@ -224,14 +227,14 @@ DrawBullet_Outer_Loop_E
     ADD R0 , R0, R1        ; R0 = address of Player_Bullet[R5]
     LDRH R2 , [R0]         ; R2 = contents of Player_Bullet[R5]
 
-    MOV R6 , #32              ; Init the R6 = X_Start (CELL) of any column
-    MOV R7 , #48              ; Init the R7 = X_END (CELL) of any column
+    MOV R6 , #48              ; Init the R6 = X_Start (CELL) of any column
+    MOV R7 , #64              ; Init the R7 = X_END (CELL) of any column
 
     LSL R8 , R5 , #4         ; Y_START = R5 * 16
     LSL R9 , R5 , #4                
     ADD R9 , R9 , #16        ; Y_END = R5 * 16 + 16  
 
-    MOV R4 , #2             ; Bit 0
+    MOV R4 , #2             ; Bit
 DrawBullet_Inner_Loop_E
     MOV R1 , #1              ; Bit mask
     LSL R1 , R1 , R4         ; SHIFT THE 1 BIT IN R1 TO THE INDEX OF THE ARRAY[R5]   
@@ -241,18 +244,18 @@ DrawBullet_Inner_Loop_E
     CMP R3 , #0
     BEQ Continue_Ok_E
  
- MOV R10 , R8             ; SAVE THE OLD R8 IN R10
+	MOV R10 , R8             ; SAVE THE OLD R8 IN R10
     MOV R12 , R9             ; SAVE THE OLD R9 IN R12
- ADD R8 , R8 , #5         ; R8 OF THE BULLET (CELL START + 4)
+	ADD R8 , R8 , #5         ; R8 OF THE BULLET (CELL START + 4)
     SUB R9 , R9 , #5         ; R9 OF THE BULLET (CELL END - 4)
  
- ADD R6, #0x10
- ADD R7, #0x10
- MOV R11 , #Black         ; Background Color
+	ADD R6, #0x10
+	ADD R7, #0x10
+	MOV R11 , #Black         ; Background Color
     BL TFT_Filldraw4INP
  
- SUB R6, #0x10
- SUB R7, #0x10 
+	SUB R6, #0x10
+	SUB R7, #0x10 
     MOV R11 , #Orange          ; Bullet Color
     BL TFT_Filldraw4INP
 
@@ -264,9 +267,12 @@ Continue_Ok_E
     ADD  R7 , R7 , #16       ; ADD X_END = X_END + 16
 
     ADD R4 , R4 ,#1          ; ADD R4 = R4 + 1 --> ARRAY[R5][R4] 
-    CMP R4 , #14
+    CMP R4 , #15
     BLT DrawBullet_Inner_Loop_E    ;If less than == BLT
-
+	MOV R6,0X0030
+	MOV R7,0X0040
+	MOV R11 , #Black         ; Background Color
+    BL TFT_Filldraw4INP
 Skip_Row_E
     ADD R5 , R5 , #1
     CMP R5 , #30 
@@ -398,7 +404,7 @@ DoNe
 
 
 Remove_Enemy FUNCTION ;Takes enemy to be deleted in R10
-	PUSH {R5-R11, LR}
+	PUSH {R5-R12, LR}
 	
 	CLZ R10, R10          ; Count leading zeros
 	RSB R10, R10, #31     ; r0 = 31 - r0 (position in 32-bit word)
@@ -413,7 +419,9 @@ Remove_Enemy FUNCTION ;Takes enemy to be deleted in R10
 	MOV R7, #320
     MOV R11, #Black
     BL TFT_Filldraw4INP
-	POP {R5-R11, PC}
+	MOV R12, #75
+	BL Increment_Score_And_Draw
+	POP {R5-R12, PC}
 	ENDFUNC
 
 
@@ -455,14 +463,7 @@ redraw
     MOV R11, #Black               ;Clear position
     BL TFT_Filldraw4INP
     ;Prepare arguments for draw_player function
-    MOV R0, R3
-	LSL R0, #4             ; R0 *= 16
-    MOV R6, #0x0
-    MOV R7, #0x30
-    SUB R8,R0,#0x10
-    ADD R9,R0,#0x20
-    MOV R11, #Blue
-    BL TFT_Filldraw4INP            ;// Call the existing draw function
+    BL DRAW3ARABYA
 
 end_
     POP {R0, R6-R12, PC}
@@ -552,10 +553,10 @@ cOntinUe
 	
 ENEMY_BULLET_RATE FUNCTION
 	PUSH{R0-R4,LR}
-	LDR R5, =PlayerBulletCounter
-	LDRB R5, [R5]
-	CMP R5, #1
-	BNE SkIp
+	LDR R1, =PlayerBulletCounter
+	LDRB R1, [R1]
+	CMP R1, #1
+	BEQ SkIp
 	
 	BL Get_Random
 	MOV R4, R0
@@ -586,7 +587,7 @@ check_all_bit15 FUNCTION
 loop
     CMP R3, #30             ; // Check if counter >= 29
     BEQ endO                ;  // If yes, exit loop
-  
+    ADD R3, R3, #1 
    ; // Load word at R0 + (counter * 4)
     LDRH R1, [R0, R3, LSL #1]  ;// R1 = word at index R4
 
@@ -598,24 +599,27 @@ loop
     BEQ GOT                         ; // If bit 15 is 1, set bit 0 in R5
   
 
-    ADD R3, R3, #1          ;  // Increment counter
+          ;  // Increment counter
     B loop                       ; // Continue loop
                
 GOT
     ANDS R4, R3, #3    ; check if the colomn number divisable 4 (empty colomn)
     CMP R4,#0            
     BEQ endO            ; Branch to 'end' if r3 == 0 (mod 4)
-    ADD R3,#3
+    
+	;ADD R3,#3;;;;;;;;;;;;;;;
     LSR R3,R3,#2
     LDR R1, =enemy              ;THE ARRAY OF WO7OSH
     LDRB R1,[R1]
    
-    SUB R3, R3,#1
+    ;SUB R3, R3,#1;;;;;;;;;;;;;;
     MOV R2, #1
     LSL R2,R2,R3             ;000000100000
 	MOV R10, R2              ;FOR Remove_Enemy
     ;MVN R2, R2               ;111111011111
-    EOR R1, R2
+	TST R1,R2
+	BEQ GOT
+    BIC R1, R1, R2 
     LDR R2, =enemy                  ;THE ARRAY OF WO7OSH     
     STRB R1, [R2]
 	BL Remove_Enemy
@@ -624,24 +628,27 @@ GOT
 
 
 	LDR R0, =Enemy_Bullets     ;CHECK IF THE PLAYER GOT HARMED
-	LDRH R1, [R0,R11,LSL #1]
-	LSR R1, R1, #15          ; // Shift right by 15 to move bit 15 to LSB
-	AND R1, R1, #1           ;  // Mask to keep only LSB (0 or 1)
-	CMP R1, #1   
-	BEQ LOSE  
-	ADD R11,#1
-	LDR R1, [R0,R11,LSL #1]
-	LSR R1, R1, #15          ; // Shift right by 15 to move bit 15 to LSB
-	AND R1, R1, #1           ;  // Mask to keep only LSB (0 or 1)
-	CMP R1, #1   
-	BEQ LOSE   	             ;// Check if bit 15 was 1
-	SUB R11, #2
-	LDR R1, [R0,R11,LSL #1]
-	LSR R1, R1, #15          ; // Shift right by 15 to move bit 15 to LSB
-	AND R1, R1, #1           ;  // Mask to keep only LSB (0 or 1)
-	CMP R1, #1   
-	BEQ LOSE
-	B endO
+	;——— test center ———
+	LDRH    R1, [R0, R11, LSL #1]  ; R1 = half-word @ index R11
+	AND     R1, R1, #1            ; isolate bit 0
+	CMP     R1, #1
+	BEQ     LOSE
+
+	;——— test right ———
+	ADD     R2, R11, #1
+	LDRH    R1, [R0, R2, LSL #1]  ; R1 = half-word @ index R11+1
+	AND     R1, R1, #1
+	CMP     R1, #1
+	BEQ     LOSE
+
+	;——— test left ———
+	SUB     R2, R11, #1
+	LDRH    R1, [R0, R2, LSL #1]  ; R1 = half-word @ index R11–1
+	AND     R1, R1, #1
+	CMP     R1, #1
+	BEQ     LOSE
+
+	B       endO ; no hit
 LOSE 
     BL Decrement_Heart_And_Draw 
     B endO
@@ -679,30 +686,32 @@ DrawWa74 FUNCTION;take parameters at r1 and r2
 	POP {R6-R11, PC}
 	ENDFUNC
 DRAW3ARABYA
-	PUSH{R6-R11,LR}
+	PUSH{R1,R2,R6-R11,LR}
+	MOV R1,#0
+	MOV R2,R3,LSL #4
 	MOV R11,#Blue
 	MOV R6, R1   ; X start
 	ADD R7,	R1 ,#0X0030
-	MOV R8,	R2
-	ADD R9, R2 ,#0X0030
+	SUB R8,	R2 ,#0X0010
+	ADD R9, R2 ,#0X0020
 	BL TFT_Filldraw4INP
 	MOV R11,#Black
+	ADD R6, R1 ,#0X0020  ; X start
+	ADD R7,	R1 ,#0X0028
+	SUB R8,	R2 ,#0X0004
+	ADD R9, R2 ,#0X0004
+	BL TFT_Filldraw4INP
 	ADD R6, R1 ,#0X0020  ; X start
 	ADD R7,	R1 ,#0X0028
 	ADD R8,	R2 ,#0X000C
 	ADD R9, R2 ,#0X0014
 	BL TFT_Filldraw4INP
-	ADD R6, R1 ,#0X0020  ; X start
-	ADD R7,	R1 ,#0X0028
-	ADD R8,	R2 ,#0X001C
-	ADD R9, R2 ,#0X0024
-	BL TFT_Filldraw4INP
 	ADD R6, R1 ,#0X0010  ; X start
 	ADD R7,	R1 ,#0X0018
-	ADD R8,	R2 ,#0X000C
-	ADD R9, R2 ,#0X0024
+	SUB R8,	R2 ,#0X0004
+	ADD R9, R2 ,#0X0014
 	BL TFT_Filldraw4INP
-	POP {R6-R11, PC}
+	POP {R1,R2,R6-R11, PC}
 	ENDFUNC
 	
 Intialize_Grid FUNCTION
@@ -719,9 +728,14 @@ Intialize_Grid FUNCTION
 	STRH R6, [R0]
 	MOV R6,#0
 	LDR R0, =Score  ; Load address of Level Map into R0
-	STRH R6, [R0]
+	STRH R6, [R0]	
+	MOV R6,#0
 	LDR R0, =PlayerBulletCounter  ; Load address of Level Map into R0
 	STRH R6, [R0]
+	MOV R6,#0X7F
+	LDR R0, =enemy  ; Load address of Level Map into R0
+	STRB R6, [R0]
+
 	MOV R6,#0
 	MOV R3,#0
 	
@@ -748,10 +762,10 @@ START_BM
 	ADD R2,#0X0040
 	B START_BM
 FINISH_Build_Monster
-	MOV R1,#0X0000
-	MOV R2,#0X00D0
-	BL DRAW3ARABYA
 	MOV R3,#14
+	BL DRAW3ARABYA
+
+	BL Heart_Draw
 	POP {R0-R12,PC}
 	ENDFUNC
 	
@@ -773,6 +787,10 @@ GAMEL00P
 	BL Move_Player
 	BL MOVE_BULLET
 	BL check_all_bit15
+	CMP R12, #0xFF
+	BEQ WiNNer
+	CMP R12, #0xAA
+	BEQ L0OsEr
 	;MOV R10,#1
 	;BL Remove_Enemy
 	B GAMEL00P
@@ -795,13 +813,26 @@ GAMEL00P
 	BL delay
 
 
-	CMP R12, #0xFF
-	BEQ WiNNer
-	CMP R12, #0xAA
-	BEQ L0OsEr
+
 	B GAMEL00P
 WiNNer
+	MOV R6,#0X0000
+	MOV R7,#0X0140
+	MOV R8,#0X0000
+	MOV R9,#0X01E0
+    ; Fill screen with color (area)
+    MOV R11, #Pink ;;;;;34AN BARBIEEEEEEEEEEE
+	BL TFT_Filldraw4INP
+	B EXIT_ALIEN
 L0OsEr
+	MOV R6,#0X0000
+	MOV R7,#0X0140
+	MOV R8,#0X0000
+	MOV R9,#0X01E0
+    ; Fill screen with color (area)
+    MOV R11, #Orange
+	BL TFT_Filldraw4INP
+	B EXIT_ALIEN
 EXIT_ALIEN
 	POP {R0-R12, PC}
 	ENDFUNC

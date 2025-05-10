@@ -32,7 +32,17 @@ Blue    	   EQU 0x001F
 Yellow  	   EQU 0xFFE0
 White   	   EQU 0xFFFF
 Black		   EQU 0x0000	
-
+Pink 		   EQU 0xF81F  
+LightPink      EQU 0xFC9E  ; Lighter pink
+DeepPink       EQU 0xF8B2  ; Deeper pink with a bit more blue
+Brown      	   EQU 0x8200  ; Brown
+Cyan           EQU 0x07FF  ; Cyan (full green + full blue)
+LightBlue      EQU 0x841F
+Orange         EQU 0xFD20 
+Beige		   EQU 0xF7B6
+Lavender 	   EQU 0x9C3F
+Purple		   EQU 0x600F
+Violet		   EQU 0x881F
 	AREA USEABLE, DATA, READWRITE
 
 SnakeMap
@@ -76,7 +86,7 @@ TFT_DrawMap    FUNCTION
 	MOV R8,#0X0000
 	MOV R9,#0X01E0
     ; Fill screen with color BLUE
-    MOV R11, #Blue
+    MOV R11, #Violet
 	BL TFT_Filldraw4INP
 	
 	MOV R6,#10
@@ -84,7 +94,7 @@ TFT_DrawMap    FUNCTION
 	MOV R8,#40
 	MOV R9,#440 
     ; Fill screen with playing area
-    MOV R11, #White
+    MOV R11, #Beige
 	BL TFT_Filldraw4INP
 	
 	;Now all screen in blue, which is the background
@@ -113,7 +123,7 @@ COL_LOOP
 
     TST R9, R10         ; Test if bit is 1
     BEQ SkipDraw        ; If 0, skip
-	MOV R11,#Green
+	MOV R11,#Cyan
     ; If bit is 1, draw a wall block which is square
     BL TFT_DRAWSQUARE 	
 SkipDraw
