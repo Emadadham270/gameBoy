@@ -104,30 +104,29 @@ Orange         EQU 0xFD20
 	EXPORT Main_Game_Alien
 	EXPORT DrawBullet_Player
 	EXPORT DrawBullet_Enemy
-; R3 = Position of player		
-;R3 = Position of player  
+; R3 = Position of player  
 ADD_BULLET_PLAYER FUNCTION 
- PUSH {R0-R5,LR}
- LDR   R0, =Player_Bullets      ; R0 = base address of Bullets
- LDR   R4, =PlayerBulletCounter
- LDRH  R5, [R4]
- CMP   R5, #0
- BEQ   ADDONE
- MOV   R5, #0
- STRH  R5, [R4]
+	PUSH {R0-R5,LR}
+	LDR   R0, =Player_Bullets      ; R0 = base address of Bullets
+	LDR   R4, =PlayerBulletCounter
+	LDRH  R5, [R4]
+	CMP   R5, #0
+	BNE   NoAttack
+	MOV   R5, #2
+	STRH  R5, [R4]
     MOV   R1, R3             ; R1 = index
     LSL   R1, R1, #1          ; R1 = R1 * 2 (convert to byte offset)
     ADD   R0, R0, R1          ; R0 = address of Alien_Map[R3]
     LDRH  R2,[R0]            ; R2 = contents of Alien_Map[R3]
- ORR   R2, R2, #1
- STRH  R2,[R0]
- B     FFFFFinish
-ADDONE
- MOV   R5, #1
- STRH  R5, [R4]
+	ORR   R2, R2, #1
+	STRH  R2,[R0]
+	B     FFFFFinish
+NoAttack
+    SUB R5, #1
+	STRH R5, [R4]
 FFFFFinish
- POP {R0-R5,PC}
- ENDFUNC
+	POP {R0-R5,PC}
+	ENDFUNC
 
 ; R4 = Position of Enemy
 ADD_BULLET_ALIEN FUNCTION
@@ -553,13 +552,10 @@ cOntinUe
 	
 ENEMY_BULLET_RATE FUNCTION
 	PUSH{R0-R4,LR}
-	BL Get_Random
-	MOV R1, R0;Random Counter
-	AND R1, R1,#1; RANDOM%3
-	ADD R1, R1,#1;Minimum=1
-LOOP	
-	CMP R1,#0
-	BEQ SkIp
+	LDR R5, =PlayerBulletCounter
+	LDRB R5, [R5]
+	CMP R5, #1
+	BNE SkIp
 	
 	BL Get_Random
 	MOV R4, R0
@@ -569,15 +565,10 @@ LOOP
 	LDR R2,=enemy
 	LDRB R2, [R2]
 	TST R2, R3          ; Test if bit is set
-	BNE skyb
-	
+	BEQ SkIp
 	LSL R4, R4,#2
 	ADD R4, R4,#2; Position of alien is 4*R0+2 R4=[0,7]
-	
 	BL ADD_BULLET_ALIEN
-	SUB R1, R1,#1
-skyb
-	B LOOP
 SkIp
 	POP{R0-R4,PC}
 	ENDFUNC
