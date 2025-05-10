@@ -38,20 +38,20 @@ Orange         EQU 0xFD20
 	IMPORT	Heart_Draw
 	IMPORT Increment_Score_And_Draw
 	IMPORT Decrement_Heart_And_Draw
+	IMPORT Main_Game_Alien	
+	IMPORT DrawBullet_Player
+	IMPORT DrawBullet_Enemy
 __main FUNCTION
 
 	BL Init_RandomSeed
 	BL CONFIGURE_PORTS
     ; Initialize TFT
     BL TFT_Init
-	BL Intialize_Grid
+	;BL Intialize_Grid
+	;BL DrawBullet_Player
+	;BL DrawBullet_Enemy
+	BL Main_Game_Alien
 	;BL Score_Draw
-	BL Decrement_Heart_And_Draw
-	BL Increment_Score_And_Draw
-	mov r0,#1
-	bl delay
-	BL Decrement_Heart_And_Draw
-	BL Increment_Score_And_Draw
 	;BL UI
     ENDFUNC
 	

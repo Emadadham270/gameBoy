@@ -100,9 +100,12 @@ Orange         EQU 0xFD20
 	EXPORT	Heart_Draw
 	EXPORT Increment_Score_And_Draw
 	EXPORT Decrement_Heart_And_Draw
+	EXPORT Main_Game_Alien
+	EXPORT DrawBullet_Player
+	EXPORT DrawBullet_Enemy
 ; R3 = Position of player		
 ADD_BULLET_PLAYER FUNCTION 
-	PUSH {R0-R3,LR}
+	PUSH {R0-R2,LR}
 	LDR   R0, =Player_Bullets      ; R0 = base address of Bullets
     MOV   R1, R3             ; R1 = index
     LSL   R1, R1, #1          ; R1 = R1 * 2 (convert to byte offset)
@@ -110,7 +113,7 @@ ADD_BULLET_PLAYER FUNCTION
     LDRH  R2,[R0]            ; R2 = contents of Alien_Map[R3]
 	ORR   R2, R2, #1
 	STRH  R2,[R0]
-	POP {R0-R3,PC}
+	POP {R0-R2,PC}
 	ENDFUNC
 
 ; R4 = Position of Enemy
@@ -147,7 +150,7 @@ DrawBullet_Outer_Loop_P
     LSL R9 , R5 , #4                
     ADD R9 , R9 , #16        ; Y_END = R5 * 16 + 16  
 
-    MOV R4 , #0              ; Bit 0
+    MOV R4 , #1             ; Bit 0
 DrawBullet_Inner_Loop_P
     MOV R1 , #1              ; Bit mask
     LSL R1 , R1 , R4         ; SHIFT THE 1 BIT IN R1 TO THE INDEX OF THE ARRAY[R5]   
@@ -155,31 +158,26 @@ DrawBullet_Inner_Loop_P
 
     ; If i = 0
     CMP R3 , #0
-    BNE SKIP_DRAW_Bullet_P
-
-;-----------------------
-;   Draw the Bullet
-
-    MOV R10 , R8             ; SAVE THE OLD R8 IN R10
+    BEQ Continue_Ok_P
+	
+	MOV R10 , R8             ; SAVE THE OLD R8 IN R10
     MOV R12 , R9             ; SAVE THE OLD R9 IN R12
-
-    ADD R8 , R8 , #4         ; R8 OF THE BULLET (CELL START + 4)
-    SUB R9 , R9 , #4         ; R9 OF THE BULLET (CELL END - 4)
-
-    MOV R11 , #Black         ; Bullet Color
-
+	ADD R8 , R8 , #5         ; R8 OF THE BULLET (CELL START + 4)
+    SUB R9 , R9 , #5         ; R9 OF THE BULLET (CELL END - 4)
+	
+	SUB R6, #0x10
+	SUB R7, #0x10
+	MOV R11 , #Black         ; Background Color
+    BL TFT_Filldraw4INP
+	
+	ADD R6, #0x10
+	ADD R7, #0x10	
+    MOV R11 , #Pink          ; Bullet Color
     BL TFT_Filldraw4INP
 
     MOV R8 , R10             ; RETURN THE OLD R8 SO WE WILL USE IT IN THE LOOP
     MOV R9 , R12             ; RETURN THE OLD R9 SO WE WILL USE IT IN THE LOOP
-
-    B Continue_Ok_P
-;-----------------------
-
-SKIP_DRAW_Bullet_P
-    MOV R11 , #Red           ; Background_colour
-    BL TFT_Filldraw4INP     
-
+	
 Continue_Ok_P
     ADD  R6 , R6 , #16       ; ADD X_START = X_START + 16
     ADD  R7 , R7 , #16       ; ADD X_END = X_END + 16
@@ -187,14 +185,16 @@ Continue_Ok_P
     ADD R4 , R4 ,#1          ; ADD R4 = R4 + 1 --> ARRAY[R5][R4] 
     CMP R4 , #16
     BLT DrawBullet_Inner_Loop_P    ;If less than == BLT
-
+	SUB R6, #0x10
+	SUB R7, #0x10
+	MOV R11 , #Black         ; Background Color
+    BL TFT_Filldraw4INP
     ADD R5 , R5 , #1
     CMP R5 , #30 
     BLT DrawBullet_Outer_Loop_P
 
     POP {R0-R12,PC}
     ENDFUNC
-	LTORG
 
 ;------------------------------
 ; DrawBullet Function for Enemy
@@ -217,7 +217,7 @@ DrawBullet_Outer_Loop_E
     LSL R9 , R5 , #4                
     ADD R9 , R9 , #16        ; Y_END = R5 * 16 + 16  
 
-    MOV R4 , #0              ; Bit 0
+    MOV R4 , #1             ; Bit 0
 DrawBullet_Inner_Loop_E
     MOV R1 , #1              ; Bit mask
     LSL R1 , R1 , R4         ; SHIFT THE 1 BIT IN R1 TO THE INDEX OF THE ARRAY[R5]   
@@ -225,36 +225,31 @@ DrawBullet_Inner_Loop_E
 
     ; If i = 0
     CMP R3 , #0
-    BNE SKIP_DRAW_Bullet_E
-
-
-;   Draw the Bullet
-
-    MOV R10 , R8             ; SAVE THE OLD R8 IN R10
+    BEQ Continue_Ok_E
+	
+	MOV R10 , R8             ; SAVE THE OLD R8 IN R10
     MOV R12 , R9             ; SAVE THE OLD R9 IN R12
-
-    ADD R8 , R8 , #4         ; R8 OF THE BULLET (CELL START + 4)
-    SUB R9 , R9 , #4         ; R9 OF THE BULLET (CELL END - 4)
-
-    MOV R11 , #Black         ; Bullet Color
-
+	ADD R8 , R8 , #5         ; R8 OF THE BULLET (CELL START + 4)
+    SUB R9 , R9 , #5         ; R9 OF THE BULLET (CELL END - 4)
+	
+	ADD R6, #0x10
+	ADD R7, #0x10
+	MOV R11 , #Black         ; Background Color
+    BL TFT_Filldraw4INP
+	
+	SUB R6, #0x10
+	SUB R7, #0x10	
+    MOV R11 , #Pink          ; Bullet Color
     BL TFT_Filldraw4INP
 
     MOV R8 , R10             ; RETURN THE OLD R8 SO WE WILL USE IT IN THE LOOP
     MOV R9 , R12             ; RETURN THE OLD R9 SO WE WILL USE IT IN THE LOOP
-
-    B Continue_Ok_E
-
-
-SKIP_DRAW_Bullet_E
-    MOV R11 , #Red           ; Background_colour
-    BL TFT_Filldraw4INP     
-
+	
 Continue_Ok_E
     ADD  R6 , R6 , #16       ; ADD X_START = X_START + 16
     ADD  R7 , R7 , #16       ; ADD X_END = X_END + 16
 
-    ADD R4 , R4 ,#1        ; ADD R4 = R4 + 1 --> ARRAY[R5][R4] 
+    ADD R4 , R4 ,#1          ; ADD R4 = R4 + 1 --> ARRAY[R5][R4] 
     CMP R4 , #16
     BLT DrawBullet_Inner_Loop_E    ;If less than == BLT
 
@@ -267,19 +262,17 @@ Continue_Ok_E
 
 
 MOVE_BULLET FUNCTION
-	PUSH {R0-R12,LR}
-	;MOV R3, #0 ; index
-	MOV R2, #30
-
+ PUSH {R0-R12,LR}
+ MOV R3, #0 ; index
+ MOV R2, #30
+ LDR R0, =Player_Bullets       
+ LDR R1, =Enemy_Bullets
+ B skip12
+ LTORG
+skip12 
 MovePlayerLoop
     CMP R3, R2
     BEQ CheckCollision1
-	
-	;LoopEachColumn
-	LDR R0, =Player_Bullets      	
-	LDR R1, =Enemy_Bullets
-	MOV R3, #0                  ; index = 0
-	
     LDRH R4, [R0, R3, LSL #1]   ; Player column
     LSL R4, R4, #1              ; Shift up
     STRH R4, [R0, R3, LSL #1]
@@ -337,9 +330,8 @@ CollisionLoop2
     ADD R3, R3, #1
     B CollisionLoop2
 DoNe
-	POP {R0-R12,LR}
-	ENDFUNC
-	LTORG
+ POP {R0-R12,PC}
+ ENDFUNC
 
 
 Remove_Enemy FUNCTION ;Takes enemy to be deleted in R10
@@ -371,14 +363,8 @@ Move_Player FUNCTION
     ;// R10 holds the direction (1 = right, 2 = left)
 
 	MOV R0, R3
-	LSL R0, #4             ; R0 *= 16
-    MOV R8, #0x0
-    MOV R9, #0x30
-    SUB R6,R0,#0x10
-    ADD R7,R0,#0x20
-    MOV R11, #Black               ;Clear position
-    B TFT_Filldraw4INP
 	
+	AND R10,#0x3
 	
     CMP R10, #1                ;// Check if moving right
     BEQ move_right
@@ -397,14 +383,21 @@ move_left
     B redraw
 
 redraw
+
+	LSL R0, #4             ; R0 *= 16
+    MOV R6, #0x0
+    MOV R7, #0x30
+    SUB R8,R0,#0x10
+    ADD R9,R0,#0x20
+    MOV R11, #Black               ;Clear position
+    BL TFT_Filldraw4INP
     ;Prepare arguments for draw_player function
     MOV R0, R3
-	MOV R12,#16
-    MUL R0, R0, R12
-    MOV R8, #0x0
-    MOV R9, #0x30
-    SUB R6,R0,#0x10
-    ADD R7,R0,#0x20
+	LSL R0, #4             ; R0 *= 16
+    MOV R6, #0x0
+    MOV R7, #0x30
+    SUB R8,R0,#0x10
+    ADD R9,R0,#0x20
     MOV R11, #Blue
     BL TFT_Filldraw4INP            ;// Call the existing draw function
 
@@ -448,7 +441,7 @@ Increment_Score_And_Draw FUNCTION
 	BL TFT_Filldraw4INP 
     LDR   R0, =Score
     LDRH  R1, [R0]
-    ADD   R1, R1,#1
+    ADD   R1, R1,R12
     STRH  R1, [R0]
 
     BL Score_Draw
@@ -498,8 +491,8 @@ ENEMY_BULLET_RATE FUNCTION
 	PUSH{R0-R1,R4,LR}
 	BL Get_Random
 	MOV R1, R0;Random Counter
-	AND R1, R1,#3; RANDOM%3
-	ADD R1, R1,#1;Minimum=1
+	AND R1, R1,#1; RANDOM%3
+	;ADD R1, R1,#1;Minimum=1
 LOOP	
 	CMP R1,#0
 	BEQ SkIp
@@ -514,7 +507,7 @@ LOOP
 	SUB R1, R1,#1
 	B LOOP
 SkIp
-	POP{R0-R12,PC}
+	POP{R0-R1,R4,LR}
 	ENDFUNC
 	
 	
@@ -622,7 +615,32 @@ DrawWa74 FUNCTION;take parameters at r1 and r2
 	BL TFT_Filldraw4INP
 	POP {R6-R11, PC}
 	ENDFUNC
-	
+DRAW3ARABYA
+	PUSH{R6-R11,LR}
+	MOV R11,#Blue
+	MOV R6, R1   ; X start
+	ADD R7,	R1 ,#0X0030
+	MOV R8,	R2
+	ADD R9, R2 ,#0X0030
+	BL TFT_Filldraw4INP
+	MOV R11,#Black
+	ADD R6, R1 ,#0X0020  ; X start
+	ADD R7,	R1 ,#0X0028
+	ADD R8,	R2 ,#0X000C
+	ADD R9, R2 ,#0X0014
+	BL TFT_Filldraw4INP
+	ADD R6, R1 ,#0X0020  ; X start
+	ADD R7,	R1 ,#0X0028
+	ADD R8,	R2 ,#0X001C
+	ADD R9, R2 ,#0X0024
+	BL TFT_Filldraw4INP
+	ADD R6, R1 ,#0X0010  ; X start
+	ADD R7,	R1 ,#0X0018
+	ADD R8,	R2 ,#0X000C
+	ADD R9, R2 ,#0X0024
+	BL TFT_Filldraw4INP
+	POP {R6-R11, PC}
+	ENDFUNC
 	
 Intialize_Grid FUNCTION
 	PUSH {R0-R12,LR}
@@ -662,10 +680,13 @@ START_BM
     BEQ FINISH_Build_Monster
 	BL DrawWa74
 	ADD R3,R3,#1
-	ADD R2,0X0040
+	ADD R2,#0X0040
 	B START_BM
-	
 FINISH_Build_Monster
+	MOV R1,#0X0000
+	MOV R2,#0X00D0
+	BL DRAW3ARABYA
+	MOV R3,#14
 	POP {R0-R12,PC}
 	ENDFUNC
 	
@@ -673,16 +694,35 @@ FINISH_Build_Monster
 Main_Game_Alien FUNCTION
 	PUSH {R0-R12, LR}
 	BL Intialize_Grid
+	MOV R3,#14
 GAMEL00P
-	BL ADD_BULLET_PLAYER
 	BL ENEMY_BULLET_RATE
-	BL DrawBullet_Player
 	BL DrawBullet_Enemy
+	;BL DrawBullet_Player
+	;BL ADD_BULLET_PLAYER
+	BL MOVE_BULLET
 	BL GET_state
 	BL Move_Player
+	
+	B GAMEL00P
+
+	BL MOVE_BULLET	
+	;BL ADD_BULLET_PLAYER
+	BL MOVE_BULLET
+	BL DrawBullet_Player
+	
+	;BL ADD_BULLET_PLAYER
+	BL ADD_BULLET_PLAYER
+	BL MOVE_BULLET
+	BL DrawBullet_Player
+
+
+	BL DrawBullet_Enemy
+
+
 	MOV R0, #4
 	BL delay
-	BL MOVE_BULLET
+
 	BL check_all_bit15
 	CMP R12, #0xFF
 	BEQ WiNNer
