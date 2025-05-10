@@ -430,6 +430,7 @@ GET_state FUNCTION
 	MOV R10,#0
 	LDR R0, =GPIOB_IDR   ; Load address of input data register
 	LDR R10, [R0]         ; Read GPIOB input register   ; Shift right to get PC8 at bit 0 and PC9 at bit 1 and PC10 at bit 2 and PC11 at bit 3
+	BL Get_Random
 	MOV	R0,#10
 	BL delay
 	POP {R1,PC}
@@ -531,7 +532,7 @@ loop_digits
 	BNE loop_digits   ; Continue until we've drawn requested digits
 
 	POP {R5-R9, PC}
-ENDFUNC
+	ENDFUNC
 	
 ;INPUT AND OUTPUT IN R0
 ; Binary_to_BCD
@@ -576,6 +577,8 @@ b2b_loop
 
     MOV    R0, R2        ; return BCD
     POP    {R1-R5, PC}
+	ENDFUNC
+	
 ;------------------------------------------------------------
 ; R0 = [d3:d2:d1:d0] four BCD digits
 ; Returns R0 = {seg(d3), seg(d2), seg(d1), seg(d0)}

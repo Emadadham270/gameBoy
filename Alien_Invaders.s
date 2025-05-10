@@ -339,12 +339,11 @@ CollisionLoop2
 DoNe
 	POP {R0-R12,LR}
 	ENDFUNC
-
-
+	LTORG
 
 
 Remove_Enemy FUNCTION ;Takes enemy to be deleted in R10
-	PUSH {LR}
+	PUSH {R5-R11, LR}
 	
 	CLZ R10, R10          ; Count leading zeros
 	RSB R10, R10, #31     ; r0 = 31 - r0 (position in 32-bit word)
@@ -359,21 +358,20 @@ Remove_Enemy FUNCTION ;Takes enemy to be deleted in R10
 	MOV R7, #320
     MOV R11, #Black
     BL TFT_Filldraw4INP
-	POP {PC}
+	POP {R5-R11, PC}
 	ENDFUNC
 
 
 
  
 Move_Player FUNCTION
-    PUSH {R4-R7, LR}         ; // Save registers and return address
+    PUSH {R0, R6-R12, LR}         ; // Save registers and return address
 
     ;// R3 holds the current position (1 to 28)
-    ;// R7 holds the direction (1 = right, 2 = left)
+    ;// R10 holds the direction (1 = right, 2 = left)
 
 	MOV R0, R3
-	MOV R12,#16
-    MUL R0, R0, R12
+	LSL R0, #4             ; R0 *= 16
     MOV R8, #0x0
     MOV R9, #0x30
     SUB R6,R0,#0x10
@@ -382,9 +380,9 @@ Move_Player FUNCTION
     B TFT_Filldraw4INP
 	
 	
-    CMP R7, #1                ;// Check if moving right
+    CMP R10, #1                ;// Check if moving right
     BEQ move_right
-    CMP R7, #2                ;// Check if moving left
+    CMP R10, #2                ;// Check if moving left
     BEQ move_left
     B end_                     ;// If R7 is neither 1 nor 2, do nothing
 
@@ -411,7 +409,7 @@ redraw
     BL TFT_Filldraw4INP            ;// Call the existing draw function
 
 end_
-    POP {R4-R7, PC}
+    POP {R0, R6-R12, PC}
     ENDFUNC
 	
 	
@@ -419,8 +417,8 @@ end_
 ;-----------------------------------------
 ; It only Draws the Score
 ;-----------------------------------------
-Score_Draw
-    PUSH {R0-R12, LR}
+Score_Draw FUNCTION
+    PUSH {R0-R5, R11, LR}
 
     LDR   R0, =Score    ; Address of Score
     LDRH  R0, [R0]      ; R0 = value of Score
@@ -433,15 +431,15 @@ Score_Draw
 
     BL    Num_to_LCD
 
-    POP {R0-R12,PC}
+    POP {R0-R5, R11,PC}
     ENDFUNC
 	
 ;-----------------------------------------
 ; Will be used anywhere , No Need to Update the Score Screen
 ; It Incements by [R12] <- Input
 ;-----------------------------------------
-Increment_Score_And_Draw
-    PUSH {R0-R11, LR}
+Increment_Score_And_Draw FUNCTION
+    PUSH {R0, R1, R6-R11, LR}
 	MOV   R6, #300      ; X
     MOV   R7, #320      ; Y
 	MOV   R8, #450      ; X
@@ -454,13 +452,13 @@ Increment_Score_And_Draw
     STRH  R1, [R0]
 
     BL Score_Draw
-    POP {R0-R11, PC}
+    POP {R0, R1, R6-R11, PC}
     ENDFUNC
 
 
 
-Heart_Draw
-     PUSH {R0-R12, LR}
+Heart_Draw FUNCTION
+    PUSH {R0-R5, R11, LR}
 
     LDR   R0, =Hearts
     LDRH  R0, [R0]
@@ -472,12 +470,11 @@ Heart_Draw
     MOV   R11, #Orange  ; desired color
 
     BL    Num_to_LCD
-
-    POP {R0-R12, PC}
+    POP {R0-R5, R11, PC}
     ENDFUNC
 
-Decrement_Heart_And_Draw
-    PUSH {R0-R12, LR}
+Decrement_Heart_And_Draw FUNCTION
+    PUSH {R0, R1, R6-R11, LR}
 	MOV   R6, #270      ; X
     MOV   R7, #299      ; Y
 	MOV   R8, #450      ; X
@@ -490,19 +487,11 @@ Decrement_Heart_And_Draw
     STRH  R1, [R0]
 
     CMP R0 , #0
-    BLT OutOfHearts 
-
+    BGT cOntinUe
+	MOV R12, #0xAA
+cOntinUe
     BL Heart_Draw
-    POP {R0-R12, PC}
-    ENDFUNC
-
-;----------------------------
-; It must calls the lose Screen or Lose Function
-;----------------------------
-OutOfHearts FUNCTION
-    PUSH {R0-R12, LR}
-
-    POP {R0-R12, PC}
+    POP {R0, R1, R6-R11, PC}
     ENDFUNC
 	
 ENEMY_BULLET_RATE FUNCTION
@@ -531,9 +520,8 @@ SkIp
 	
 	
 check_all_bit15 FUNCTION
-    PUSH {R0-R12, LR}          
+    PUSH {R1-R11, LR}          
 	MOV R11,R3
-    ;// R0: Base address of the 29-word array
     ;// Returns R0: 29-bit value, bit i = 1 if word i's bit 15 is 1, else 
     LDR R1, =Player_Bullets
     MOV R3, #1                ;// R3: Loop counter (0 to 28)
@@ -560,8 +548,8 @@ loop
 GOT
     ANDS R4,R3, #3    ; check if the colomn number divisable 4 (empty colomn)
     CMP R4,#0            
-    BEQ     endO            ; Branch to 'end' if r3 == 0 (mod 4)
-    ADD   R3,#3
+    BEQ endO            ; Branch to 'end' if r3 == 0 (mod 4)
+    ADD R3,#3
     LSR R3,R3,#2
     LDR R1, =enemy              ;THE ARRAY OF WO7OSH
     LDR R1,[R1]
@@ -569,10 +557,12 @@ GOT
     SUB R3, R3,#1
     MOV R2, #1
     LSL R2,R2,R3             ;000000100000
+	MOV R10, R2              ;FOR Remove_Enemy
     MVN R2, R2               ;111111011111
     AND R1, R2
     LDR R2, =enemy                  ;THE ARRAY OF WO7OSH     
     STR R1, [R2]
+	BL Remove_Enemy
     CMP R1,#0
     BEQ WIN
 
@@ -580,28 +570,29 @@ GOT
 	LDR R1, =Enemy_Bullets     ;CHECK IF THE PLAYER GOT HARMED
 	LDR R1, [R1,R11]
 	LSR R1, R1, #15          ; // Shift right by 15 to move bit 15 to LSB
-	AND R1, R1, #1          ;  // Mask to keep only LSB (0 or 1)
+	AND R1, R1, #1           ;  // Mask to keep only LSB (0 or 1)
 	CMP R1, #1   
 	BEQ LOSE  
 	ADD R11,#1
 	LDR R1, [R1,R11]
 	LSR R1, R1, #15          ; // Shift right by 15 to move bit 15 to LSB
-	AND R1, R1, #1          ;  // Mask to keep only LSB (0 or 1)
+	AND R1, R1, #1           ;  // Mask to keep only LSB (0 or 1)
 	CMP R1, #1   
-	BEQ LOSE   	;// Check if bit 15 was 1
+	BEQ LOSE   	             ;// Check if bit 15 was 1
 	SUB R11, #2
 	LDR R1, [R1,R11]
 	LSR R1, R1, #15          ; // Shift right by 15 to move bit 15 to LSB
-	AND R1, R1, #1          ;  // Mask to keep only LSB (0 or 1)
+	AND R1, R1, #1           ;  // Mask to keep only LSB (0 or 1)
 	CMP R1, #1   
-	BEQ LOSE   
+	BEQ LOSE
+	B endO
 LOSE 
-    MOV R0,#2  
-    b endO
-WIN 
-     MOV R0,#3
+    BL Decrement_Heart_And_Draw 
+    B endO
+WIN
+    MOV R12,#0xFF            ; FOR WIN                  
 endO
-	POP {R0-R12, PC}
+	POP {R1-R11, PC}
 	ENDFUNC
 	
 	
@@ -664,8 +655,8 @@ MAKE_ZERO
 	B MAKE_ZERO
 FINISH_MAKE_ZERO
 	MOV R3,#0
-	MOV R1,0X0110
-	MOV R2,0X0010
+	MOV R1,#0x0110
+	MOV R2,#0x0010
 START_BM
     CMP R3, #7		; Check if all 6 rows processed
     BEQ FINISH_Build_Monster
@@ -674,18 +665,35 @@ START_BM
 	ADD R2,0X0040
 	B START_BM
 	
-FINISH_Build_Monster	
-	
-	
+FINISH_Build_Monster
 	POP {R0-R12,PC}
 	ENDFUNC
 	
 	
 Main_Game_Alien FUNCTION
 	PUSH {R0-R12, LR}
-	BL Init_RandomSeed
+	BL Intialize_Grid
+GAMEL00P
+	BL ADD_BULLET_PLAYER
+	BL ENEMY_BULLET_RATE
+	BL DrawBullet_Player
+	BL DrawBullet_Enemy
+	BL GET_state
+	BL Move_Player
+	MOV R0, #4
+	BL delay
+	BL MOVE_BULLET
+	BL check_all_bit15
+	CMP R12, #0xFF
+	BEQ WiNNer
+	CMP R12, #0xAA
+	BEQ L0OsEr
+	B GAMEL00P
+WiNNer
+L0OsEr
 	POP {R0-R12, PC}
 	ENDFUNC
+	
 	END
 		
 ;ADD_BULLET_PLAYER
@@ -695,7 +703,7 @@ Main_Game_Alien FUNCTION
 ;MOVE_BULLET
 ;Remove_Enemy
 ;Move_Player
-;OutOfHearts
+;OutOfHearts    ///STILL EMPTY
 ;ENEMY_BULLET_RATE
 ;check_all_bit15
 ;DrawWa74
