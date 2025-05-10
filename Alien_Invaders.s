@@ -69,7 +69,7 @@ Enemy_Bullets
 enemy DCB 0x7F
 Score DCW 0X0000
 Hearts DCW 0X0003       ;Initialize Heart with 3
-
+PlayerBulletCounter DCB 0x00; For Youssef Maged
 Red     	   EQU 0XF800 
 Green   	   EQU 0x07E0
 Blue    	   EQU 0x001F 
@@ -104,17 +104,29 @@ Orange         EQU 0xFD20
 	EXPORT DrawBullet_Player
 	EXPORT DrawBullet_Enemy
 ; R3 = Position of player		
+;R3 = Position of player  
 ADD_BULLET_PLAYER FUNCTION 
-	PUSH {R0-R2,LR}
-	LDR   R0, =Player_Bullets      ; R0 = base address of Bullets
+ PUSH {R0-R5,LR}
+ LDR   R0, =Player_Bullets      ; R0 = base address of Bullets
+ LDR   R4, =PlayerBulletCounter
+ LDRH  R5, [R4]
+ CMP   R5, #0
+ BEQ   ADDONE
+ MOV   R5, #0
+ STRH  R5, [R4]
     MOV   R1, R3             ; R1 = index
     LSL   R1, R1, #1          ; R1 = R1 * 2 (convert to byte offset)
     ADD   R0, R0, R1          ; R0 = address of Alien_Map[R3]
     LDRH  R2,[R0]            ; R2 = contents of Alien_Map[R3]
-	ORR   R2, R2, #1
-	STRH  R2,[R0]
-	POP {R0-R2,PC}
-	ENDFUNC
+ ORR   R2, R2, #1
+ STRH  R2,[R0]
+ B     FFFFFinish
+ADDONE
+ MOV   R5, #1
+ STRH  R5, [R4]
+FFFFFinish
+ POP {R0-R5,PC}
+ ENDFUNC
 
 ; R4 = Position of Enemy
 ADD_BULLET_ALIEN FUNCTION
@@ -239,7 +251,7 @@ DrawBullet_Inner_Loop_E
 	
 	SUB R6, #0x10
 	SUB R7, #0x10	
-    MOV R11 , #Pink          ; Bullet Color
+    MOV R11 , #Orange          ; Bullet Color
     BL TFT_Filldraw4INP
 
     MOV R8 , R10             ; RETURN THE OLD R8 SO WE WILL USE IT IN THE LOOP
@@ -657,6 +669,8 @@ Intialize_Grid FUNCTION
 	MOV R6,#0
 	LDR R0, =Score  ; Load address of Level Map into R0
 	STRH R6, [R0]
+	LDR R0, =PlayerBulletCounter  ; Load address of Level Map into R0
+	STRH R6, [R0]
 	MOV R6,#0
 	MOV R3,#0
 	
@@ -698,8 +712,8 @@ Main_Game_Alien FUNCTION
 GAMEL00P
 	BL ENEMY_BULLET_RATE
 	BL DrawBullet_Enemy
-	;BL DrawBullet_Player
-	;BL ADD_BULLET_PLAYER
+	BL DrawBullet_Player
+	BL ADD_BULLET_PLAYER
 	BL MOVE_BULLET
 	BL GET_state
 	BL Move_Player
