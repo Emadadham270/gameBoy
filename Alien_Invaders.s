@@ -95,6 +95,7 @@ Orange         EQU 0xFD20
 	IMPORT  Num_to_LCD
 	IMPORT  Get_Random
 	IMPORT  Init_RandomSeed
+	IMPORT GET_state2	
 	EXPORT	Intialize_Grid
 	EXPORT  Score_Draw
 	EXPORT	Heart_Draw
@@ -773,8 +774,10 @@ GAMEL00P
 	BL DrawBullet_Enemy
 	BL DrawBullet_Player
 	BL ADD_BULLET_PLAYER
-	BL GET_state
+	BL GET_state2
+	AND R10,#0X003F
 	CMP R10,#32
+	
 	BEQ EXIT_ALIEN
 	BL Move_Player
 	BL MOVE_BULLET
@@ -808,8 +811,6 @@ GAMEL00P
 	B GAMEL00P
 WiNNer
 L0OsEr
-
-
 EXIT_ALIEN
 	POP {R0-R12, PC}
 	ENDFUNC

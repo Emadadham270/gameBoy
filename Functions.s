@@ -60,6 +60,7 @@ RNG_State DCD 1 ; 32-bit seed (must be non-zero)
 	EXPORT Init_RandomSeed
 	EXPORT Get_Random
 	EXPORT UI	
+	EXPORT GET_state2	
 	IMPORT Main_Game_XO
 	IMPORT MainGame_LongCat
 	IMPORT MAIN_MAZE
@@ -431,12 +432,23 @@ GET_state FUNCTION
 	MOV R10,#0
 	LDR R0, =GPIOB_IDR   ; Load address of input data register
 	LDR R10, [R0]         ; Read GPIOB input register   ; Shift right to get PC8 at bit 0 and PC9 at bit 1 and PC10 at bit 2 and PC11 at bit 3
-	BL Get_Random
+	;BL Get_Random
 	MOV	R0,#10
 	BL delay
 	POP {R1,PC}
 	ENDFUNC	
-	
+
+
+;------------------------
+; GET_state  (debounced)
+;------------------------
+GET_state2 FUNCTION
+	PUSH {R1,LR}
+	MOV R10,#0
+	LDR R0, =GPIOB_IDR   ; Load address of input data register
+	LDR R10, [R0]         ; Read GPIOB input register   ; Shift right to get PC8 at bit 0 and PC9 at bit 1 and PC10 at bit 2 and PC11 at bit 3
+	POP {R1,PC}
+	ENDFUNC	
 	
 
 ;------------------------
