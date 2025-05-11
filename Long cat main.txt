@@ -63,7 +63,6 @@ SnakeMap
 	IMPORT CatFace
 	EXPORT MainGame_LongCat	
 	EXPORT Draw_Snake_Movement
-	EXPORT TFT_DRAWSQUARE
 
 ;------------------------
 ; TFT_DRAWSQUARE COLOR IN R11
@@ -87,7 +86,7 @@ TFT_DrawMap    FUNCTION
 	MOV R8,#0X0000
 	MOV R9,#0X01E0
     ; Fill screen with color BLUE
-    MOV R11, #LightPink ;34an BARBIEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    MOV R11, #Violet
 	BL TFT_Filldraw4INP
 	
 	MOV R6,#10
@@ -95,8 +94,7 @@ TFT_DrawMap    FUNCTION
 	MOV R8,#40
 	MOV R9,#440 
     ; Fill screen with playing area
-    MOV R11, #White
-	
+    MOV R11, #Beige
 	BL TFT_Filldraw4INP
 	
 	;Now all screen in blue, which is the background
@@ -158,7 +156,7 @@ Draw_Snake_Movement FUNCTION
 	BEQ DRAW_HEAD
 ;R6 -> X_START_OF START CELL
 ;R8 -> Y_START_OF START CELL
-	MOV R11, #Blue
+	MOV R11, #Yellow
 ;SET COLOR
 	MOV R0, #15
 ;DELAY
@@ -323,7 +321,7 @@ Move_Snake FUNCTION
 	 
 MOVE_UPS
 	LDR R0, =SnakeMap; load the address
-	MOV R4, R3   			; R4 = our ìcurrent cell indexî
+	MOV R4, R3   			; R4 = our ‚Äúcurrent cell index‚Äù
     ; split R3 into row/col
     MOV R6, R4, LSR #3      ; R6 = row = R4/8
     AND R5, R4, #7          ; R5 = col = R4%8
@@ -332,17 +330,17 @@ MOVE_UPS
     MOV R2, #1
     LSL R2, R2, R5
 
-    ; if weíre already in the top row (row==0), there is nothing below
+    ; if we‚Äôre already in the top row (row==0), there is nothing below
     CMP R6, #5
     BEQ Return               ; R4 still = start
 
 LoopUp
 	LDR R0, =SnakeMap; load the address
-    ; move one row ìupî
+    ; move one row ‚Äúup‚Äù
     ADD R6, #1          ; row++
     ; R6 will remain <=5 as long as we branched here
     LDRB R7, [R0, R6]            ; R7 = map[row]
-    TST R7, R2              ; test the bit at ìcolî
+    TST R7, R2              ; test the bit at ‚Äúcol‚Äù
     BNE Return           ; if bit==1 ? wall
 
     ; it was 0 ? valid; mark it visited by setting bit to 1
@@ -355,14 +353,14 @@ LoopUp
     ; if we still have another row below, loop
     CMP R6, #5
 	BNE LoopUp
-        ; we fell off after marking the downmost cell; thatís our result
+        ; we fell off after marking the downmost cell; that‚Äôs our result
     B Return
         ; as soon as we hit a 1-bit, we stop.
         ; R4 still holds the index one row below (the last valid cell).
 
 	
 MOVE_DOWNS
-	MOV R4, R3              ; R4 = our ìcurrent cell indexî
+	MOV R4, R3              ; R4 = our ‚Äúcurrent cell index‚Äù
     ; split R3 into row/col
     MOV R6, R4, LSR #3      ; R6 = row = R4/8
     AND R5, R4, #7          ; R5 = col = R4%8
@@ -370,18 +368,18 @@ MOVE_DOWNS
     ; compute bitmask = 1<<col in R2
     MOV R2, #1
     LSL R2, R2, R5
-    ; if weíre already in the bottom row (row==0), there is nothing below
+    ; if we‚Äôre already in the bottom row (row==0), there is nothing below
     CMP R6, #0
     BEQ Return               ; R4 still = start
 
 LoopDown
 	LDR R0, =SnakeMap; load the address
-    ; move one row ìdownî
+    ; move one row ‚Äúdown‚Äù
     SUB R6, #1          ; row--
     ; R6 will remain >=0 as long as we branched here
 
     LDRB R7, [R0, R6]            ; R7 = map[row]
-    TST R7, R2              ; test the bit at ìcolî
+    TST R7, R2              ; test the bit at ‚Äúcol‚Äù
     BNE Return           ; if bit==1 ? wall
 
     ; it was 0 ? valid; mark it visited by setting bit to 1
@@ -395,14 +393,14 @@ LoopDown
     CMP R6, #0
     BNE LoopDown
 
-    ; we fell off after marking the downmost cell; thatís our result
+    ; we fell off after marking the downmost cell; that‚Äôs our result
     B Return
     ; as soon as we hit a 1-bit, we stop.
     ; R4 still holds the index one row below (the last valid cell).
 
 
 MOVE_LEFTS
-	MOV R4, R3   			; R4 = our ìcurrent cell indexî
+	MOV R4, R3   			; R4 = our ‚Äúcurrent cell index‚Äù
     ; split R3 into row/col
     MOV R6, R4, LSR #3      ; R6 = row = R4/8
     AND R5, R4, #7          ; R5 = col = R4%8
@@ -411,7 +409,7 @@ MOVE_LEFTS
     MOV R2, #1
     LSL R2, R2, R5
 
-    ; if weíre already in the left side  , there is nothing below
+    ; if we‚Äôre already in the left side  , there is nothing below
     CMP R5, #7
     BEQ Return               ; R4 still = start
 
@@ -423,7 +421,7 @@ LoopLEFT
 	MOV R2, #1              ;R2= 0....00000001
     LSL R2, R2, R5          ;R2= 0....00100000
     LDRB R7, [R0, R6]       ; R7 = map[row]
-    TST R7, R2              ; test the bit at ìcolî
+    TST R7, R2              ; test the bit at ‚Äúcol‚Äù
     BNE Return           	; if bit==1 ? wall
 
     ; it was 0 ? valid; mark it visited by setting bit to 1
@@ -437,14 +435,14 @@ LoopLEFT
     CMP R5, #7
     BNE LoopLEFT
 
-    ; we fell off after marking the leftmost cell; thatís our result
+    ; we fell off after marking the leftmost cell; that‚Äôs our result
     B Return
     ; as soon as we hit a 1-bit, we stop.
     ; R4 still holds the index one row below (the last valid cell).
 
 	
 MOVE_RIGHTS
-	MOV R4, R3   			; R4 = our ìcurrent cell indexî
+	MOV R4, R3   			; R4 = our ‚Äúcurrent cell index‚Äù
     ; split R3 into row/col
     MOV R6, R4, LSR #3      ; R6 = row = R4/8
     AND R5, R4, #7          ; R5 = col = R4%8
@@ -453,7 +451,7 @@ MOVE_RIGHTS
     MOV R2, #1
     LSL R2, R2, R5
 
-    ; if weíre already in the right	side  , there is nothing below
+    ; if we‚Äôre already in the right	side  , there is nothing below
     CMP R5, #0
     BEQ Return               ; R4 still = start
 
@@ -465,7 +463,7 @@ LoopRGHIT
 	MOV R2, #1
     LSL R2, R2, R5
     LDRB R7, [R0, R6]    ; R7 = map[row]
-    TST R7, R2           ; test the bit at ìcolî
+    TST R7, R2           ; test the bit at ‚Äúcol‚Äù
     BNE Return           ; if bit==1 ? wall
 
     ; it was 0 ? valid; mark it visited by setting bit to 1
@@ -479,7 +477,7 @@ LoopRGHIT
     CMP R5, #0
     BNE LoopRGHIT
 
-    ; we fell off after marking the rightmost cell; thatís our result
+    ; we fell off after marking the rightmost cell; that‚Äôs our result
     B Return
     ; as soon as we hit a 1-bit, we stop.
     ; R4 still holds the the last valid cell.
