@@ -20,11 +20,35 @@ Level3Map
     DCB 0xE0
 	DCB 0x80
 	DCB 0x80
+Level4Map
+	DCB 0x0C
+	DCB 0x08
+	DCB 0x20
+    DCB 0x04
+	DCB 0x10
+	DCB 0xC0	
+Level5Map
+	DCB 0x08
+	DCB 0x40
+	DCB 0x50
+    DCB 0x46
+	DCB 0x4E
+	DCB 0x00	
+Level6Map
+	DCB 0x00
+	DCB 0x00
+	DCB 0x00
+    DCB 0x04
+	DCB 0x40
+	DCB 0x00	
 	
 Leve1StartCell 
 			   DCB 36
 			   DCB 36
 			   DCB 19
+			   DCB 2
+			   DCB 3
+			   DCB 26
 		;--- Colors ---
 Red     	   EQU 0XF800 
 Green   	   EQU 0x07E0
