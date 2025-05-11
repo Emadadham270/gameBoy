@@ -63,6 +63,7 @@ SnakeMap
 	IMPORT CatFace
 	EXPORT MainGame_LongCat	
 	EXPORT Draw_Snake_Movement
+	EXPORT TFT_DRAWSQUARE
 
 ;------------------------
 ; TFT_DRAWSQUARE COLOR IN R11

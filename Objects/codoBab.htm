@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\codoBab.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\codoBab.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6230001: Last Updated: Sun May 11 12:58:30 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6230001: Last Updated: Sun May 11 13:26:13 2025
 <BR><P>
 <H3>Maximum Stack Usage =          0 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -419,9 +419,9 @@ Global Symbols
 <LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MOVE_BULLET
 <LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drawsquare
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_Snake_Movement
+<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DRAWSQUARE
 <LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_win
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMap
-<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DRAWSQUARE
 <LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_O
 <LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_X
 <LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawTA3ADOL
@@ -504,6 +504,12 @@ Global Symbols
 <LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GET_state
 </UL>
 <BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI
+</UL>
+
+<P><STRONG><a name="[64]"></a>TFT_DRAWSQUARE</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, longcat.o(CODEY))
+<BR><BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
+</UL>
+<BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMap
 </UL>
 
 <P><STRONG><a name="[66]"></a>Draw_Snake_Movement</STRONG> (Thumb, 178 bytes, Stack size 0 bytes, longcat.o(CODEY))
@@ -691,12 +697,6 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawOWINS
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_XO
 <LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawGrid
-</UL>
-
-<P><STRONG><a name="[64]"></a>TFT_DRAWSQUARE</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, longcat.o(CODEY))
-<BR><BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
-</UL>
-<BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMap
 </UL>
 
 <P><STRONG><a name="[65]"></a>TFT_DrawMap</STRONG> (Thumb, 132 bytes, Stack size 0 bytes, longcat.o(CODEY))
