@@ -128,7 +128,56 @@ FINISH_MAPMM
     BL TFT_Filldraw4INP
 	POP {R0-R12, PC}
 	ENDFUNC
-
+DrawMan FUNCTION;take parameters at r1 and r2
+	PUSH{R0-R12,LR}
+	MOV R11,#Green
+	
+	ADD R6, R1 ,#0
+	ADD R7,	R1 ,#5
+	ADD R8,	R2 ,#5
+	ADD R9, R2 ,#7
+	BL TFT_Filldraw4INP
+	ADD R6, R1 ,#0
+	ADD R7,	R1 ,#5
+	ADD R8,	R2 ,#9
+	ADD R9, R2 ,#11
+	BL TFT_Filldraw4INP
+	ADD R6, R1 ,#5
+	ADD R7,	R1 ,#11
+	ADD R8,	R2 ,#5
+	ADD R9, R2 ,#11
+	BL TFT_Filldraw4INP
+	ADD R6, R1 ,#11
+	ADD R7,	R1 ,#12
+	ADD R8,	R2 ,#3
+	ADD R9, R2 ,#13
+	BL TFT_Filldraw4INP
+	ADD R6, R1 ,#7
+	ADD R7,	R1 ,#11
+	ADD R8,	R2 ,#3
+	ADD R9, R2 ,#4
+	BL TFT_Filldraw4INP
+	ADD R6, R1 ,#7
+	ADD R7,	R1 ,#11
+	ADD R8,	R2 ,#12
+	ADD R9, R2 ,#13
+	BL TFT_Filldraw4INP
+	ADD R6, R1 ,#12
+	ADD R7,	R1 ,#16
+	ADD R8,	R2 ,#6
+	ADD R9, R2 ,#10
+	BL TFT_Filldraw4INP
+	MOV R11,#Red
+	ADD R6, R1 ,#14
+	ADD R7,	R1 ,#15
+	ADD R8,	R2 ,#7
+	ADD R9, R2 ,#9
+	BL TFT_Filldraw4INP
+	POP {R0-R12, PC}
+	ENDFUNC
+	
+	
+	
 Drawsquare FUNCTION;take parameters at r1 and r2
 	PUSH{R0-R12,LR}
 	MOV R6, R1   ; X start
@@ -219,8 +268,7 @@ MOVE_LEFTBM
 	 B DEFAULTBM
 	 
 DEFAULTBM
-	 MOV R11,#Green
-	 BL Drawsquare
+	 BL DrawMan
 	 pop{R0-R2,R4-R12,PC}
 	 ENDFUNC
 	 

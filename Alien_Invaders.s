@@ -504,6 +504,9 @@ Increment_Score_And_Draw FUNCTION
 	MOV	  R11,#Black
 	BL TFT_Filldraw4INP 
     LDR   R0, =Score
+	B SO
+	LTORG
+SO	
     LDRH  R1, [R0]
     ADD   R1, R1,R12
     STRH  R1, [R0]
@@ -668,32 +671,106 @@ Exit
         POP     {R0-R11, PC}
         ENDFUNC
 	
+	
 DrawWa74 FUNCTION;take parameters at r1 and r2
 	PUSH{R6-R11,LR}
-	MOV R11,#Yellow
-	MOV R6, R1   ; X start
-	ADD R7,	R1 ,#0X0030
-	MOV R8,	R2
-	ADD R9, R2 ,#0X0030
+	MOV R11,#Green
+	ADD R6, R1 ,#6
+	ADD R7,	R1 ,#42
+	ADD R8,	R2 ,#6
+	ADD R9, R2 ,#42
 	BL TFT_Filldraw4INP
 	MOV R11,#Black
-	ADD R6, R1 ,#0X0020  ; X start
-	ADD R7,	R1 ,#0X0028
-	ADD R8,	R2 ,#0X000C
-	ADD R9, R2 ,#0X0014
+	ADD R6, R1 ,#6
+	ADD R7,	R1 ,#9
+	ADD R8,	R2 ,#6
+	ADD R9, R2 ,#15
 	BL TFT_Filldraw4INP
-	ADD R6, R1 ,#0X0020  ; X start
-	ADD R7,	R1 ,#0X0028
-	ADD R8,	R2 ,#0X001C
-	ADD R9, R2 ,#0X0024
+	ADD R6, R1 ,#6
+	ADD R7,	R1 ,#9
+	ADD R8,	R2 ,#21
+	ADD R9, R2 ,#27
 	BL TFT_Filldraw4INP
-	ADD R6, R1 ,#0X0010  ; X start
-	ADD R7,	R1 ,#0X0018
-	ADD R8,	R2 ,#0X000C
-	ADD R9, R2 ,#0X0024
+	ADD R6, R1 ,#6
+	ADD R7,	R1 ,#9
+	ADD R8,	R2 ,#33
+	ADD R9, R2 ,#42
 	BL TFT_Filldraw4INP
+	ADD R6, R1 ,#9
+	ADD R7,	R1 ,#21
+	ADD R8,	R2 ,#9
+	ADD R9, R2 ,#12
+	BL TFT_Filldraw4INP
+	ADD R6, R1 ,#9
+	ADD R7,	R1 ,#21
+	ADD R8,	R2 ,#36
+	ADD R9, R2 ,#39
+	BL TFT_Filldraw4INP
+	ADD R6, R1 ,#9
+	ADD R7,	R1 ,#12
+	ADD R8,	R2 ,#15
+	ADD R9, R2 ,#33
+	BL TFT_Filldraw4INP	
+	ADD R6, R1 ,#15
+	ADD R7,	R1 ,#21
+	ADD R8,	R2 ,#15
+	ADD R9, R2 ,#33
+	BL TFT_Filldraw4INP	
+	ADD R6, R1 ,#30
+	ADD R7,	R1 ,#33
+	ADD R8,	R2 ,#15
+	ADD R9, R2 ,#18
+	BL TFT_Filldraw4INP	
+	ADD R6, R1 ,#30
+	ADD R7,	R1 ,#33
+	ADD R8,	R2 ,#30
+	ADD R9, R2 ,#33
+	BL TFT_Filldraw4INP	
+	ADD R6, R1 ,#30
+	ADD R7,	R1 ,#42
+	ADD R8,	R2 ,#6
+	ADD R9, R2 ,#9
+	BL TFT_Filldraw4INP	
+	ADD R6, R1 ,#30
+	ADD R7,	R1 ,#42
+	ADD R8,	R2 ,#39
+	ADD R9, R2 ,#42
+	BL TFT_Filldraw4INP		
+	ADD R6, R1 ,#33
+	ADD R7,	R1 ,#42
+	ADD R8,	R2 ,#9
+	ADD R9, R2 ,#12
+	BL TFT_Filldraw4INP	
+	ADD R6, R1 ,#33
+	ADD R7,	R1 ,#42
+	ADD R8,	R2 ,#36
+	ADD R9, R2 ,#39
+	BL TFT_Filldraw4INP	
+	ADD R6, R1 ,#36
+	ADD R7,	R1 ,#39
+	ADD R8,	R2 ,#12
+	ADD R9, R2 ,#15
+	BL TFT_Filldraw4INP	
+	ADD R6, R1 ,#36
+	ADD R7,	R1 ,#39
+	ADD R8,	R2 ,#33
+	ADD R9, R2 ,#36
+	BL TFT_Filldraw4INP	
+	ADD R6, R1 ,#36
+	ADD R7,	R1 ,#39
+	ADD R8,	R2 ,#18
+	ADD R9, R2 ,#30
+	BL TFT_Filldraw4INP	
+	ADD R6, R1 ,#39
+	ADD R7,	R1 ,#42
+	ADD R8,	R2 ,#15
+	ADD R9, R2 ,#33
+	BL TFT_Filldraw4INP	
 	POP {R6-R11, PC}
-	ENDFUNC
+	ENDFUNC	
+	
+	
+	
 DRAW3ARABYA
 	PUSH{R1,R2,R6-R11,LR}
 	MOV R1,#0
