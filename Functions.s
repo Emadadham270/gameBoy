@@ -509,7 +509,7 @@ sk
 ; Returns R0 = raw 32-bit segment word (optional)
 ;------------------------------------------
 Num_to_LCD FUNCTION
-	PUSH {R5-R9, LR}
+	PUSH {R5-R9,R12, LR}
 
 	; Save R5 (number of digits to display) to a preserved register
 	MOV R9, R5        ; R9 = digit count from user
@@ -544,7 +544,7 @@ loop_digits
 	SUBS R9, R9, #1   ; Decrement digit counter
 	BNE loop_digits   ; Continue until we've drawn requested digits
 
-	POP {R5-R9, PC}
+	POP {R5-R9,R12, PC}
 	ENDFUNC
 	
 ;INPUT AND OUTPUT IN R0

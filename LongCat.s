@@ -86,7 +86,7 @@ TFT_DrawMap    FUNCTION
 	MOV R8,#0X0000
 	MOV R9,#0X01E0
     ; Fill screen with color BLUE
-    MOV R11, #Violet
+    MOV R11, #LightPink ;34an BARBIEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 	BL TFT_Filldraw4INP
 	
 	MOV R6,#10
@@ -94,7 +94,8 @@ TFT_DrawMap    FUNCTION
 	MOV R8,#40
 	MOV R9,#440 
     ; Fill screen with playing area
-    MOV R11, #Beige
+    MOV R11, #White
+	
 	BL TFT_Filldraw4INP
 	
 	;Now all screen in blue, which is the background
@@ -156,7 +157,7 @@ Draw_Snake_Movement FUNCTION
 	BEQ DRAW_HEAD
 ;R6 -> X_START_OF START CELL
 ;R8 -> Y_START_OF START CELL
-	MOV R11, #Yellow
+	MOV R11, #Blue
 ;SET COLOR
 	MOV R0, #15
 ;DELAY

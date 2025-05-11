@@ -437,9 +437,9 @@ Move_Player FUNCTION
 	
 	AND R10,#0x3
 	
-    CMP R10, #1                ;// Check if moving right
+    CMP R10, #2                ;// Check if moving right
     BEQ move_right
-    CMP R10, #2                ;// Check if moving left
+    CMP R10, #1                ;// Check if moving left
     BEQ move_left
     B end_                     ;// If R7 is neither 1 nor 2, do nothing
 
@@ -543,7 +543,7 @@ Decrement_Heart_And_Draw FUNCTION
     SUB   R1, R1, #1
     STRH  R1, [R0]
 
-    CMP R0 , #0
+    CMP R1 , #0			;34AN BARBIE
     BGT cOntinUe
 	MOV R12, #0xAA
 cOntinUe
@@ -575,89 +575,98 @@ SkIp
 	ENDFUNC
 	
 	
-	
-check_all_bit15 FUNCTION
-    PUSH {R0-R11, LR}          
-	MOV R11,R3
-    ;// Returns R0: 29-bit value, bit i = 1 if word i's bit 15 is 1, else 
-    LDR R0, =Player_Bullets
-    MOV R3, #1                ;// R3: Loop counter (0 to 28)
-
-    
-loop
-    CMP R3, #30             ; // Check if counter >= 29
-    BEQ endO                ;  // If yes, exit loop
-    ADD R3, R3, #1 
-   ; // Load word at R0 + (counter * 4)
-    LDRH R1, [R0, R3, LSL #1]  ;// R1 = word at index R4
-
-    ;// Check bit 15
-    LSR R1, R1, #15           ;// Shift right by 15 to move bit 15 to LSB
-    AND R1, R1, #1            ;// Mask to keep only LSB (0 or 1)
-    CMP R1, #1                 ;// Check if bit 15 was 1
-        
-    BEQ GOT                         ; // If bit 15 is 1, set bit 0 in R5
-  
-
-          ;  // Increment counter
-    B loop                       ; // Continue loop
-               
-GOT
-    ANDS R4, R3, #3    ; check if the colomn number divisable 4 (empty colomn)
-    CMP R4,#0            
-    BEQ endO            ; Branch to 'end' if r3 == 0 (mod 4)
-    
-	;ADD R3,#3;;;;;;;;;;;;;;;
-    LSR R3,R3,#2
-    LDR R1, =enemy              ;THE ARRAY OF WO7OSH
-    LDRB R1,[R1]
-   
-    ;SUB R3, R3,#1;;;;;;;;;;;;;;
-    MOV R2, #1
-    LSL R2,R2,R3             ;000000100000
-	MOV R10, R2              ;FOR Remove_Enemy
-    ;MVN R2, R2               ;111111011111
-	TST R1,R2
-	BEQ GOT
-    BIC R1, R1, R2 
-    LDR R2, =enemy                  ;THE ARRAY OF WO7OSH     
-    STRB R1, [R2]
-	BL Remove_Enemy
-    CMP R1,#0
-    BEQ WIN
 
 
-	LDR R0, =Enemy_Bullets     ;CHECK IF THE PLAYER GOT HARMED
-	;——— test center ———
-	LDRH    R1, [R0, R11, LSL #1]  ; R1 = half-word @ index R11
-	AND     R1, R1, #1            ; isolate bit 0
-	CMP     R1, #1
-	BEQ     LOSE
+check_all_bit15    FUNCTION
+        PUSH    {R0-R11, LR}         ; keep original calling convention
+		MOV R11,R3
+;------------------------------------------------------------
+; 1.  Look for first player bullet whose bit-15 = 1
+;------------------------------------------------------------
+        LDR     R0, =Player_Bullets
+        MOV     R3, #0                ; row / index 0 … 28
 
-	;——— test right ———
-	ADD     R2, R11, #1
-	LDRH    R1, [R0, R2, LSL #1]  ; R1 = half-word @ index R11+1
-	AND     R1, R1, #1
-	CMP     R1, #1
-	BEQ     LOSE
+FindNextBullet
+        CMP     R3, #29
+        BGE     AfterBulletSearch
+        LDRH    R1, [R0, R3, LSL #1]
+        TST     R1, #0x8000
+        BEQ     NextEntry
 
-	;——— test left ———
-	SUB     R2, R11, #1
-	LDRH    R1, [R0, R2, LSL #1]  ; R1 = half-word @ index R11–1
-	AND     R1, R1, #1
-	CMP     R1, #1
-	BEQ     LOSE
+;------------------------------------------------------------
+;   ? player bullet found in row R3  (store in R11)
+;------------------------------------------------------------
 
-	B       endO ; no hit
-LOSE 
-    BL Decrement_Heart_And_Draw 
-    B endO
-WIN
-    MOV R12,#0xFF            ; FOR WIN                  
-endO
-	POP {R0-R11, PC}
-	ENDFUNC
-	
+        ANDS    R4, R3, #3            ; row % 4 == 0 ? empty column
+        BEQ     CheckPlayerHurt
+
+;----------------- enemy column / mask ----------------------
+        ADD     R4, R3, #3            ; (row+3)>>2  = col (1…7)
+        LSR     R4, R4, #2
+        SUB     R4, R4, #1            ; 0…6
+        MOV     R2, #1
+        LSL     R2, R2, R4            ; bit mask
+        MOV     R10, R2               ; for Remove_Enemy
+
+;----------------- remove enemy if present ------------------
+        LDR     R5, =enemy
+        LDRB    R1, [R5]
+        TST     R1, R2
+        BEQ     CheckPlayerHurt
+        BIC     R1, R1, R2
+        STRB    R1, [R5]
+        BL      Remove_Enemy
+        CMP     R1, #0
+        BEQ     WinGame               ; all enemies gone
+        B       CheckPlayerHurt
+
+NextEntry
+        ADD     R3, R3, #1
+        B       FindNextBullet
+
+AfterBulletSearch
+;------------------------------------------------------------
+; 2.  (even if no player bullet with bit-15 was found)
+;     test whether an enemy bullet is in player_col-1/0/+1
+;------------------------------------------------------------
+CheckPlayerHurt
+        LDR     R0, =Enemy_Bullets     ; base of half-word array
+
+        MOV     R6, R11        ; byte holding 0 … 28
+
+        MOV     R7, #-1                ; delta = -1, 0, +1
+DeltaLoop
+        ADD     R2, R6, R7             ; column index to test
+        CMP     R2, #0
+        BLT     NextDelta
+        CMP     R2, #28                ; highest valid index
+        BGT     NextDelta
+
+        LDRH    R1, [R0, R2, LSL #1]   ; half-word at that column
+        TST     R1, #1                 ; bit-0 = enemy bullet present?
+        BNE     LoseGame
+
+NextDelta
+        ADD     R7, R7, #1
+        CMP     R7, #1
+        BLE     DeltaLoop
+
+        B       Exit
+
+;------------------------------------------------------------
+; 3.  Win / Lose / Exit
+;------------------------------------------------------------
+LoseGame
+        BL      Decrement_Heart_And_Draw
+        B       Exit
+
+WinGame
+        MOV     R12, #0xFF             ; game won
+        B       Exit
+
+Exit
+        POP     {R0-R11, PC}
+        ENDFUNC
 	
 DrawWa74 FUNCTION;take parameters at r1 and r2
 	PUSH{R6-R11,LR}
@@ -793,27 +802,6 @@ GAMEL00P
 	BEQ L0OsEr
 	;MOV R10,#1
 	;BL Remove_Enemy
-	B GAMEL00P
-
-	BL MOVE_BULLET	
-	;BL ADD_BULLET_PLAYER
-	BL MOVE_BULLET
-	BL DrawBullet_Player
-	
-	;BL ADD_BULLET_PLAYER
-	BL ADD_BULLET_PLAYER
-	BL MOVE_BULLET
-	BL DrawBullet_Player
-
-
-	BL DrawBullet_Enemy
-
-
-	MOV R0, #4
-	BL delay
-
-
-
 	B GAMEL00P
 WiNNer
 	MOV R6,#0X0000
