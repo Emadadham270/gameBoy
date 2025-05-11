@@ -634,7 +634,9 @@ AfterBulletSearch
 ;------------------------------------------------------------
 CheckPlayerHurt
         LDR     R0, =Enemy_Bullets     ; base of half-word array
-
+		BL HELLO
+		LTORG
+HELLO		
         MOV     R6, R11        ; byte holding 0 … 28
 
         MOV     R7, #-1                ; delta = -1, 0, +1
@@ -768,9 +770,6 @@ DrawWa74 FUNCTION;take parameters at r1 and r2
 	BL TFT_Filldraw4INP	
 	POP {R6-R11, PC}
 	ENDFUNC	
-	
-	
-	
 DRAW3ARABYA
 	PUSH{R1,R2,R6-R11,LR}
 	MOV R1,#0
@@ -798,7 +797,10 @@ DRAW3ARABYA
 	ADD R9, R2 ,#0X0014
 	BL TFT_Filldraw4INP
 	POP {R1,R2,R6-R11, PC}
-	ENDFUNC
+	ENDFUNC	
+
+	
+
 	
 Intialize_Grid FUNCTION
 	PUSH {R0-R12,LR}

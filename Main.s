@@ -33,13 +33,14 @@ Orange         EQU 0xFD20
 	IMPORT Init_RandomSeed
 	IMPORT Get_Random
 	IMPORT UI	
+	IMPORT Draw_Map_Break		
 __main FUNCTION
 
 	BL Init_RandomSeed
 	BL CONFIGURE_PORTS
     ; Initialize TFT
     BL TFT_Init
-	;BL Main_Game_Alien
+	;BL Draw_Map_Break
 	BL UI
     ENDFUNC
 	

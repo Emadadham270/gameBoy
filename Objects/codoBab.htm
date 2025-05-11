@@ -3,11 +3,7 @@
 <title>Static Call Graph - [.\Objects\codoBab.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\codoBab.axf</H1><HR>
-<<<<<<< HEAD
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6230001: Last Updated: Sun May 11 13:57:16 2025
-=======
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6230001: Last Updated: Sun May 11 13:26:13 2025
->>>>>>> 18214911336be6b80a1ebcc43aa5f29d2a0d7bda
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6230001: Last Updated: Sun May 11 16:13:08 2025
 <BR><P>
 <H3>Maximum Stack Usage =          0 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -367,16 +363,16 @@ Global Symbols
 </UL>
 <P><STRONG><a name="[44]"></a>__user_initial_stackheap</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, startup_stm32f401xc.o(.text), UNUSED, KEPT)
 
-<P><STRONG><a name="[7e]"></a>__use_two_region_memory</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+<P><STRONG><a name="[80]"></a>__use_two_region_memory</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
 
-<P><STRONG><a name="[7f]"></a>__rt_heap_escrow$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+<P><STRONG><a name="[81]"></a>__rt_heap_escrow$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
 
-<P><STRONG><a name="[80]"></a>__rt_heap_expand$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+<P><STRONG><a name="[82]"></a>__rt_heap_expand$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
 
 <P><STRONG><a name="[42]"></a>SystemInit</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, system_stm32f4xx.o(.text.SystemInit))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f401xc.o(.text)
 </UL>
-<P><STRONG><a name="[7d]"></a>CONFIGURE_PORTS</STRONG> (Thumb, 78 bytes, Stack size 0 bytes, functions.o(CODEY))
+<P><STRONG><a name="[7f]"></a>CONFIGURE_PORTS</STRONG> (Thumb, 78 bytes, Stack size 0 bytes, functions.o(CODEY))
 <BR><BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__main
 </UL>
 
@@ -412,7 +408,8 @@ Global Symbols
 <BR><BR>[Calls]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_WriteData
 <LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_WriteCommand
 </UL>
-<BR>[Called By]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Intialize_Grid
+<BR>[Called By]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawOutlineW
+<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Intialize_Grid
 <LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Decrement_Heart_And_Draw
 <LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Increment_Score_And_Draw
 <LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawBullet_Enemy
@@ -422,12 +419,11 @@ Global Symbols
 <LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Remove_Enemy
 <LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MOVE_BULLET
 <LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drawsquare
-<<<<<<< HEAD
 <LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawMan
 <LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_Snake_Movement
+<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DRAWSQUARE
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_win
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMap
-<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DRAWSQUARE
 <LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_O
 <LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_X
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawTA3ADOL
@@ -439,24 +435,8 @@ Global Symbols
 <LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MAIN_MAZE
 <LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawOutline
 <LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI
-=======
-<LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_Snake_Movement
-<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DRAWSQUARE
-<LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_win
-<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMap
-<LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_O
-<LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_X
-<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawTA3ADOL
-<LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawOWINS
-<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawXWINS
-<LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawBorder
-<LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawGrid
-<LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_Alien
-<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MAIN_MAZE
-<LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawOutline
-<LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI
->>>>>>> 18214911336be6b80a1ebcc43aa5f29d2a0d7bda
 <LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMapM
+<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_Map_Break
 <LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawDigit
 </UL>
 
@@ -485,7 +465,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ENEMY_BULLET_RATE
 </UL>
 
-<P><STRONG><a name="[7c]"></a>Init_RandomSeed</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, functions.o(CODEY))
+<P><STRONG><a name="[7e]"></a>Init_RandomSeed</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, functions.o(CODEY))
 <BR><BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__main
 </UL>
 
@@ -529,28 +509,23 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI
 </UL>
 
-<<<<<<< HEAD
+<P><STRONG><a name="[65]"></a>TFT_DRAWSQUARE</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, longcat.o(CODEY))
+<BR><BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
+</UL>
+<BR>[Called By]<UL><LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMap
+<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_Map_Break
+</UL>
+
 <P><STRONG><a name="[67]"></a>Draw_Snake_Movement</STRONG> (Thumb, 178 bytes, Stack size 0 bytes, longcat.o(CODEY))
 <BR><BR>[Calls]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_Coordinates
 <LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay
-=======
-<P><STRONG><a name="[64]"></a>TFT_DRAWSQUARE</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, longcat.o(CODEY))
-<BR><BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
-</UL>
-<BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMap
-</UL>
-
-<P><STRONG><a name="[66]"></a>Draw_Snake_Movement</STRONG> (Thumb, 178 bytes, Stack size 0 bytes, longcat.o(CODEY))
-<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_Coordinates
-<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay
->>>>>>> 18214911336be6b80a1ebcc43aa5f29d2a0d7bda
 <LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
 <LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawImage
 </UL>
 <BR>[Called By]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
 </UL>
 
-<P><STRONG><a name="[59]"></a>MainGame_LongCat</STRONG> (Thumb, 136 bytes, Stack size 0 bytes, longcat.o(CODEY))
+<P><STRONG><a name="[59]"></a>MainGame_LongCat</STRONG> (Thumb, 142 bytes, Stack size 0 bytes, longcat.o(CODEY))
 <BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_Snake_Movement
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_win
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Move_Snake
@@ -624,11 +599,17 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI
 </UL>
 
+<P><STRONG><a name="[7c]"></a>Draw_Map_Break</STRONG> (Thumb, 200 bytes, Stack size 0 bytes, colorbreake.o(ColorBreakeCode), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawOutlineW
+<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DRAWSQUARE
+<LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
+</UL>
+
 <P><STRONG><a name="[43]"></a>__main</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, main.o(MYCODE))
 <BR><BR>[Calls]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI
 <LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Init
-<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Init_RandomSeed
-<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CONFIGURE_PORTS
+<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Init_RandomSeed
+<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CONFIGURE_PORTS
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f401xc.o(.text)
 </UL><P>
@@ -728,19 +709,8 @@ Local Symbols
 <LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawGrid
 </UL>
 
-<<<<<<< HEAD
-<P><STRONG><a name="[65]"></a>TFT_DRAWSQUARE</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, longcat.o(CODEY))
-<BR><BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
-</UL>
-<BR>[Called By]<UL><LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawMap
-</UL>
-
 <P><STRONG><a name="[66]"></a>TFT_DrawMap</STRONG> (Thumb, 132 bytes, Stack size 0 bytes, longcat.o(CODEY))
 <BR><BR>[Calls]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DRAWSQUARE
-=======
-<P><STRONG><a name="[65]"></a>TFT_DrawMap</STRONG> (Thumb, 132 bytes, Stack size 0 bytes, longcat.o(CODEY))
-<BR><BR>[Calls]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DRAWSQUARE
->>>>>>> 18214911336be6b80a1ebcc43aa5f29d2a0d7bda
 <LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
 </UL>
 <BR>[Called By]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MainGame_LongCat
@@ -819,7 +789,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Main_Game_Alien
 </UL>
 
-<P><STRONG><a name="[77]"></a>check_all_bit15</STRONG> (Thumb, 140 bytes, Stack size 0 bytes, alien_invaders.o(CODEY))
+<P><STRONG><a name="[77]"></a>check_all_bit15</STRONG> (Thumb, 164 bytes, Stack size 0 bytes, alien_invaders.o(CODEY))
 <BR><BR>[Calls]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Decrement_Heart_And_Draw
 <LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Remove_Enemy
 </UL>
@@ -830,6 +800,12 @@ Local Symbols
 <BR><BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
 </UL>
 <BR>[Called By]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Intialize_Grid
+</UL>
+
+<P><STRONG><a name="[7d]"></a>DrawOutlineW</STRONG> (Thumb, 96 bytes, Stack size 0 bytes, colorbreake.o(ColorBreakeCode), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_Filldraw4INP
+</UL>
+<BR>[Called By]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Draw_Map_Break
 </UL>
 <P>
 <H3>

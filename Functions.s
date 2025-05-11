@@ -70,6 +70,8 @@ RNG_State DCD 1 ; 32-bit seed (must be non-zero)
 	IMPORT AEROSPACE
 	IMPORT Main_Game_Alien
 
+
+
 ;-----------------------------------------
 ; Initially call in main function
 ;-----------------------------------------
@@ -932,6 +934,7 @@ MAINLOOP              ;Wait for input from user
 	AND R10,R10, #0x001F
 	CMP R10, #00      ;Keep looping while input = 0
 	BEQ MAINLOOP
+	
 	;If input == ENTER
 	CMP R10, #0x0010
 	BEQ EnterHuh

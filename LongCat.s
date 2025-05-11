@@ -614,7 +614,7 @@ EndTheGame
 ;------------------------
 MainGame_LongCat FUNCTION
     PUSH {R0-R12, LR}
-	MOV R9, #3
+	MOV R9, #1
 New_Game_Loop
 	MOV R12, R9
 	SUB R12, #1          ; cuz if level = 1 we will get address + 0, etc..
@@ -662,7 +662,9 @@ end_geme
 	
 INPUT12345                ;Wait for input from user
 	BL GET_state
-	AND R10, #0x001F
+	AND R10, #0x003F
+	CMP R10, #32
+	BEQ EXIT_LC	
 	CMP R10, #00
 	BEQ INPUT12345
 	
