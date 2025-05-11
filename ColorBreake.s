@@ -27,17 +27,19 @@ colorBreaklvl
 		DCD    0x00000001
 		DCD    0x11144003
 		DCD    0x11144001
+
 	AREA ColorBreakMAP, DATA, READWRITE
-		
 colorBreakMap
-		DCD    0x11144001
-		DCD    0x11144002
-		DCD    0x00000001
-		DCD    0x08880000
-		DCD    0x08880000
-		DCD    0x00000001
-		DCD    0x11144003
-		DCD    0x11144001		
+		DCD    0x00000000
+		DCD    0x00000000
+		DCD    0x00000000
+		DCD    0x00000000
+		DCD    0x00000000
+		DCD    0x00000000
+		DCD    0x00000000
+		DCD    0x00000000	
+	
+		
 PlayerColor DCB 0x00 
 
 
@@ -52,8 +54,21 @@ PlayerColor DCB 0x00
 	IMPORT  GET_state2			
 	IMPORT TFT_DRAWSQUARE
 	EXPORT Draw_Map_Break
+	EXPORT Draw_Filled_Circle30
+	EXPORT UP_D0WN_MOVEMENT	
+	EXPORT main_Color_Break
+	EXPORT DRAW_BALL_MOVEMENT 
+	EXPORT Destroy_Block	
 
-
+TFT_DRAWSQUARE2 FUNCTION
+	PUSH{R6-R9,LR}
+	MOV R6,R1
+	ADD R7,R6,#40
+	MOV R8,R2
+	ADD R9,R8,#40
+	BL TFT_Filldraw4INP
+	POP{R6-R9, PC}
+	ENDFUNC
 
 Draw_Map_Break FUNCTION
     PUSH {R0-R12, LR}
@@ -96,10 +111,7 @@ col_LOOP
     BEQ FINISH_MAP        ; If done, exit function
 
     LDR R0, =colorBreakMap     ; Load address of map data
-    BL BATATA
-	LTORG
-BATATA	
-	LDR R9, [R0, R3,LSL #2]           ; Load the 32-bit word for current column
+    LDR R9, [R0, R3,LSL #2]           ; Load the 32-bit word for current column
 
     MOV R4, #0            ; Initialize bit position counter
 
@@ -132,26 +144,27 @@ row_LOOP
     MOVEQ R11, #Yellow    ; Set color to Yellow for Color 1
 
     ; Draw square at current position
-    BL TFT_DRAWSQUARE     ; Draw a square with selected color
-	MOV R1 , R7
-	MOV R2 , R9
-	BL DrawOutlineW
+    BL TFT_DRAWSQUARE2     ; Draw a square with selected color
+	;MOV R1 , R7
+	;MOV R2 , R9
+	;BL DrawOutlineW
 
 SkipDraw
-    ADD R1, #40           ; Move X position right for next block
+    ADD R2, #40           ; Move X position right for next block
     ADD R4, #4            ; Increment bit position by 4 (next block)
     B row_LOOP            ; Continue processing this column
 
 Next_col_MAP
-    ADD R2, #40           ; Move Y position down for next column
-    MOV R1, #0            ; Reset X position to start of row
+    ADD R1, #40           ; Move Y position down for next column
+    MOV R2, #80            ; Reset X position to start of row
     ADD R3, #1            ; Increment column counter
     B col_LOOP            ; Process next column
 
 FINISH_MAP
     POP {R0-R12, PC}      ; Restore registers and return
-ENDFUNC
-
+	ENDFUNC
+	
+	
 DrawOutlineW FUNCTION;take r1,x r2,y , dimension of square in R4, dimension of outline in R3
 	PUSH{R0-R12,LR}
 	MOV R4 , #40
@@ -180,11 +193,265 @@ DrawOutlineW FUNCTION;take r1,x r2,y , dimension of square in R4, dimension of o
 	pop{R0-R12,PC}
 	ENDFUNC	
 
+UP_D0WN_MOVEMENT FUNCTION
+    PUSH{R0-R2, R4-R12, LR}
 
-CHECK_BLOCK FUNCTION
-	PUSH {R0-R12, LR}
-	POP{R0-R12,PC}
-	ENDFUNC
+    LDR  R2 , =PlayerColor
+    LDRB R0 , [R2]
+    TST  R0 , #2
+    BNE.W UP_MOVEMENT
+
+DOWN_MOVEMENT
+    SUB R3 , R3 , #8
+    LDR R4, =colorBreakMap
+    LSR R5, R3, #3  ;R5 = ROW
+    LDR R4, [R4, R5, LSL #2] ;LOAD ROW IN R4
+    AND R6, R3, #7 ;R6 = COLUMN
+    MOV R7, #0xF  ;BIT MASK FOR COLUMN NUMBER 0000000F
+    LSL R6,#2
+    LSL R7, R6 ;BIT MASK TILL COLUMN
+    AND R7 , R7 , R4
+    LSR R7, R6
+
+    CMP R7 , #0x0
+    BEQ NORMALD
+
+    CMP R7 , #0x1
+    BEQ UP_MOVE
+    
+    CMP R7 , #0x2         ;Change color zero
+    BEQ Change_Up_ZERO
+    
+    CMP R7 , #0x3         ;Change color one
+    BEQ Change_Up_ONE
+
+    CMP R7, #0x4          ; Check if Color 0 (4)
+    BEQ Check_Block_BLUE_UP
+    
+    CMP R7, #0x8          ; Check if Color 1 (8)
+    BEQ Check_Block_YELLOW_UP
+       
+    MOV R1 , R3 
+    LSR R1 , #3
+    CMP R1 , #0
+    ORREQ R0, #2
+
+NORMALD
+    ADD R3,R3,#8
+    MOV R11, #LightPink
+    BL Draw_Filled_Circle30
+    SUB R3,R3,#8
+    LDR R0,=PlayerColor
+    LDRB R0,[R0]
+    TST R0,#1
+    BEQ color0
+    MOV R11 , #Yellow
+    BL Draw_Filled_Circle30
+    MOV R1 , R3 
+    LSR R1 , #3
+    CMP R1 , #0
+    ORREQ R0, #2
+    B ENDDD
+
+color0
+    MOV R11, #Blue  
+    BL Draw_Filled_Circle30
+    MOV R1 , R3 
+    LSR R1 , #3
+    CMP R1 , #0
+    ORREQ R0, #2
+    B ENDDD
+
+UP_MOVE
+    ADD R3, R3, #8
+    LDR  R2 , =PlayerColor
+    LDRB R0 , [R2]
+    ORR  R0 , #2
+    MOV R1 , R3 
+    LSR R1 , #3
+    CMP R1 , #0
+    ORREQ R0, #2
+    B ENDDD
+
+Change_Up_ZERO
+    ADD R3, R3, #8
+    LDR R0,=PlayerColor
+    LDRB R0,[R0]
+    TST R0,#1
+    BEQ CHANGE1 ; same COLOR, DON'T CHANGE
+    BL Change_color ; change color in array
+	MOV R11, #Blue ; player color 1
+	BL Draw_Filled_Circle30
+CHANGE1 
+    B UP_MOVE
+
+Change_Up_ONE
+	ADD R3, R3, #8
+    LDR R0,=PlayerColor
+    LDRB R0,[R0]
+    TST R0,#1
+    BNE CHANGE2 ; same COLOR, DON'T CHANGE
+    BL Change_color ; change player color in array
+	MOV R11, #Yellow ; player color 2
+	BL Draw_Filled_Circle30
+CHANGE2    
+    B UP_MOVE
+
+Check_Block_BLUE_UP
+    LDR R0,=PlayerColor
+    LDRB R0,[R0]
+
+    TST R0,#1
+    BNE ADD17 ; OPPOSITE COLOR, DON'T DESTROY
+    
+    
+    BL Destroy_Block
+ADD17
+    B UP_MOVE
+
+Check_Block_YELLOW_UP
+    LDR R0,=PlayerColor
+    LDRB R0,[R0]
+
+    TST R0,#1
+    BEQ ADD27; IF OPPOSITE COLOR, DON'T DESTROY
+
+    BL Destroy_Block
+ADD27
+    B UP_MOVE
+
+
+UP_MOVEMENT
+    ADD R3 , R3 , #8
+    LDR R4, =colorBreakMap
+    LSR R5, R3, #3  ;R5 = ROW
+    LDR R4, [R4, R5, LSL #2] ;LOAD ROW IN R4
+    AND R6, R3, #7 ;R6 = COLUMN
+    MOV R7, #0xF  ;BIT MASK FOR COLUMN NUMBER 0000000F
+	LSL R6 , R6 ,#2
+    LSL R7, R6 ;BIT MASK TILL COLUMN
+    AND R7 , R7 , R4
+    LSR R7, R6 ;BIT MASK TILL COLUMN
+    
+    CMP R7 , #0x0
+    BEQ NORMALU
+
+    CMP R7 , #0x1
+    BEQ DOWN_MOVE
+    
+    CMP R7 , #0x2
+    BEQ Change_Down_ZERO
+    
+    CMP R7 , #0x3
+    BEQ Change_Down_ONE
+
+    CMP R7, #0x4          ; Check if Color 0 (4)
+    BEQ Check_Block_BLUE_DOWN  ; Set color to Blue for Color 0
+    
+    CMP R7, #0x8           ; Check if Color 1 (8)
+    BEQ Check_Block_YELLOW_DOWN ; Set color to Yellow for Color 1
+
+    MOV R1 , R3 
+    LSR R1 , #3
+    CMP R1 , #7
+    BICEQ R0, #2
+    B ENDDD
+
+NORMALU
+    SUB R3, R3, #8
+	MOV R11, #LightPink ; background
+	BL Draw_Filled_Circle30 ; draw background over the old position
+	ADD R3, R3, #8
+	
+	LDR R0,=PlayerColor
+	BL FFF
+	LTORG
+FFF
+    LDRB R0,[R0]
+	TST R0, #1
+	BEQ COLOR02
+	MOV R11, #Yellow
+	BL Draw_Filled_Circle30 ;draw player with new color
+	MOV R1 , R3 
+    LSR R1 , #3
+    CMP R1 , #7
+    BICEQ R0, #2
+    B ENDDD
+COLOR02
+	MOV R11, #Blue
+	BL Draw_Filled_Circle30 ;draw player with new color
+    MOV R1 , R3 
+    LSR R1 , #3
+    CMP R1 , #7
+    BICEQ R0, #2
+    B ENDDD
+
+
+DOWN_MOVE
+    SUB R3, R3, #8
+    LDR  R2 , =PlayerColor 
+    LDRB R0 , [R2]
+    BIC  R0 , #2
+    MOV R1 , R3 
+    LSR R1 , #3
+    CMP R1 , #7
+    BICEQ R0, #2
+    B ENDDD
+
+
+Change_Down_ZERO
+	SUB R3, R3, #8
+    LDR R0,=PlayerColor
+    LDRB R0,[R0]
+    
+    TST R0,#1
+    BEQ SUB111 ; same COLOR, DON'T CHANGE
+    BL Change_color ; change color in array
+	MOV R11, #Blue ; player color 1
+	BL Draw_Filled_Circle30
+SUB111
+ 
+    B DOWN_MOVE
+
+
+Change_Down_ONE
+    SUB R3, R3, #8
+    LDR R0,=PlayerColor
+    LDRB R0,[R0]
+    
+    TST R0,#1
+    BNE SUB121 ; same COLOR, DON'T CHANGE
+    BL Change_color ; change color in array
+	MOV R11, #Yellow ; player color 2
+	BL Draw_Filled_Circle30 
+SUB121
+    B DOWN_MOVE
+
+Check_Block_BLUE_DOWN
+    LDR R0,=PlayerColor
+    LDRB R0,[R0]
+
+    TST R0,#1
+    BNE SUB17 ; IF OPPOSITE COLOR, DON'T DESTROY
+    BL Destroy_Block
+SUB17
+    B DOWN_MOVE
+
+Check_Block_YELLOW_DOWN  
+    LDR R0,=PlayerColor
+    LDRB R0,[R0]
+
+    TST R0,#1
+    BEQ SUB27 ; IF OPPOSITE COLOR, DON'T DESTROY
+    BL Destroy_Block
+SUB27
+    B DOWN_MOVE
+
+ENDDD
+    STR R0 , [R2] 
+    POP{R0-R2, R4-R12, PC}
+    ENDFUNC
+
 	
 	
 Change_color FUNCTION
@@ -207,7 +474,7 @@ change_to_0
 
 end    
    POP{R0-R1,PC}	
-	
+	ENDFUNC
 	
 	
 
@@ -260,9 +527,9 @@ Row_Loop
 Nibble_Loop
         AND     R1, R0, #0xF           ; Extract lowest nibble
         CMP     R1, #4
-        BEQ     Not_Win
+        BEQ     no_win
         CMP     R1, #8
-        BEQ     Not_Win
+        BEQ     no_win
 
         LSR     R0, R0, #4             ; Shift to next nibble
         SUBS    R6, R6, #1
@@ -271,22 +538,13 @@ Nibble_Loop
         SUBS    R5, R5, #1             ; Decrement row counter
         BNE     Row_Loop
 
-        MOV     R0, #1 
-		MOV R1, #0x00FF             ; Return 00FF for win
-		MOV R6,#0X0000
-		MOV R7,#0X0140
-		MOV R8,#0X0000
-		MOV R9,#0X01E0
-		MOV R11, #Green
-		BL TFT_Filldraw4INP		; Win
-        B       End_Check
-
-Not_Win
-        MOV     R0, #0                 ; Not win
-
-End_Check
+		MOV		R1, #0x00FF             ; Return 00FF for win
+        B       End_lol
+no_win
+	MOV R1,#0X00AA
+End_lol
 	
-        POP     {R0,R2-R12, LR}
+        POP     {R0,R2-R12, PC}
 		ENDFUNC
 		
 		
@@ -547,7 +805,13 @@ end_
     
     POP{R0-R2, R4-R12,PC}
     ENDFUNC
+	
+	
+	
 
+		
+		
+		
 Draw_Filled_Circle30 FUNCTION
 	PUSH {R0-R12, LR}
 
@@ -658,6 +922,39 @@ main_Color_Break FUNCTION
 ;CHECK_BLOCK;(Color_Change,delete block,KILL)
 ;check win
 	PUSH {R0-R12, LR}
+	LDR     r0, =colorBreaklvl     ; Source address
+    LDR     r1, =colorBreakMap     ; Destination address
+    MOV     r2, #8                 ; Number of words to copy (8 DCD values)
+
+copy_loop
+    LDR     r3, [r0], #4           ; Load word from source and increment source pointer
+    STR     r3, [r1], #4           ; Store word to destination and increment destination pointer
+    SUBS    r2, r2, #1             ; Decrement counter
+    BNE     copy_loop              ; Continue if not done 
+	BL Draw_Map_Break
+	MOV R3,#9
+INNERLOOPIN
+	BL UP_D0WN_MOVEMENT	
+	BL GET_state2
+	BL DRAW_BALL_MOVEMENT
+	BL Check_Win
+	CMP R1 ,#0X00AA
+	BEQ INNERLOOPIN
+	CMP R1 ,#0X00FF
+	BEQ WINNER
+	B INNERLOOPIN
+WINNER 
+	
+    ; Define screen boundaries for drawing
+    MOV R6, #0x0000       ; Start X position (0)
+    MOV R7, #0x0140       ; End X position (320 pixels)
+    MOV R8, #0       ; Start Y position (40 pixels) 
+    MOV R9, #480       ; End Y position (480 pixels)
+
+    ; Fill screen with background color
+    MOV R11, #Pink   ; Set background color
+    BL TFT_Filldraw4INP   ; Fill screen with background color
+EXIT_CB
 	POP{R0-R12,PC}
 	ENDFUNC
 
