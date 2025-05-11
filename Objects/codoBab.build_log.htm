@@ -3,13 +3,13 @@
 <pre>
 <h1>µVision Build Log</h1>
 <h2>Tool Versions:</h2>
-IDE-Version: ÂµVision V5.42.0.0
+IDE-Version: µVision V5.42.0.0
 Copyright (C) 2025 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: Omar Nagy, Cairo University Faculty of Engineering, LIC=S5IID-SZCBL-91M1K-HUWIS-SR479-UNXGM
+License Information: Youssef Maged, Mego's, LIC=----
  
 Tool Versions:
 Toolchain:       MDK-ARM Professional  Version: 5.42.0.0
-Toolchain Path:  C:\Users\USER\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin
+Toolchain Path:  C:\Users\youss\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin
 C Compiler:      ArmClang.exe V6.23
 Assembler:       Armasm.exe V6.23
 Linker/Locator:  ArmLink.exe V6.23
@@ -21,38 +21,20 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.3.0.0
 Dialog DLL:      TCM.DLL V1.56.6.0
  
 <h2>Project:</h2>
-C:\Users\USER\gameBoy\codoBab.uvprojx
-Project File Date:  05/09/2025
+C:\Users\youss\gameBoy\codoBab.uvprojx
+Project File Date:  05/11/2025
 
 <h2>Output:</h2>
-*** Using Compiler 'V6.23', folder: 'C:\Users\USER\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
+*** Using Compiler 'V6.23', folder: 'C:\Users\youss\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'Target_1'
-armclang: warning: Your license for feature Keil will expire in 12 days [-Wlicense-management]
-"Alien_Invaders.s", line 150: Warning: A1488W: PROC/FUNC at line 132 in 'Alien_Invaders.s' without matching ENDP/ENDFUNC
-  150 00000042 DrawBullet_Player FUNCTION
-"Alien_Invaders.s", line 272 (column 9): Warning: A1865W: '#' not seen before constant expression
-  272 0000015a  MOV R6,0X0030
-                       ^
-"Alien_Invaders.s", line 273 (column 9): Warning: A1865W: '#' not seen before constant expression
-  273 0000015e  MOV R7,0X0040
-                       ^
-"Alien_Invaders.s", line 724: Warning: A1464W: ENDP/ENDFUNC without corresponding PROC/FUNC
-  724 0000058e  ENDFUNC
-"Alien_Invaders.s", line 70: Warning: A1581W: Added 1 bytes of padding at address 0x79
-   70 0000007a Score DCW 0X0000
-"Alien_Invaders.s", line 403: Warning: A1581W: Added 2 bytes of padding at address 0x2ca
-  403 000002cc  LTORG
-"Alien_Invaders.s", line 828: Warning: A1581W: Added 2 bytes of padding at address 0x692
-  828 00000694  END
-0 Errors, 7 Warnings
-armclang: warning: Your license for feature Keil will expire in 12 days [-Wlicense-management]
-assembling Alien_Invaders.s...
+"ColorBreake.s", line 28: Warning: A1581W: Added 3 bytes of padding at address 0x1
+   28 00000004   DCD    0x00000000
+0 Errors, 1 Warning
+assembling ColorBreake.s...
 linking...
 Program Size: Code=7208 RO-data=85632 RW-data=160 ZI-data=1536  
 FromELF: creating hex file...
-.\Objects\codoBab.hex: Warning: Q9931W: Your license for feature Keil will expire in 12 days
-Finished: 0 information, 1 warning and 0 error messages.
-".\Objects\codoBab.axf" - 0 Error(s), 2 Warning(s).
+".\Objects\codoBab.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -70,16 +52,16 @@ Package Vendor: Keil
 
 <h2>Collection of Component include folders:</h2>
   ./RTE/_Target_1
-  C:/Users/USER/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include
-  C:/Users/USER/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+  C:/Users/youss/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include
+  C:/Users/youss/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include
 
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE@6.1.0
 
    * Component: Keil::Device:Startup@2.6.3
-      Source file:   MDK/Device/Source/ARM/STM32F4xx_OTP.s
       Include file:  Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
+      Source file:   MDK/Device/Source/ARM/STM32F4xx_OTP.s
       Source file:   MDK/Device/Source/ARM/STM32F401xx_OPT.s
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f401xc.s
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
