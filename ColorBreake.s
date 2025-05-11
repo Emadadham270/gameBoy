@@ -17,7 +17,8 @@ Lavender 	   EQU 0x9C3F
 Purple		   EQU 0x600F
 Violet		   EQU 0x881F
 Gray    	   EQU 0x8410
-colorBreakMap
+
+colorBreaklvl
 		DCD    0x11144001
 		DCD    0x11144002
 		DCD    0x00000001
@@ -26,10 +27,17 @@ colorBreakMap
 		DCD    0x00000001
 		DCD    0x11144003
 		DCD    0x11144001
-		
 	AREA ColorBreakMAP, DATA, READWRITE
 		
-		
+colorBreakMap
+		DCD    0x11144001
+		DCD    0x11144002
+		DCD    0x00000001
+		DCD    0x08880000
+		DCD    0x08880000
+		DCD    0x00000001
+		DCD    0x11144003
+		DCD    0x11144001		
 PlayerColor DCB 0x00 
 
 
