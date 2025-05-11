@@ -28,19 +28,23 @@ Project File Date:  05/11/2025
 *** Using Compiler 'V6.23', folder: 'C:\Users\USER\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'Target_1'
 armclang: warning: Your license for feature Keil will expire in 12 days [-Wlicense-management]
-"ColorBreake.s", line 144: Warning: A1488W: PROC/FUNC at line 50 in 'ColorBreake.s' without matching ENDP/ENDFUNC
-  144 000000c8 DrawOutlineW FUNCTION;take r1,x r2,y , dimension of square in R4, dimension of outline in R3
-"ColorBreake.s", line 202: Warning: A1488W: PROC/FUNC at line 179 in 'ColorBreake.s' without matching ENDP/ENDFUNC
-  202 0000014e DRAW_BALL_MOVEMENT FUNCTION
-"ColorBreake.s", line 243: Warning: A1488W: PROC/FUNC at line 208 in 'ColorBreake.s' without matching ENDP/ENDFUNC
-  243 000001ae Check_Win FUNCTION
-"ColorBreake.s", line 299: Warning: A1581W: Added 2 bytes of padding at address 0x20a
-  299 0000020c  END
-0 Errors, 4 Warnings
+"ColorBreake.s", line 147: Warning: A1488W: PROC/FUNC at line 50 in 'ColorBreake.s' without matching ENDP/ENDFUNC
+  147 000000d2 DrawOutlineW FUNCTION;take r1,x r2,y , dimension of square in R4, dimension of outline in R3
+"ColorBreake.s", line 207: Warning: A1488W: PROC/FUNC at line 182 in 'ColorBreake.s' without matching ENDP/ENDFUNC
+  207 00000158 Destroy_Block FUNCTION; Take position of block
+"ColorBreake.s", line 242: Warning: A1488W: PROC/FUNC at line 207 in 'ColorBreake.s' without matching ENDP/ENDFUNC
+  242 000001b0 Check_Win FUNCTION
+"ColorBreake.s", line 92: Warning: A1471W: Directive LTORG may be in an executable position
+   92 00000062  LTORG
+"ColorBreake.s", line 92: Warning: A1581W: Added 2 bytes of padding at address 0x62
+   92 00000064  LTORG
+"ColorBreake.s", line 659: Warning: A1581W: Added 2 bytes of padding at address 0x486
+  659 00000488  END
+0 Errors, 6 Warnings
 armclang: warning: Your license for feature Keil will expire in 12 days [-Wlicense-management]
 assembling ColorBreake.s...
 linking...
-Program Size: Code=8228 RO-data=85664 RW-data=164 ZI-data=1536  
+Program Size: Code=9016 RO-data=85664 RW-data=164 ZI-data=1536  
 FromELF: creating hex file...
 .\Objects\codoBab.hex: Warning: Q9931W: Your license for feature Keil will expire in 12 days
 Finished: 0 information, 1 warning and 0 error messages.
@@ -75,7 +79,7 @@ Package Vendor: Keil
       Source file:   MDK/Device/Source/ARM/STM32F401xx_OPT.s
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f401xc.s
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
-Build Time Elapsed:  00:00:00
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

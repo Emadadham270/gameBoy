@@ -50,8 +50,8 @@ Section Cross References
     colorbreake.o(ColorBreakeData) refers (Special) to functions.o(CODEY) for GET_state2
     colorbreake.o(ColorBreakMAP) refers (Special) to functions.o(CODEY) for GET_state2
     colorbreake.o(ColorBreakeCode) refers (Special) to functions.o(CODEY) for GET_state2
-    colorbreake.o(ColorBreakeCode) refers to longcat.o(CODEY) for TFT_DRAWSQUARE
     colorbreake.o(ColorBreakeCode) refers to colorbreake.o(ColorBreakeData) for colorBreakMap
+    colorbreake.o(ColorBreakeCode) refers to longcat.o(CODEY) for TFT_DRAWSQUARE
     colorbreake.o(ColorBreakeCode) refers to colorbreake.o(ColorBreakMAP) for PlayerColor
     startup_stm32f401xc.o(STACK) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_stm32f401xc.o(HEAP) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
@@ -145,32 +145,35 @@ Image Symbol Table
     check_win                                0x08001615   Thumb Code   254  longcat.o(CODEY)
     $v0                                      0x080017b0   Number         0  alien_invaders.o(CODEY)
     ADD_BULLET_PLAYER                        0x080017b1   Thumb Code    44  alien_invaders.o(CODEY)
-    CODEY                                    0x080017b0   Section     2020  alien_invaders.o(CODEY)
+    CODEY                                    0x080017b0   Section     2172  alien_invaders.o(CODEY)
     ADD_BULLET_ALIEN                         0x080017dd   Thumb Code    22  alien_invaders.o(CODEY)
     MOVE_BULLET                              0x08001927   Thumb Code   340  alien_invaders.o(CODEY)
     Remove_Enemy                             0x08001a89   Thumb Code    56  alien_invaders.o(CODEY)
     Move_Player                              0x08001ac1   Thumb Code    76  alien_invaders.o(CODEY)
     ENEMY_BULLET_RATE                        0x08001bc5   Thumb Code    50  alien_invaders.o(CODEY)
-    check_all_bit15                          0x08001bf7   Thumb Code   164  alien_invaders.o(CODEY)
-    DrawWa74                                 0x08001c9b   Thumb Code   376  alien_invaders.o(CODEY)
-    $v0                                      0x08001f94   Number         0  colorbreake.o(ColorBreakeCode)
-    ColorBreakeCode                          0x08001f94   Section      532  colorbreake.o(ColorBreakeCode)
-    DrawOutlineW                             0x0800205d   Thumb Code    96  colorbreake.o(ColorBreakeCode)
-    $v0                                      0x080021a8   Number         0  main.o(MYCODE)
-    MYCODE                                   0x080021a8   Section       16  main.o(MYCODE)
-    colorBreakMap                            0x080021b8   Data           0  colorbreake.o(ColorBreakeData)
-    ColorBreakeData                          0x080021b8   Section       32  colorbreake.o(ColorBreakeData)
-    Level1Map                                0x080021d8   Data           0  longcat.o(MYDATA)
-    MYDATA                                   0x080021d8   Section       21  longcat.o(MYDATA)
-    Leve1StartCell                           0x080021ea   Data           0  longcat.o(MYDATA)
-    MYIMAGE                                  0x080021f0   Section     5008  datacatface.o(MYIMAGE)
-    MYIMAGE                                  0x08003580   Section    20008  dataaerospace.o(MYIMAGE)
-    MYIMAGE                                  0x080083a8   Section    20008  datalongcat.o(MYIMAGE)
-    MYIMAGE                                  0x0800d1d0   Section    20008  dataxo.o(MYIMAGE)
-    MYIMAGE                                  0x08011ff8   Section    20008  mazelogo.o(MYIMAGE)
-    MazeData                                 0x08016e20   Section      161  maze_functions.o(MazeData)
-    ROW2                                     0x08016e70   Data           0  maze_functions.o(MazeData)
-    CellStart                                0x08016ec0   Data           1  maze_functions.o(MazeData)
+    check_all_bit15                          0x08001bf7   Thumb Code   162  alien_invaders.o(CODEY)
+    DrawWa74                                 0x08001c99   Thumb Code   376  alien_invaders.o(CODEY)
+    $v0                                      0x0800202c   Number         0  colorbreake.o(ColorBreakeCode)
+    ColorBreakeCode                          0x0800202c   Section     1168  colorbreake.o(ColorBreakeCode)
+    DrawOutlineW                             0x080020ff   Thumb Code    96  colorbreake.o(ColorBreakeCode)
+    Change_color                             0x08002167   Thumb Code    30  colorbreake.o(ColorBreakeCode)
+    Destroy_Block                            0x08002185   Thumb Code    88  colorbreake.o(ColorBreakeCode)
+    Draw_Filled_Circle30                     0x080023fd   Thumb Code    90  colorbreake.o(ColorBreakeCode)
+    $v0                                      0x080024bc   Number         0  main.o(MYCODE)
+    MYCODE                                   0x080024bc   Section       16  main.o(MYCODE)
+    colorBreakMap                            0x080024cc   Data           0  colorbreake.o(ColorBreakeData)
+    ColorBreakeData                          0x080024cc   Section       32  colorbreake.o(ColorBreakeData)
+    Level1Map                                0x080024ec   Data           0  longcat.o(MYDATA)
+    MYDATA                                   0x080024ec   Section       21  longcat.o(MYDATA)
+    Leve1StartCell                           0x080024fe   Data           0  longcat.o(MYDATA)
+    MYIMAGE                                  0x08002504   Section     5008  datacatface.o(MYIMAGE)
+    MYIMAGE                                  0x08003894   Section    20008  dataaerospace.o(MYIMAGE)
+    MYIMAGE                                  0x080086bc   Section    20008  datalongcat.o(MYIMAGE)
+    MYIMAGE                                  0x0800d4e4   Section    20008  dataxo.o(MYIMAGE)
+    MYIMAGE                                  0x0801230c   Section    20008  mazelogo.o(MYIMAGE)
+    MazeData                                 0x08017134   Section      161  maze_functions.o(MazeData)
+    ROW2                                     0x08017184   Data           0  maze_functions.o(MazeData)
+    CellStart                                0x080171d4   Data           1  maze_functions.o(MazeData)
     PlayerColor                              0x20000000   Data           1  colorbreake.o(ColorBreakMAP)
     ColorBreakMAP                            0x20000000   Section        1  colorbreake.o(ColorBreakMAP)
     RNG_State                                0x20000004   Data           4  functions.o(MYDATA)
@@ -301,15 +304,15 @@ Image Symbol Table
     Increment_Score_And_Draw                 0x08001b35   Thumb Code    50  alien_invaders.o(CODEY)
     Heart_Draw                               0x08001b67   Thumb Code    40  alien_invaders.o(CODEY)
     Decrement_Heart_And_Draw                 0x08001b8f   Thumb Code    54  alien_invaders.o(CODEY)
-    Intialize_Grid                           0x08001e79   Thumb Code   136  alien_invaders.o(CODEY)
-    Main_Game_Alien                          0x08001f01   Thumb Code   124  alien_invaders.o(CODEY)
-    Draw_Map_Break                           0x08001f95   Thumb Code   200  colorbreake.o(ColorBreakeCode)
-    __main                                   0x080021a9   Thumb Code    16  main.o(MYCODE)
-    CatFace                                  0x080021f0   Data           0  datacatface.o(MYIMAGE)
-    AEROSPACE                                0x08003580   Data           0  dataaerospace.o(MYIMAGE)
-    LONGCAT                                  0x080083a8   Data           0  datalongcat.o(MYIMAGE)
-    XO                                       0x0800d1d0   Data           0  dataxo.o(MYIMAGE)
-    MAZELOGO                                 0x08011ff8   Data           0  mazelogo.o(MYIMAGE)
+    Intialize_Grid                           0x08001f11   Thumb Code   136  alien_invaders.o(CODEY)
+    Main_Game_Alien                          0x08001f99   Thumb Code   124  alien_invaders.o(CODEY)
+    Draw_Map_Break                           0x0800202d   Thumb Code   210  colorbreake.o(ColorBreakeCode)
+    __main                                   0x080024bd   Thumb Code    16  main.o(MYCODE)
+    CatFace                                  0x08002504   Data           0  datacatface.o(MYIMAGE)
+    AEROSPACE                                0x08003894   Data           0  dataaerospace.o(MYIMAGE)
+    LONGCAT                                  0x080086bc   Data           0  datalongcat.o(MYIMAGE)
+    XO                                       0x0800d4e4   Data           0  dataxo.o(MYIMAGE)
+    MAZELOGO                                 0x0801230c   Data           0  mazelogo.o(MYIMAGE)
 
 
 
@@ -319,9 +322,9 @@ Memory Map of the image
 
   Image Entry point : 0x08000409
 
-  Load Region LR_1 (Base: 0x08000000, Size: 0x00016f68, Max: 0xffffffff, ABSOLUTE)
+  Load Region LR_1 (Base: 0x08000000, Size: 0x0001727c, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region ER_RO (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00016ec4, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RO (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x000171d8, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -335,34 +338,34 @@ Memory Map of the image
     0x08000464   0x08000464   0x00000798   Code   RO            9    CODEY               functions.o
     0x08000bfc   0x08000bfc   0x000007b0   Code   RO           14    CODEY               xo_functions.o
     0x080013ac   0x080013ac   0x00000404   Code   RO           20    CODEY               longcat.o
-    0x080017b0   0x080017b0   0x000007e4   Code   RO           32    CODEY               alien_invaders.o
-    0x08001f94   0x08001f94   0x00000214   Code   RO           42    ColorBreakeCode     colorbreake.o
-    0x080021a8   0x080021a8   0x00000010   Code   RO            2    MYCODE              main.o
-    0x080021b8   0x080021b8   0x00000020   Data   RO           40    ColorBreakeData     colorbreake.o
-    0x080021d8   0x080021d8   0x00000015   Data   RO           18    MYDATA              longcat.o
-    0x080021ed   0x080021ed   0x00000003   PAD
-    0x080021f0   0x080021f0   0x00001390   Data   RO           30    MYIMAGE             datacatface.o
-    0x08003580   0x08003580   0x00004e28   Data   RO           36    MYIMAGE             dataaerospace.o
-    0x080083a8   0x080083a8   0x00004e28   Data   RO           37    MYIMAGE             datalongcat.o
-    0x0800d1d0   0x0800d1d0   0x00004e28   Data   RO           38    MYIMAGE             dataxo.o
-    0x08011ff8   0x08011ff8   0x00004e28   Data   RO           39    MYIMAGE             mazelogo.o
-    0x08016e20   0x08016e20   0x000000a1   Data   RO           24    MazeData            maze_functions.o
+    0x080017b0   0x080017b0   0x0000087c   Code   RO           32    CODEY               alien_invaders.o
+    0x0800202c   0x0800202c   0x00000490   Code   RO           42    ColorBreakeCode     colorbreake.o
+    0x080024bc   0x080024bc   0x00000010   Code   RO            2    MYCODE              main.o
+    0x080024cc   0x080024cc   0x00000020   Data   RO           40    ColorBreakeData     colorbreake.o
+    0x080024ec   0x080024ec   0x00000015   Data   RO           18    MYDATA              longcat.o
+    0x08002501   0x08002501   0x00000003   PAD
+    0x08002504   0x08002504   0x00001390   Data   RO           30    MYIMAGE             datacatface.o
+    0x08003894   0x08003894   0x00004e28   Data   RO           36    MYIMAGE             dataaerospace.o
+    0x080086bc   0x080086bc   0x00004e28   Data   RO           37    MYIMAGE             datalongcat.o
+    0x0800d4e4   0x0800d4e4   0x00004e28   Data   RO           38    MYIMAGE             dataxo.o
+    0x0801230c   0x0801230c   0x00004e28   Data   RO           39    MYIMAGE             mazelogo.o
+    0x08017134   0x08017134   0x000000a1   Data   RO           24    MazeData            maze_functions.o
 
 
-    Execution Region ER_RW (Exec base: 0x20000000, Load base: 0x08016ec4, Size: 0x000000a4, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RW (Exec base: 0x20000000, Load base: 0x080171d8, Size: 0x000000a4, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000000   0x08016ec4   0x00000001   Data   RW           41    ColorBreakMAP       colorbreake.o
-    0x20000001   0x08016ec5   0x00000003   PAD
-    0x20000004   0x08016ec8   0x00000004   Data   RW            8    MYDATA              functions.o
-    0x20000008   0x08016ecc   0x00000014   Data   RW           13    MYDATA              xo_functions.o
-    0x2000001c   0x08016ee0   0x00000006   Data   RW           19    USEABLE             longcat.o
-    0x20000022   0x08016ee6   0x00000002   PAD
-    0x20000024   0x08016ee8   0x0000007f   Data   RW           31    USEABLE             alien_invaders.o
+    0x20000000   0x080171d8   0x00000001   Data   RW           41    ColorBreakMAP       colorbreake.o
+    0x20000001   0x080171d9   0x00000003   PAD
+    0x20000004   0x080171dc   0x00000004   Data   RW            8    MYDATA              functions.o
+    0x20000008   0x080171e0   0x00000014   Data   RW           13    MYDATA              xo_functions.o
+    0x2000001c   0x080171f4   0x00000006   Data   RW           19    USEABLE             longcat.o
+    0x20000022   0x080171fa   0x00000002   PAD
+    0x20000024   0x080171fc   0x0000007f   Data   RW           31    USEABLE             alien_invaders.o
 
 
-    Execution Region ER_ZI (Exec base: 0x200000a8, Load base: 0x08016f68, Size: 0x00000600, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_ZI (Exec base: 0x200000a8, Load base: 0x0801727c, Size: 0x00000600, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -377,8 +380,8 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-      2020         62          0        127          0       1584   alien_invaders.o
-       532         10         32          1          0        756   colorbreake.o
+      2172         60          0        127          0       1620   alien_invaders.o
+      1168         16         32          1          0       1032   colorbreake.o
          0          0      20008          0          0          0   dataaerospace.o
          0          0       5008          0          0          0   datacatface.o
          0          0      20008          0          0          0   datalongcat.o
@@ -393,7 +396,7 @@ Image component sizes
       1968         74          0         20          0       1300   xo_functions.o
 
     ----------------------------------------------------------------------
-      8220        276      85664        164       1536      10811   Object Totals
+      9008        280      85664        164       1536      11123   Object Totals
          0          0          0          0          0          0   (incl. Generated)
          2          0          6          6          0          0   (incl. Padding)
 
@@ -423,15 +426,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      8228        276      85664        164       1536      10263   Grand Totals
-      8228        276      85664        164       1536      10263   ELF Image Totals
-      8228        276      85664        164          0          0   ROM Totals
+      9016        280      85664        164       1536      10575   Grand Totals
+      9016        280      85664        164       1536      10575   ELF Image Totals
+      9016        280      85664        164          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                93892 (  91.69kB)
+    Total RO  Size (Code + RO Data)                94680 (  92.46kB)
     Total RW  Size (RW Data + ZI Data)              1700 (   1.66kB)
-    Total ROM Size (Code + RO Data + RW Data)      94056 (  91.85kB)
+    Total ROM Size (Code + RO Data + RW Data)      94844 (  92.62kB)
 
 ==============================================================================
 

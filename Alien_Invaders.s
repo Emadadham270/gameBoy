@@ -587,6 +587,9 @@ check_all_bit15    FUNCTION
 ; 1.  Look for first player bullet whose bit-15 = 1
 ;------------------------------------------------------------
         LDR     R0, =Player_Bullets
+		BL HH
+		LTORG
+HH		
         MOV     R3, #0                ; row / index 0 … 28
 
 FindNextBullet
@@ -634,9 +637,7 @@ AfterBulletSearch
 ;------------------------------------------------------------
 CheckPlayerHurt
         LDR     R0, =Enemy_Bullets     ; base of half-word array
-		BL HELLO
-		LTORG
-HELLO		
+
         MOV     R6, R11        ; byte holding 0 … 28
 
         MOV     R7, #-1                ; delta = -1, 0, +1
@@ -770,38 +771,75 @@ DrawWa74 FUNCTION;take parameters at r1 and r2
 	BL TFT_Filldraw4INP	
 	POP {R6-R11, PC}
 	ENDFUNC	
+	
 DRAW3ARABYA
 	PUSH{R1,R2,R6-R11,LR}
 	MOV R1,#0
 	MOV R2,R3,LSL #4
-	MOV R11,#Blue
-	MOV R6, R1   ; X start
-	ADD R7,	R1 ,#0X0030
-	SUB R8,	R2 ,#0X0010
-	ADD R9, R2 ,#0X0020
-	BL TFT_Filldraw4INP
+	SUB R2,0X0010
 	MOV R11,#Black
-	ADD R6, R1 ,#0X0020  ; X start
-	ADD R7,	R1 ,#0X0028
-	SUB R8,	R2 ,#0X0004
-	ADD R9, R2 ,#0X0004
+	ADD R6, R1,#0   ; X start
+	ADD R7,	R1 ,#0X0030
+	ADD R8,R2,#0
+	ADD R9, R2 ,#0X0030
 	BL TFT_Filldraw4INP
-	ADD R6, R1 ,#0X0020  ; X start
-	ADD R7,	R1 ,#0X0028
-	ADD R8,	R2 ,#0X000C
-	ADD R9, R2 ,#0X0014
+	MOV R11,#White
+	ADD R6, R1,#0   ; X start
+	ADD R7,	R1 ,#12
+	ADD R8,R2,#3
+	ADD R9, R2 ,#12
 	BL TFT_Filldraw4INP
-	ADD R6, R1 ,#0X0010  ; X start
-	ADD R7,	R1 ,#0X0018
-	SUB R8,	R2 ,#0X0004
-	ADD R9, R2 ,#0X0014
+	ADD R6, R1,#0   ; X start
+	ADD R7,	R1 ,#12
+	ADD R8,R2,#33
+	ADD R9, R2 ,#45
+	BL TFT_Filldraw4INP
+	ADD R6, R1,#12   ; X start
+	ADD R7,	R1 ,#30
+	ADD R8,R2,#9
+	ADD R9, R2 ,#39
+	BL TFT_Filldraw4INP
+	MOV R11,#Blue
+	ADD R6, R1,#21   ; X start
+	ADD R7,	R1 ,#27
+	ADD R8,R2,#30
+	ADD R9, R2 ,#36
+	BL TFT_Filldraw4INP
+	ADD R6, R1,#21   ; X start
+	ADD R7,	R1 ,#27
+	ADD R8,R2,#12
+	ADD R9, R2 ,#18
+	BL TFT_Filldraw4INP
+	MOV R11,#Red
+	ADD R6, R1,#0   ; X start
+	ADD R7,	R1 ,#9
+	ADD R8,R2,#6
+	ADD R9, R2 ,#12
+	BL TFT_Filldraw4INP
+	ADD R6, R1,#0   ; X start
+	ADD R7,	R1 ,#9
+	ADD R8,R2,#36
+	ADD R9, R2 ,#42
+	BL TFT_Filldraw4INP
+	ADD R6, R1,#24   ; X start
+	ADD R7,	R1 ,#36
+	ADD R8,R2,#6
+	ADD R9, R2 ,#9
+	BL TFT_Filldraw4INP
+	ADD R6, R1,#24   ; X start
+	ADD R7,	R1 ,#36
+	ADD R8,R2,#39
+	ADD R9, R2 ,#42
+	BL TFT_Filldraw4INP
+	ADD R6, R1,#24   ; X start
+	ADD R7,	R1 ,#42
+	ADD R8,R2,#21
+	ADD R9, R2 ,#27
 	BL TFT_Filldraw4INP
 	POP {R1,R2,R6-R11, PC}
-	ENDFUNC	
-
+	ENDFUNC
 	
 
-	
 Intialize_Grid FUNCTION
 	PUSH {R0-R12,LR}
 	MOV R6,#0X0000
