@@ -668,7 +668,7 @@ CopyLoop
 	MOV R3,#2
 	MOV R4,#16
 	MOV R5,#1
-	MOV R11,#Cyan              ;34an kennnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+	MOV R11,#Cyan         
 	BL Num_to_LCD
 
 	MOV R4,R6

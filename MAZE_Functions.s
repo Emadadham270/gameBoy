@@ -114,6 +114,7 @@ MAZEMAP
 		IMPORT  GET_state
 		EXPORT MAIN_MAZE	
 		EXPORT  TFT_DrawMapM
+		IMPORT Num_to_LCD
 		
 ;------------------------
 ; TFT_DRAWSQUARE COLOR IN R11,R1 FOR COL R2 FOR PAGE
@@ -359,7 +360,16 @@ copy_level_MAZE
 	BNE copy_level_MAZE
 
     BL TFT_DrawMapM
-	
+	PUSH{R0-R5,R11}
+	MOV     R0,  R9                ; R0 = level (1,2,3…)
+	MOV R1,280
+	MOV R2,450
+	MOV R3,#2
+	MOV R4,#16
+	MOV R5,#1
+	MOV R11,#Yellow         
+	BL Num_to_LCD
+	POP{R0-R5,R11}
 	POP{R0-R8,R10-R12}
 	LDR R3,=CellStart
 	LDR R3,[R3]

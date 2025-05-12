@@ -100,6 +100,7 @@ PlayerColor DCB 0x00
 	EXPORT Destroy_Block
 	IMPORT  Draw_X
 	IMPORT  Draw_O
+	IMPORT Num_to_LCD
 
 TFT_DRAWSQUARE2 FUNCTION
 	PUSH{R1-R4,R6-R9,LR}
@@ -321,7 +322,7 @@ UP_MOVE
     B ENDDD
 
 Change_Up_ZERO
-    ADD R3, R3, #8
+    ;ADD R3, R3, #8
     LDR R0,=PlayerColor
     LDRB R0,[R0]
     TST R0,#1
@@ -1024,7 +1025,16 @@ copy_level_loop
 	BNE copy_level_loop
 
     BL      Draw_Map_Break         ; your existing routine
-    ;MOV     R0,  R9                ; R0 = level (1,2,3…)
+	PUSH{R0-R5,R11}
+	MOV     R0,  R9                ; R0 = level (1,2,3…)
+	MOV R1,280
+	MOV R2,450
+	MOV R3,#2
+	MOV R4,#16
+	MOV R5,#1
+	MOV R11,#Cyan         
+	BL Num_to_LCD
+	POP{R0-R5,R11}
 	
 	POP{R0-R8,R10-R12}
 	MOV R3,#9
