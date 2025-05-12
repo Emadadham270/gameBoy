@@ -112,7 +112,8 @@ TFT_DrawMap    FUNCTION
 	MOV R8,#0X0000
 	MOV R9,#0X01E0
     ; Fill screen with color BLUE
-    MOV R11, #LightPink ;34an BARBIEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    MOV R11, #Black
+	;34an BARBIEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 	BL TFT_Filldraw4INP
 	
 	MOV R6,#10
@@ -120,7 +121,7 @@ TFT_DrawMap    FUNCTION
 	MOV R8,#40
 	MOV R9,#440 
     ; Fill screen with playing area
-    MOV R11, #White
+    MOV R11, #Yellow
 	
 	BL TFT_Filldraw4INP
 	
@@ -150,7 +151,7 @@ COL_LOOP
 
     TST R9, R10         ; Test if bit is 1
     BEQ SkipDraw        ; If 0, skip
-	MOV R11,#Cyan
+	MOV R11,#LightPink
     ; If bit is 1, draw a wall block which is square
     BL TFT_DRAWSQUARE 	
 SkipDraw
@@ -183,7 +184,7 @@ Draw_Snake_Movement FUNCTION
 	BEQ DRAW_HEAD
 ;R6 -> X_START_OF START CELL
 ;R8 -> Y_START_OF START CELL
-	MOV R11, #Blue
+	MOV R11, #Cyan
 ;SET COLOR
 	MOV R0, #15
 ;DELAY

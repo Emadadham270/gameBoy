@@ -449,6 +449,11 @@
               <FileType>2</FileType>
               <FilePath>.\COLOR_BREAKER.s</FilePath>
             </File>
+            <File>
+              <FileName>TEAMLOGO.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\TEAMLOGO.s</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

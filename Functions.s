@@ -67,6 +67,7 @@ RNG_State DCD 1 ; 32-bit seed (must be non-zero)
 	IMPORT MAIN_MAZE
 	IMPORT MAZELOGO
 	IMPORT XO
+	IMPORT TEAMLOGO
 	IMPORT LONGCAT
 	IMPORT AEROSPACE
 	IMPORT Main_Game_Alien
@@ -860,7 +861,10 @@ DrawFourSquares
 	MOV R8,#45
 	MOV R9,#145
 	BL TFT_Filldraw4INP
-	
+	MOV R1,R6
+	MOV R2,R8
+	LDR R3,=TEAMLOGO
+	BL TFT_DrawImage
 	MOV R11, #Black
 	MOV R1, R6
 	MOV R2, R8
