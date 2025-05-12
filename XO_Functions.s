@@ -24,6 +24,8 @@ Black		   EQU 0x0000
 	IMPORT  GET_state
 	IMPORT  Num_to_LCD
 	EXPORT  Main_Game_XO
+	EXPORT  Draw_X
+	EXPORT  Draw_O
 	
 
 ;------------------------

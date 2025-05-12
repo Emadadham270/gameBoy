@@ -37,8 +37,8 @@ Level5Map
 Level6Map
 	DCB 0x00
 	DCB 0x00
-	DCB 0x00
-    DCB 0x04
+	DCB 0x04
+    DCB 0x14
 	DCB 0x40
 	DCB 0x00	
 	
@@ -88,7 +88,7 @@ SnakeMap
 	EXPORT MainGame_LongCat	
 	EXPORT Draw_Snake_Movement
 	EXPORT TFT_DRAWSQUARE
-		
+	IMPORT Num_to_LCD	
 
 ;------------------------
 ; TFT_DRAWSQUARE COLOR IN R11
@@ -642,10 +642,12 @@ MainGame_LongCat FUNCTION
 	MOV R9, #1
 New_Game_Loop
 	MOV R12, R9
+
 	SUB R12, #1          ; cuz if level = 1 we will get address + 0, etc..
 	LDR R3, =Leve1StartCell
 	LDRB R3, [R3, R12]   ; Load level start cell
 	MOV R4, R3
+	MOV R6,R4
 	MOV R2, #6           ; Temp for multiplication
 	MUL R12, R2          ; R12 = 6 * level shift value
 	MOV R2, #0           ; counter for bytes to copy
@@ -658,8 +660,17 @@ CopyLoop
 	ADD R2, #1 	  ; increment counter
 	CMP R2, #6
 	BNE CopyLoop
-	
+	MOV R0,R9
 	BL TFT_DrawMap
+	MOV R1,280
+	MOV R2,450
+	MOV R3,#2
+	MOV R4,#16
+	MOV R5,#1
+	MOV R11,#Cyan              ;34an kennnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+	BL Num_to_LCD
+
+	MOV R4,R6
 	MOV R3, R4
 	;MOV R10,R3
 	;MOV R6,#0X0050
@@ -695,7 +706,7 @@ INPUT12345                ;Wait for input from user
 	
 	CMP R1, #0x00FF
 	ADDEQ R9, #1     ;Next level if he won
-	CMP R9, #3     ;If next level is valid, jump to it (5 is a placeholder here)
+	CMP R9, #6     ;If next level is valid, jump to it (5 is a placeholder here)
 	BLE New_Game_Loop
 EXIT_LC	
 	POP {R0-R12, PC}

@@ -60,7 +60,8 @@ RNG_State DCD 1 ; 32-bit seed (must be non-zero)
 	EXPORT Init_RandomSeed
 	EXPORT Get_Random
 	EXPORT UI	
-	EXPORT GET_state2	
+	EXPORT GET_state2
+	EXPORT DrawOutline
 	IMPORT Main_Game_XO
 	IMPORT MainGame_LongCat
 	IMPORT MAIN_MAZE
@@ -69,6 +70,8 @@ RNG_State DCD 1 ; 32-bit seed (must be non-zero)
 	IMPORT LONGCAT
 	IMPORT AEROSPACE
 	IMPORT Main_Game_Alien
+	IMPORT main_Color_Break
+	IMPORT COLOR_BREAKER	
 
 
 
@@ -854,8 +857,8 @@ DrawFourSquares
 	;down right square
 	MOV R6,#35
 	MOV R7,#135
-	MOV R8,#115
-	MOV R9,#215
+	MOV R8,#45
+	MOV R9,#145
 	BL TFT_Filldraw4INP
 	
 	MOV R11, #Black
@@ -864,34 +867,12 @@ DrawFourSquares
 	MOV R3, #10
 	MOV R4, #110
 	BL DrawOutline
-	MOV R1,R6
-	MOV R2,R8
-	LDR R3,=AEROSPACE
-	BL TFT_DrawImage
 	MOV R11, #Cyan
 	;up right square
 	MOV R6,#185
 	MOV R7,#285
-	MOV R8,#115
-	MOV R9,#215
-	BL TFT_Filldraw4INP
-	MOV R1,R6
-	MOV R2,R8
-	LDR R3,=LONGCAT
-	BL TFT_DrawImage
-	MOV R11, #Black
-	MOV R1, R6
-	MOV R2, R8
-	MOV R3, #10
-	MOV R4, #110
-	BL DrawOutline
-	
-	MOV R11, #Cyan
-	;down left square
-	MOV R6,#35
-	MOV R7,#135
-	MOV R8,#265
-	MOV R9,#365
+	MOV R8,#45
+	MOV R9,#145
 	BL TFT_Filldraw4INP
 	MOV R1,R6
 	MOV R2,R8
@@ -905,11 +886,29 @@ DrawFourSquares
 	BL DrawOutline
 	
 	MOV R11, #Cyan
+	;down left square
+	MOV R6,#35
+	MOV R7,#135
+	MOV R8,#335
+	MOV R9,#435
+	BL TFT_Filldraw4INP
+	MOV R1,R6
+	MOV R2,R8
+	LDR R3,=AEROSPACE
+	BL TFT_DrawImage
+	MOV R11, #Black
+	MOV R1, R6
+	MOV R2, R8
+	MOV R3, #10
+	MOV R4, #110
+	BL DrawOutline
+	
+	MOV R11, #Cyan
 	;up left square
 	MOV R6,#185
 	MOV R7,#285
-	MOV R8,#265
-	MOV R9,#365
+	MOV R8,#335
+	MOV R9,#435
 	BL TFT_Filldraw4INP
 	MOV R1,R6
 	MOV R2,R8
@@ -921,10 +920,45 @@ DrawFourSquares
 	MOV R3, #10
 	MOV R4, #110
 	BL DrawOutline
+	;down middle square
+	MOV R11, #Cyan
+	MOV R6,#35
+	MOV R7,#135
+	MOV R8,#190
+	MOV R9,#290
+	BL TFT_Filldraw4INP
+	MOV R1,R6
+	MOV R2,R8
+	LDR R3,=COLOR_BREAKER
+	BL TFT_DrawImage
+	MOV R11, #Black
+	MOV R1, R6
+	MOV R2, R8
+	MOV R3, #10
+	MOV R4, #110
+	BL DrawOutline
+	
+	MOV R11, #Cyan
+	;up middle square
+	MOV R6,#185
+	MOV R7,#285
+	MOV R8,#190
+	MOV R9,#290
+	BL TFT_Filldraw4INP
+	MOV R1,R6
+	MOV R2,R8
+	LDR R3,=LONGCAT
+	BL TFT_DrawImage
+	MOV R11, #Black
+	MOV R1, R6
+	MOV R2, R8
+	MOV R3, #10
+	MOV R4, #110
+	BL DrawOutline
 
 Initialize_Outline
 	MOV R1,#185
-	MOV R2,#265
+	MOV R2,#190
 	MOV R3,#10
 	MOV R4,#110
 	MOV R11,#Yellow
@@ -954,20 +988,26 @@ EnterHuh
 	
 	
 CMP_Y_1
-	MOV R12,#265
+	MOV R12,#335
 	CMP R2, R12; To compare values greater than #255
 	BEQ FIRST_GAME
 	
-	CMP R2,#115
+	CMP R2,#190
 	BEQ SECOND_GAME
+	
+	CMP R2,#45
+	BEQ THIRD_GAME
 
 CMP_Y_2
-	MOV R12,#265
+	MOV R12,#335
 	CMP R2,R12; To compare values greater than #255
-	BEQ THIRD_GAME
+	BEQ FOURTH_GAME
 	
-	CMP R2,#115
-	BEQ FOURTH_GAME	
+	CMP R2,#190
+	BEQ FIFTH_GAME	
+	
+	CMP R2,#45
+	BEQ SIXTH_GAME	
 	
 FIRST_GAME
 	BL Main_Game_XO
@@ -982,6 +1022,12 @@ THIRD_GAME
 	
 FOURTH_GAME
 	BL Main_Game_Alien
+	B START
+FIFTH_GAME	
+	BL main_Color_Break
+	B START
+SIXTH_GAME
+	BL Main_Game_Alien ;TO BE RANDOM
 	B START
 	ENDFUNC
 
@@ -1025,16 +1071,16 @@ MOVE_DOWNB
 	 B DEFAULTB
 	 
 MOVE_RIGHTB
-	 CMP R2 , #115
+	 CMP R2 , #45
 	 BEQ DEFAULTB
-	 SUB R2 , R2 , #150
+	 SUB R2 , R2 , #145
 	 B DEFAULTB
 	 
 MOVE_LEFTB
-	 MOV R12,#265 ; To compare values greater than #255
+	 MOV R12,#335 ; To compare values greater than #255
 	 CMP R2 , R12
 	 BEQ DEFAULTB
-	 ADD R2 , R2 , #150
+	 ADD R2 , R2 , #145
 	 B DEFAULTB
 	 
 DEFAULTB

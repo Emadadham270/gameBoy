@@ -46,7 +46,7 @@ __main FUNCTION
     BL TFT_Init
 	;MOV R3,24
 	;MOV R11,#Red
-	BL main_Color_Break
+	;BL main_Color_Break
 	
 ;gg	
 	;mov R0, #10

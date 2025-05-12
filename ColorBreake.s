@@ -27,6 +27,15 @@ colorBreaklvl
 		DCD    0x00000001
 		DCD    0x11144003
 		DCD    0x11144001
+colorBreaklvl2
+		DCD    0x00000000
+		DCD    0x00000000
+		DCD    0x00000000
+		DCD    0x01111110
+		DCD    0x04444440
+		DCD    0x01151110
+		DCD    0x00000000
+		DCD    0x00000000
 
 	AREA ColorBreakMAP, DATA, READWRITE
 colorBreakMap
@@ -53,21 +62,30 @@ PlayerColor DCB 0x00
     IMPORT  delay
 	IMPORT  GET_state2			
 	IMPORT TFT_DRAWSQUARE
+	IMPORT DrawOutline
 	EXPORT Draw_Map_Break
 	EXPORT Draw_Filled_Circle30
 	EXPORT UP_D0WN_MOVEMENT	
 	EXPORT main_Color_Break
 	EXPORT DRAW_BALL_MOVEMENT 
-	EXPORT Destroy_Block	
+	EXPORT Destroy_Block
+	IMPORT  Draw_X
+	IMPORT  Draw_O
 
 TFT_DRAWSQUARE2 FUNCTION
-	PUSH{R6-R9,LR}
+	PUSH{R1-R4,R6-R9,LR}
 	MOV R6,R1
 	ADD R7,R6,#40
 	MOV R8,R2
 	ADD R9,R8,#40
 	BL TFT_Filldraw4INP
-	POP{R6-R9, PC}
+	MOV R11,#Black
+	ADD R1,#2
+	ADD R2,#2
+	MOV R4 , #36
+	MOV R3 , #2
+	BL DrawOutline
+	POP{R1-R4,R6-R9, PC}
 	ENDFUNC
 
 Draw_Map_Break FUNCTION
@@ -104,14 +122,14 @@ Draw_Map_Break FUNCTION
     ; Initialize drawing position and counter
     MOV R1, #0            ; Initial X position for drawing
     MOV R2, #80           ; Initial Y position for drawing
-    MOV R3, #0            ; Initialize column counter
+    MOV R12, #0            ; Initialize column counter
 
 col_LOOP
-    CMP R3, #8            ; Check if all 8 columns processed
+    CMP R12, #8            ; Check if all 8 columns processed
     BEQ FINISH_MAP        ; If done, exit function
 
     LDR R0, =colorBreakMap     ; Load address of map data
-    LDR R9, [R0, R3,LSL #2]           ; Load the 32-bit word for current column
+    LDR R9, [R0, R12,LSL #2]           ; Load the 32-bit word for current column
 
     MOV R4, #0            ; Initialize bit position counter
 
@@ -131,24 +149,47 @@ row_LOOP
     CMP R5, #0x1          ; Check if Wall (1)
     MOVEQ R11, #Gray      ; Set color to Gray for Wall
     
-    CMP R5, #0x2          ; Check if Change color (2)
-    MOVEQ R11, #Purple    ; Set color to Purple for Change color
+    CMP R5, #0x2          ; Check if Change color 0 (2)
+    BEQ ChangeColorBlue      ; Set color to Blue for Change color 0
     
-    CMP R5, #0x3          ; Check if Kill (3)
-    MOVEQ R11, #Red       ; Set color to Red for Kill
+    CMP R5, #0x3          ; Check if Change color 1 (3)
+    BEQ ChangeColorYellow    ; Set color to Yellow for Change color 1
     
     CMP R5, #0x4          ; Check if Color 0 (4)
     MOVEQ R11, #Blue      ; Set color to Blue for Color 0
+	
+	CMP R5, #0x5          ; Check if Kill (3)
+    BEQ KILLlmao       ; Set color to Red for kill
     
     CMP R5, #0x8          ; Check if Color 1 (8)
     MOVEQ R11, #Yellow    ; Set color to Yellow for Color 1
 
     ; Draw square at current position
     BL TFT_DRAWSQUARE2     ; Draw a square with selected color
-	;MOV R1 , R7
-	;MOV R2 , R9
-	;BL DrawOutlineW
-
+	B SkipDraw
+	
+ChangeColorBlue
+	MOV R11, #Blue
+    BL TFT_DRAWSQUARE2     ; Draw a square with selected color
+	MOV R3, #40
+	MOV R11, #Lavender
+	BL Draw_O
+	B SkipDraw
+ChangeColorYellow
+	MOV R11, #Yellow
+    BL TFT_DRAWSQUARE2     ; Draw a square with selected color
+	MOV R3, #40
+	MOV R11, #Lavender
+	BL Draw_O
+	B SkipDraw
+KILLlmao
+	MOV R11, #Black
+    BL TFT_DRAWSQUARE2     ; Draw a square with selected color
+	MOV R3, #40
+	MOV R11, #Red
+	BL Draw_X
+	
+	
 SkipDraw
     ADD R2, #40           ; Move X position right for next block
     ADD R4, #4            ; Increment bit position by 4 (next block)
@@ -157,7 +198,7 @@ SkipDraw
 Next_col_MAP
     ADD R1, #40           ; Move Y position down for next column
     MOV R2, #80            ; Reset X position to start of row
-    ADD R3, #1            ; Increment column counter
+    ADD R12, #1            ; Increment column counter
     B col_LOOP            ; Process next column
 
 FINISH_MAP
@@ -165,33 +206,6 @@ FINISH_MAP
 	ENDFUNC
 	
 	
-DrawOutlineW FUNCTION;take r1,x r2,y , dimension of square in R4, dimension of outline in R3
-	PUSH{R0-R12,LR}
-	MOV R4 , #40
-	MOV R3 , #1
-	SUB R10, R4, R3 ; R10 = dimension of square - dimension of outline
-	SUB R6,R1,R3
-	MOV R7,R1
-	SUB R8,R2,R3
-	ADD R9,R2,R4
-	BL TFT_Filldraw4INP  ; draw left vertical outline
-	SUB R6,R1,R3
-	ADD R7,R1,R4
-	SUB R8,R2,R3
-	MOV R9,R2
-	BL TFT_Filldraw4INP ; draw upper horizontal outline
-	SUB R6,R1,R3
-	ADD R7,R1,R4
-	ADD R8,R2,R10
-	ADD R9,R2,R4
-	BL TFT_Filldraw4INP ; draw lower horizontal outline
-	ADD R6,R1,R10
-	ADD R7,R1,R4
-	SUB R8,R2,R3
-	ADD R9,R2,R4
-	BL TFT_Filldraw4INP ; draw right vertical outline
-	pop{R0-R12,PC}
-	ENDFUNC	
 
 UP_D0WN_MOVEMENT FUNCTION
     PUSH{R0-R2, R4-R12, LR}
@@ -228,8 +242,12 @@ DOWN_MOVEMENT
     CMP R7, #0x4          ; Check if Color 0 (4)
     BEQ Check_Block_BLUE_UP
     
+	CMP R7,#0x5			  ; Check if kill block
+	BEQ KILL
+	
     CMP R7, #0x8          ; Check if Color 1 (8)
     BEQ Check_Block_YELLOW_UP
+	
        
     MOV R1 , R3 
     LSR R1 , #3
@@ -319,8 +337,18 @@ Check_Block_YELLOW_UP
     BL Destroy_Block
 ADD27
     B UP_MOVE
-
-
+	
+	
+	
+KILL
+	LDR R0,=PlayerColor
+    LDRB R1,[R0]
+	ORR R1,#4
+	STRB R1,[R0]
+	B END2
+	
+	
+	
 UP_MOVEMENT
     ADD R3 , R3 , #8
     LDR R4, =colorBreakMap
@@ -348,6 +376,10 @@ UP_MOVEMENT
     CMP R7, #0x4          ; Check if Color 0 (4)
     BEQ Check_Block_BLUE_DOWN  ; Set color to Blue for Color 0
     
+	
+	CMP R7,#0x5			  ; Check if kill block
+	BEQ KILL1
+	
     CMP R7, #0x8           ; Check if Color 1 (8)
     BEQ Check_Block_YELLOW_DOWN ; Set color to Yellow for Color 1
 
@@ -437,6 +469,16 @@ Check_Block_BLUE_DOWN
 SUB17
     B DOWN_MOVE
 
+
+
+KILL1
+	LDR R0,=PlayerColor
+    LDRB R1,[R0]
+	ORR R1,#4
+	STRB R1,[R0]
+	B END2
+	
+	
 Check_Block_YELLOW_DOWN  
     LDR R0,=PlayerColor
     LDRB R0,[R0]
@@ -449,6 +491,7 @@ SUB27
 
 ENDDD
     STR R0 , [R2] 
+END2	
     POP{R0-R2, R4-R12, PC}
     ENDFUNC
 
@@ -510,26 +553,31 @@ Destroy_Block FUNCTION; Take position of block
     STR R5, [R12,R11, LSL #2]
 
     
-     POP{R0-R1,R4-R9,PC}
+    POP{R0-R1,R4-R9,PC}
+	ENDFUNC
 	
 	
 	
 Check_Win FUNCTION
         PUSH    {R0,R2-R12, LR}
-
-        LDR     R4, =colorBreakMap     ; base address of the map
-        MOV     R5, #8                 ; 8 rows
+		
+		LDR     R4, =PlayerColor
+		LDRB    R4, [R4]
+		TST     R4, #0x4
+		BNE     no_win
+        LDR     R4, =colorBreakMap
+        MOV     R5, #8
 
 Row_Loop
-        LDR     R0, [R4], #4           ; Load one row (32-bit)
-        MOV     R6, #8                 ; 8 nibbles per row
+        LDR     R0, [R4], #4
+        MOV     R6, #8
 
 Nibble_Loop
-        AND     R1, R0, #0xF           ; Extract lowest nibble
+        AND     R1, R0, #0xF
         CMP     R1, #4
-        BEQ     no_win
+        BEQ     End_lol
         CMP     R1, #8
-        BEQ     no_win
+        BEQ     End_lol
 
         LSR     R0, R0, #4             ; Shift to next nibble
         SUBS    R6, R6, #1
@@ -541,21 +589,18 @@ Nibble_Loop
 		MOV		R1, #0x00FF             ; Return 00FF for win
         B       End_lol
 no_win
-	MOV R1,#0X00AA
+		MOV R1,#0X00AA
 End_lol
 	
         POP     {R0,R2-R12, PC}
 		ENDFUNC
-		
+		LTORG
 		
 DRAW_BALL_MOVEMENT  FUNCTION
     PUSH {R0-R2, R4-R12,LR}
     ;// R3 holds the current position 
     ;// R10 holds the direction (1 = left, 2 = right)
     ; we get from out the R3,R10
-
-    
-
    ;MOV R0, R3
    AND R6, R3, #7 ;R6 = COLUMN
    AND R10,#0x3
@@ -593,6 +638,9 @@ move_right
 
     CMP R7, #4
     BEQ COLOR0
+	
+	CMP R7,#0x5			  ; Check if kill block
+	BEQ KILL2
 
     CMP R7, #8
     BEQ COLOR1
@@ -684,6 +732,12 @@ ADD2
     ADD R3, R3, #1
     B end_
 
+KILL2
+	LDR R0,=PlayerColor
+    LDRB R1,[R0]
+	ORR R1,#4
+	STRB R1,[R0]
+	B end_
     
 move_left
     CMP R6, #7                ;// Check if at the leftmost position
@@ -713,6 +767,10 @@ move_left
 
     CMP R7, #4
     BEQ COLOR0L
+
+	CMP R7,#0x5			  ; Check if kill block
+	BEQ KILL3
+
 
     CMP R7, #8
     BEQ COLOR1L
@@ -773,7 +831,13 @@ CHANGECOLOR2L
 SUB12
     B end_
 
-
+KILL3
+	LDR R0,=PlayerColor
+    LDRB R1,[R0]
+	ORR R1,#4
+	STRB R1,[R0]
+	B end_
+	
 COLOR0L
     
     LDR R0,=PlayerColor
@@ -819,20 +883,20 @@ Draw_Filled_Circle30 FUNCTION
 
     AND R2, R3,#7
     MUL R2, R2, R0
-    ADD R2, R2, #85;Y-VALUE = 80+40*(cell no.%8)
+    ADD R2, R2, #90;Y-VALUE = 80+40*(cell no.%8)
  
     MOV R1, R3, LSR #3
     MUL R1, R1, R0;X-VALUE = 40*(cell no./8)
-	ADD R1, #5
+	ADD R1, #10
 
-	 ;----- constants --------------------------------------------------------------
-	MOV R0, #15 ; R (always 15 ? diameter 30)
+;----- constants --------------------------------------------------------------
+	MOV R0, #10 ; R (always 15 ? diameter 30)
 
-	 ;----- centre point -----------------------------------------------------------
+;----- centre point -----------------------------------------------------------
 	ADD R3, R1, R0 ; R3 = Cx = X0 + 15
 	ADD R4, R2, R0 ; R4 = Cy = Y0 + 15
 
-	 ;----- Bresenham initial values -----------------------------------------------
+	;----- Bresenham initial values -----------------------------------------------
 	MOVS R1, #0 ; x = 0
 	MOV R2, R0 ; y = R
 	MOVS R7, #1
@@ -847,7 +911,7 @@ BresLoop
 
 	CMP     R7, #0
 	BLE     addX_ONLY         ; if d = 0 : keep y
- ; else d > 0 : y--
+; else d > 0 : y--
 	SUBS R2, R2, #1 ; y = y – 1
 	SUB R7, R7, R2, LSL #1; d = d – 2*y
 
@@ -862,103 +926,120 @@ BresDone
 	POP {R0-R12, PC}
 	ENDFUNC
 
- ;==============================================================================
- ; PlotSpans
- ; ---------
- ; For the current (x,y) octant pair draw the four horizontal bars that
- ; fill the circle:
- ;
- ; (Cx ± x, Cy ± y) and (Cx ± y, Cy ± x)
- ;
- ; Entry :
- ; R1 = x , R2 = y
- ; R3 = Cx, R4 = Cy
- ; R11 = colour
- ; Clobbers : R0, R5-R10, R12
- ;==============================================================================
-
 PlotSpans
- PUSH {R0-R12, LR}
+	PUSH {R0-R12, LR}
 
- ;----- Span #1 ( y = +y ) ----------------------------------------------------
- SUB R6, R3, R1 ; startX = Cx – x
- ADD R7, R3, R1 ; endX = Cx + x
- ADD R8, R4, R2 ; Y = Cy + y
- MOV R9, R8 ; endY = startY (height = 1)
- BL TFT_Filldraw4INP
+;----- Span #1 ( y = +y ) ----------------------------------------------------
+	SUB R6, R3, R1 ; startX = Cx – x
+	ADD R7, R3, R1 ; endX = Cx + x
+	ADD R8, R4, R2 ; Y = Cy + y
+	MOV R9, R8 ; endY = startY (height = 1)
+	BL TFT_Filldraw4INP
 
- ;----- Span #2 ( y = –y ) ----------------------------------------------------
- SUB R6, R3, R1
- ADD R7, R3, R1
- SUB R8, R4, R2
- MOV R9, R8
- BL TFT_Filldraw4INP
+;----- Span #2 ( y = –y ) ----------------------------------------------------
+	SUB R6, R3, R1
+	ADD R7, R3, R1
+	SUB R8, R4, R2
+	MOV R9, R8
+	BL TFT_Filldraw4INP
 
- ;----- If x == y we are on the 45° line – the other two spans collapse -----
- CMP R1, R2
- BEQ PlotDone
+;----- If x == y we are on the 45° line – the other two spans collapse -----
+	CMP R1, R2
+	BEQ PlotDone
 
- ;----- Span #3 ( y = +x ) ----------------------------------------------------
- SUB R6, R3, R2 ; startX = Cx – y
- ADD R7, R3, R2 ; endX = Cx + y
- ADD R8, R4, R1 ; Y = Cy + x
- MOV R9, R8
- BL TFT_Filldraw4INP
+;----- Span #3 ( y = +x ) ----------------------------------------------------
+	SUB R6, R3, R2 ; startX = Cx – y
+	ADD R7, R3, R2 ; endX = Cx + y
+	ADD R8, R4, R1 ; Y = Cy + x
+	MOV R9, R8
+	BL TFT_Filldraw4INP
 
- ;----- Span #4 ( y = –x ) ----------------------------------------------------
- SUB R6, R3, R2
- ADD R7, R3, R2
- SUB R8, R4, R1
- MOV R9, R8
- BL TFT_Filldraw4INP
+;----- Span #4 ( y = –x ) ----------------------------------------------------
+	SUB R6, R3, R2
+	ADD R7, R3, R2
+	SUB R8, R4, R1
+	MOV R9, R8
+	BL TFT_Filldraw4INP
 
 PlotDone
- POP {R0-R12, PC}
+	POP {R0-R12, PC}
 	
 main_Color_Break FUNCTION
-;DRAW MAP 
-;GET_STATE
-;DRAW BALL MOVEMENT(may call CHECK_BLOCK )
-;CHECK_BLOCK;(Color_Change,delete block,KILL)
-;check win
 	PUSH {R0-R12, LR}
-	LDR     r0, =colorBreaklvl     ; Source address
-    LDR     r1, =colorBreakMap     ; Destination address
-    MOV     r2, #8                 ; Number of words to copy (8 DCD values)
 
-copy_loop
-    LDR     r3, [r0], #4           ; Load word from source and increment source pointer
-    STR     r3, [r1], #4           ; Store word to destination and increment destination pointer
-    SUBS    r2, r2, #1             ; Decrement counter
-    BNE     copy_loop              ; Continue if not done 
-	BL Draw_Map_Break
+
+    MOV R9, #1
+
+New_Level_Loop
+	PUSH{R0-R8,R10-R12}
+	LDR R0, =PlayerColor
+	LDRB R1, [R0]
+	MOV R1, #0
+	STRB R1, [R0]
+	MOV R12, R9 ; R12 = level
+	SUB R12, #1 ; zero-based (level-1)
+	MOV R2, #32 ; 32 bytes per level (8 words × 4)
+	MUL R12, R2 ; R12 = (level-1)*32 = byte offset
+
+
+    LDR R0,  =colorBreaklvl    ; base of all layouts
+    ADD R0,  R12               ; R0 -> current level layout
+
+    LDR R1,  =colorBreakMap    ; destination RAM buffer
+    MOV R2,  #8                ; copy 8 words
+	
+copy_level_loop
+	LDR R3, [R0], #4 ; read one word, post-inc source
+	STR R3, [R1], #4 ; write it, post-inc dest
+	SUBS R2, R2, #1
+	BNE copy_level_loop
+
+    BL      Draw_Map_Break         ; your existing routine
+    ;MOV     R0,  R9                ; R0 = level (1,2,3…)
+	
+	POP{R0-R8,R10-R12}
 	MOV R3,#9
 INNERLOOPIN
 	BL UP_D0WN_MOVEMENT	
 	BL GET_state2
+	AND R10,R10,#0X003F
+	CMP R10,#32
+	BEQ EXIT_CB
 	BL DRAW_BALL_MOVEMENT
 	BL Check_Win
 	CMP R1 ,#0X00AA
-	BEQ INNERLOOPIN
+	BEQ LOOSER
 	CMP R1 ,#0X00FF
 	BEQ WINNER
 	B INNERLOOPIN
-WINNER 
-	
-    ; Define screen boundaries for drawing
-    MOV R6, #0x0000       ; Start X position (0)
-    MOV R7, #0x0140       ; End X position (320 pixels)
-    MOV R8, #0       ; Start Y position (40 pixels) 
-    MOV R9, #480       ; End Y position (480 pixels)
 
-    ; Fill screen with background color
-    MOV R11, #Pink   ; Set background color
-    BL TFT_Filldraw4INP   ; Fill screen with background color
+WINNER
+	PUSH {R9}
+	MOV R6, #0x0000
+	MOV R7, #0x0140
+	MOV R8, #0
+	MOV R9, #480
+	MOV R11, #Pink
+	BL TFT_Filldraw4INP
+	POP {R9}
+    ADD     R9,  #1                ; R9 = R9 + 1
+    CMP     R9,  #2        ; finished all levels?
+    BGT     EXIT_CB                ; yes ? quit the game
+    B       New_Level_Loop         ; no  ? load next level
+LOOSER
+	PUSH {R9}
+	MOV R6, #0x0000
+	MOV R7, #0x0140
+	MOV R8, #0
+	MOV R9, #480
+	MOV R11, #Red
+	BL TFT_Filldraw4INP
+	POP {R9}
+
+    B       New_Level_Loop         ; restart same level
 EXIT_CB
-	POP{R0-R12,PC}
+	POP {R0-R12, PC}
 	ENDFUNC
 
-
-			
-			
+	
 	END
