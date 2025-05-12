@@ -966,10 +966,16 @@ Initialize_Outline
 	
 MAINLOOP              ;Wait for input from user
 	BL GET_state
+	BL Get_Random
 	AND R10,R10, #0x001F
 	CMP R10, #00      ;Keep looping while input = 0
 	BEQ MAINLOOP
-	
+	PUSH{R1,R2}
+    MOV r1, #5     
+    UDIV r2, r0, r1      
+    MUL r2, r2, r1      
+    SUB r0, r0, r2  
+	POP{R1,R2}    
 	;If input == ENTER
 	CMP R10, #0x0010
 	BEQ EnterHuh
@@ -1027,8 +1033,16 @@ FIFTH_GAME
 	BL main_Color_Break
 	B START
 SIXTH_GAME
-	BL Main_Game_Alien ;TO BE RANDOM
-	B START
+	CMP R0,#0
+	BEQ FIRST_GAME
+	CMP R0,#1
+	BEQ SECOND_GAME
+	CMP R0,#2
+	BEQ THIRD_GAME
+	CMP R0,#3
+	BEQ FOURTH_GAME
+	CMP R0,#4
+	BEQ FIFTH_GAME
 	ENDFUNC
 
 

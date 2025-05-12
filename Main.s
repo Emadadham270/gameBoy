@@ -44,19 +44,7 @@ __main FUNCTION
 	BL CONFIGURE_PORTS
     ; Initialize TFT
     BL TFT_Init
-	;MOV R3,24
-	;MOV R11,#Red
-	;BL main_Color_Break
-	
-;gg	
-	;mov R0, #10
-	;bl delay
-	;BL UP_D0WN_MOVEMENT	
-	;BL GET_state
-	;AND R10, R10,#3
-	;bl DRAW_BALL_MOVEMENT 
-	;b gg
-	;b mmm
+
 	BL UI
     ENDFUNC
 	
