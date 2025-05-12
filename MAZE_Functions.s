@@ -4,27 +4,48 @@
 	IMPORT LONGCAT
 	IMPORT AEROSPACE	
 ROW1		
-	DCD    0x10000000
-	DCD    0x10000000
-	DCD    0x10000000
-	DCD    0x10000000
-	DCD    0x10000000
-	DCD    0x10000000
-	DCD    0x10000000
-	DCD    0x10000000
-	DCD    0x1FFF8000
-	DCD    0x00008000
-	DCD    0x00008000
-	DCD    0x00008000
-	DCD    0x00008000
-	DCD    0x00008000
-	DCD    0x0000FFFE
-	DCD    0x00000002
-	DCD    0x00000002
-	DCD    0x00000002
-	DCD    0x00000002
-	DCD    0x00000002
-ROW2		
+	DCD    0X10000000
+	DCD    0X1C101FF0
+	DCD    0X14103010
+	DCD    0X17A07030
+	DCD    0X109FD000
+	DCD    0X10901010
+	DCD    0X11901010
+	DCD    0X11101010
+	DCD    0X11F01010
+	DCD    0X10101010
+	DCD    0X10101010
+	DCD    0X1F901010
+	DCD    0X10909FFC
+	DCD    0X10909104
+	DCD    0X10F09104
+	DCD    0X101FC11C
+	DCD    0X1FF01F30
+	DCD    0X0000103E
+	DCD    0X00000012
+	DCD    0X00000002
+ROW2
+    DCD 0x10000000
+    DCD 0x13FFFFFF    
+    DCD 0x12000010    
+    DCD 0x17F7FF10    
+    DCD 0x1402101C    
+    DCD 0x15A10174    
+    DCD 0x156B2184    
+    DCD 0x14A92E84    
+    DCD 0x17F92A80    
+    DCD 0x1C012A80    
+    DCD 0x181F3CFA    
+    DCD 0x0A15044A    
+    DCD 0x0BD505CA    
+    DCD 0x0A57FF0E    
+    DCD 0x0B5001E0    
+    DCD 0x0950FC20    
+    DCD 0x0970842E    
+    DCD 0x0F00BFAA    
+    DCD 0x01FF803A    
+    DCD 0x00000002    	
+ROW3		
 		DCD    0x10000000
 		DCD    0x13EDFFFE
 		DCD    0x16290010
@@ -45,6 +66,9 @@ ROW2
 		DCD    0x0F00BFAA
 		DCD    0x01FF803A
 		DCD    0x00000002
+
+
+
 CellStart	DCB 28
 CellWin		EQU 609
 ;--- Colors ---
@@ -77,7 +101,7 @@ MAZEMAP
 		DCD    0x00000000
 		DCD    0x00000000
 		DCD    0x00000000
-		DCD    0x00000002	
+		DCD    0x00000000	
 
 
 			  
@@ -120,7 +144,7 @@ ROW_LOOPMM
     BEQ FINISH_MAPMM
 	
 	
-	LDR R0, =ROW2   ; Load address of Level Map into R0
+	LDR R0, =MAZEMAP   ; Load address of Level Map into R0
     LDR R9, [R0, R3]		; R9 HAS THE CELLS OF THIS ROW 
 
     MOV R4, #0          ;START COL
@@ -231,7 +255,7 @@ Drawsquare FUNCTION;take parameters at r1 and r2
 
 check_win_lose FUNCTION
     PUSH {R4-R8,LR}              ; Save registers to comply with calling conventions
-	LDR R0,=ROW2
+	LDR R0,=MAZEMAP
     MOV R4, R3, LSR #5       ;R4 = row = cell number / 32 (shift right by 5)
 	LSL R4,#2
     AND R5, R3, #0x1F         ; R5 = column = cell number % 32 (mask with 31)
@@ -315,11 +339,31 @@ DEFAULTBM
 	 
 MAIN_MAZE	FUNCTION
 	PUSH {R0-R12, LR} 
-RESTART	
+	MOV R9,#1
+New_Level_MAZE	PUSH{R0-R8,R10-R12}
+	MOV R12, R9 ; R12 = level
+	SUB R12, #1 ; zero-based (level-1)
+	MOV R2, #80 ; 32 bytes per level (8 words × 4)
+	MUL R12, R2 ; R12 = (level-1)*32 = byte offset
+
+
+    LDR R0,  =ROW1    ; base of all layouts
+    ADD R0,  R12               ; R0 -> current level layout
+
+    LDR R1,  =MAZEMAP    ; destination RAM buffer
+    MOV R2,  #20                ; copy 8 words
+copy_level_MAZE
+	LDR R3, [R0], #4 ; read one word, post-inc source
+	STR R3, [R1], #4 ; write it, post-inc dest
+	SUBS R2, R2, #1
+	BNE copy_level_MAZE
+
+    BL TFT_DrawMapM
+	
+	POP{R0-R8,R10-R12}
 	LDR R3,=CellStart
 	LDR R3,[R3]
 	MOV R0,#0
-	BL TFT_DrawMapM
 LOOPINPUT
 	BL GET_state
 	AND R10,R10, #0x002F
@@ -332,9 +376,10 @@ LOOPINPUT
 	CMP R0,#1
 	BEQ WINNERWIN
 	CMP R0,#2
-	BEQ RESTART	
+	BEQ LOSSERLOS	
 	B LOOPINPUT
 WINNERWIN
+	PUSH{R6-R9}
 	MOV R6,#0X0000
 	MOV R7,#0X0140
 	MOV R8,#0X0000
@@ -342,7 +387,24 @@ WINNERWIN
     ; Fill screen with color BLUE
     MOV R11, #Green
 	BL TFT_Filldraw4INP
-	
+	POP{R6-R9}
+	ADD     R9,  #1                ; R9 = R9 + 1
+    CMP     R9,  #3       ; finished all levels?
+    BGT     EXIT_MAZE                ; yes ? quit the game
+    B       New_Level_MAZE         ; no  ? load next level
+
+LOSSERLOS
+	PUSH{R6-R9}
+	MOV R6,#0X0000
+	MOV R7,#0X0140
+	MOV R8,#0X0000
+	MOV R9,#0X01E0
+    ; Fill screen with color BLUE
+    MOV R11, #Red
+	BL TFT_Filldraw4INP
+	POP{R6-R9}
+	B       New_Level_MAZE         ; restart same level
+
 EXIT_MAZE	
 	POP     {R0-R12, PC}  
 	ENDFUNC

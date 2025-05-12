@@ -36,6 +36,35 @@ colorBreaklvl2
 		DCD    0x01151110
 		DCD    0x00000000
 		DCD    0x00000000
+colorBreaklv3
+		DCD    0x11000011
+		DCD    0x00000000
+		DCD    0x44050000
+		DCD    0x44000000
+		DCD    0x44000000
+		DCD    0x00000011
+		DCD    0x11000011
+		DCD    0x11111111
+
+colorBreaklv4
+		DCD    0x00011111
+		DCD    0x00011501
+		DCD    0x00004444
+		DCD    0x00004444
+		DCD    0x40000000
+		DCD    0x44440000
+		DCD    0x11511000
+		DCD    0x11111000
+
+colorBreaklv5
+		DCD    0x00000000
+		DCD    0x00000000
+		DCD    0x00000000
+		DCD    0x00000000
+		DCD    0x01151110
+		DCD    0x44444444
+		DCD    0x11111111
+		DCD    0x00000000
 
 	AREA ColorBreakMAP, DATA, READWRITE
 colorBreakMap
@@ -1023,7 +1052,7 @@ WINNER
 	BL TFT_Filldraw4INP
 	POP {R9}
     ADD     R9,  #1                ; R9 = R9 + 1
-    CMP     R9,  #2        ; finished all levels?
+    CMP     R9,  #5        ; finished all levels?
     BGT     EXIT_CB                ; yes ? quit the game
     B       New_Level_Loop         ; no  ? load next level
 LOOSER
