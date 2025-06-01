@@ -15,13 +15,17 @@
 
 - Firstly, We have made a UI to make you choose your game with a yellow border cursor. Also , There is an exit button for each game that takes you to the UI Screen.
 
-![](assests/Screenshot_2025-05-12_050739.png)
+<p align="center">
+  <img src="assests/Screenshot_2025-05-12_050739.png" alt="Description" width="300"/>
+</p>
 
 # Features of Each Game :
 
 ## **- Long Cat Game :**
 
-![](assests/image.png)
+<p align="center">
+  <img src="assests/image.png" alt="Description" width="300"/>
+</p>
 
 **Inspired from** : https://play.google.com/store/apps/details?id=com.martinmagni.longcat&hl=ar
 
@@ -46,7 +50,9 @@
 
 ## **- Alien Invaders :**
 
-![](assests/Screenshot_2025-05-11_005036.png)
+<p align="center">
+  <img src="assests/Screenshot_2025-05-11_005036.png" alt="Description" width="300"/>
+</p>
 
 1. **Player and Enemy Bullets**
    - **Shooting Mechanism**:
@@ -85,7 +91,9 @@
 
 ## **- XO Game :**
 
-![](assests/Screenshot_2025-05-10_212511.png)
+<p align="center">
+  <img src="assests/Screenshot_2025-05-10_212511.png" alt="Description" width="300"/>
+</p>
 
 1. **Grid Drawing** (**`TFT_DrawGrid`**):
    - Sets up the grid with distinct colors using **`TFT_Filldraw4INP`** to fill areas on the display. The grid lines are drawn with specific color codes to differentiate sections of the game board.
@@ -112,8 +120,9 @@
     - Frequent updates to the display provide dynamic feedback for actions such as drawing on the board, score changes, and movement validation with **`DrawBorder`**.
 
 ## **- Maze Game :**
-
-![](assests/Screenshot_2025-05-10_220609.png)
+<p align="center">
+  <img src="assests/Screenshot_2025-05-10_220609.png" alt="Description" width="300"/>
+</p>
 
 1. **Maze Layout** (**`TFT_DrawMapM`**):
    - The function draws the maze map on the screen using predefined data stored in **`ROW`** and **`ROW2`**. These data sections use hexadecimal values to represent walls and paths within the maze.
@@ -133,7 +142,9 @@
 
 # - Color Break :
 
-![](assests/Screenshot_2025-05-12_051509.png)
+<p align="center">
+  <img src="assests/Screenshot_2025-05-12_051509.png" alt="Description" width="300"/>
+</p>
 
 **Inspired from** : https://play.fancade.com/5F5A4E32A2926D92
 
